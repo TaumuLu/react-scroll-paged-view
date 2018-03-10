@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
-import { isAndroid } from 'app/utils/platform'
-import { accAdd } from 'app/utils/formats'
-import { isEmpty } from 'lodash'
+import { accAdd, isAndroid, isEmpty, isIOS } from './utils'
 
 import { CarouselPage, ScrollPageHOC } from './components'
 import RNScrollView from './components/RNScrollView'
 
-@ScrollPageHOC
-export default class ScrollPagedView extends Component {
+class ScrollPagedView extends Component {
 
   constructor(props) {
     super(props)
@@ -53,9 +50,9 @@ export default class ScrollPagedView extends Component {
     this.isResponder = flag
     if (flag) {
       // ios单独处理阻止外层scrollView滑动
-      if (!isAndroid) {
-        const { setWrapScrollView } = this.props
-        setWrapScrollView && setWrapScrollView()
+      if (isIOS) {
+        const { setResponder } = this.props
+        setResponder && setResponder(flag)
       }
     }
     // if (isAndroid) {
@@ -300,4 +297,6 @@ export default class ScrollPagedView extends Component {
     )
   }
 }
+
+export default ScrollPageHOC(ScrollPagedView)
 

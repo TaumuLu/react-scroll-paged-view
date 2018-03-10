@@ -4,7 +4,7 @@ import {
   Animated,
   PanResponder
  } from 'react-native'
-import { isAndroid } from 'app/utils/platform'
+import { isAndroid } from '../utils'
 
 
 export default class ScrollViewMonitor extends Component {

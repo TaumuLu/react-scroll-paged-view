@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { mergeWith } from 'lodash'
-import { ItemTabs } from 'app/components/ui'
-import { accAdd } from 'app/utils/formats'
-import { createStyles } from 'app/utils/style'
+import { ItemTabs } from './components/item-tabs'
+import { accAdd } from './utils'
 
 import { ScrollPageHOC } from './components'
 
@@ -124,7 +123,7 @@ export default class ScrollPagedView extends Component {
     const { height = '100%', width = '100%' } = this.props
 
     return (
-      <div style={createStyles({ display: 'flex', flex: 1, height, width })}>
+      <div style={{ display: 'flex', flex: 1, height, width }}>
         <ItemTabs
           onChange={this.onChange}
           vertical

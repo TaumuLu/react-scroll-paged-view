@@ -1,0 +1,58 @@
+extends: airbnb
+parser: babel-eslint
+env:
+  es6: true
+  browser: true
+  node: true
+  mocha: true
+settings:
+  import/resolver:
+    node:
+      moduleDirectory:
+        - node_modules
+        - components
+rules:
+  semi:
+    - error
+    - never
+  arrow-body-style: 0
+  max-len: 0
+  global-require: 0
+  no-console: 0
+  import/no-dynamic-require: 0
+  no-use-before-define: 0
+  no-underscore-dangle: 0
+  no-class-assign: 0
+  no-extra-boolean-cast: 0
+  no-nested-ternary: 0
+  eol-last: 0
+  comma-dangle:
+    - error
+    - functions: ignore
+      objects: always-multiline
+      arrays: always-multiline
+  jsx-quotes:
+    - 2
+    - prefer-single
+  react/jsx-sort-props: 0
+  react/jsx-space-before-closing: 0
+  react/prefer-stateless-function: 0
+  react/jsx-no-bind: 0
+  react/jsx-first-prop-new-line: 0
+  react/jsx-filename-extension: 0
+  react/react-in-jsx-scope: 0
+  react/no-multi-comp: 0
+  react/prop-types: 0
+  react/self-closing-comp: 0
+  react/no-string-refs: 0
+  import/no-extraneous-dependencies: 0
+  import/prefer-default-export: 0
+  jsx-a11y/no-static-element-interactions: 0
+  class-methods-use-this: 0
+  no-param-reassign: 0
+  camelcase: 0
+  no-shadow: 0
+  no-unused-expressions: 0
+  no-plusplus: 0
+
+

@@ -15,5 +15,16 @@
   "bugs": {
     "url": "https://github.com/TaumuLu/react-scroll-paged-view/issues"
   },
-  "homepage": "https://github.com/TaumuLu/react-scroll-paged-view#readme"
+  "homepage": "https://github.com/TaumuLu/react-scroll-paged-view#readme",
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^3.3.1",
+    "eslint-config-airbnb": "13.0.0",
+    "eslint-plugin-babel": "^4.0.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "2.2.3",
+    "eslint-plugin-markdown": "1.0.0-beta.3",
+    "eslint-plugin-react": "^6.1.2",
+    "eslint-tinker": "^0.4.0"
+  }
 }
