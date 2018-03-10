@@ -1,0 +1,19 @@
+{
+  "name": "react-scroll-paged-view",
+  "version": "1.0.0",
+  "description": "Inside scroll, Full page scroll",
+  "main": "./src",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TaumuLu/react-scroll-paged-view.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TaumuLu/react-scroll-paged-view/issues"
+  },
+  "homepage": "https://github.com/TaumuLu/react-scroll-paged-view#readme"
+}
