@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import {
   StyleSheet,
   Text,
-  Dimensions,
+  // Dimensions,
   View
 } from 'react-native'
 import PropTypes from 'prop-types'
@@ -11,7 +11,7 @@ import ScrollPagedView from './src'
 
 console.disableYellowBox = true
 
-const height = Dimensions.get('window').height
+// const height = Dimensions.get('window').height
 
 export default class App extends Component {
   render() {
@@ -21,7 +21,7 @@ export default class App extends Component {
           onPageChange={this._onPageChange}
           setResponder={this._setResponder}
         >
-          {Array.from({ length: 2 }, (val, ind) => {
+          {Array.from({ length: 3 }, (val, ind) => {
             return (
               <InsideScrollView key={ind} text={ind} style={styles[`pageItem_${ind}`]}/>
             )
@@ -46,8 +46,15 @@ class InsideScrollView extends Component {
       <View style={{ flex: 1 }}>
         <ScrollView>
           <View style={[styles.wrapView, style]}>
-            <Text style={styles.text}>head: {text}</Text>
-            <Text style={styles.text}>foot: {text}</Text>
+            <Text style={styles.text}>head: page{text}</Text>
+            {Array.from({ length: 20 }, (val, ind) => {
+              return (
+                <View key={ind} text={ind} style={styles.viewItem}>
+                  <Text style={styles.text}>{ind}</Text>
+                </View>
+              )
+            })}
+            <Text style={styles.text}>foot: page{text}</Text>
           </View>
         </ScrollView>
       </View>
@@ -74,11 +81,17 @@ const styles = StyleSheet.create({
   },
 
   wrapView: {
+    // height: height * 2,
     backgroundColor: '#F5FCFF',
-    height: height * 2,
     alignItems: 'center',
     paddingVertical: 20,
     justifyContent: 'space-between',
+  },
+  viewItem: {
+    flex: 1,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   text: {
@@ -90,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   pageItem_1: {
-    backgroundColor: 'yellow',
+    backgroundColor: 'green',
   },
   pageItem_2: {
     backgroundColor: 'blue',

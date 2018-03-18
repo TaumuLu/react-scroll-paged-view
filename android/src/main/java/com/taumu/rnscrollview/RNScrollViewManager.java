@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 import android.graphics.Color;
-import android.view.View;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
@@ -126,6 +125,11 @@ public class RNScrollViewManager
       int commandId,
       @Nullable ReadableArray args) {
     RNScrollViewCommandHelper.receiveCommand(this, scrollView, commandId, args);
+  }
+
+  @Override
+  public void flashScrollIndicators(RNScrollView scrollView) {
+    scrollView.flashScrollIndicators();
   }
 
   @Override

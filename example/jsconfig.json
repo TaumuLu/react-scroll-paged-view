@@ -4,20 +4,19 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
-      "app": "app",
-      "disign": "design",
-      "themes": "themes"
+      "example": "example",
+      "src": "src"
     }
   },
   "exclude": [
     "node_modules",
-    "web_modules",
     "android",
     "ios",
     "public",
     "vendor"
   ],
   "include": [
-    "app"
+    "example",
+    "src"
   ]
 }

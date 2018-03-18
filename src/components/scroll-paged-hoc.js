@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { get, set } from 'lodash'
+import { get, set } from '../utils'
 
 export default function ScrollPageHOC(WrappedComponent) {
   return class ScrollPage extends WrappedComponent {
@@ -81,7 +81,7 @@ export default function ScrollPageHOC(WrappedComponent) {
         case this.len - 1:
           return isTop
         default:
-          return isTop || isBottom
+          return (isTop && this.borderDirection === 'isTop') || (isBottom && this.borderDirection === 'isBottom')
       }
     }
 

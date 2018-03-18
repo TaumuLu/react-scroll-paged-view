@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,13 +24,11 @@ import com.facebook.react.views.scroll.FpsListener;
 import com.facebook.react.views.scroll.OnScrollDispatchHelper;
 import com.facebook.react.views.scroll.ReactScrollViewHelper;
 import com.facebook.react.views.scroll.VelocityHelper;
-import com.facebook.react.views.view.ReactViewBackgroundDrawable;
 import com.facebook.react.views.view.ReactViewBackgroundManager;
 
 import java.lang.reflect.Field;
 
 import javax.annotation.Nullable;
-
 
 
 @TargetApi(11)

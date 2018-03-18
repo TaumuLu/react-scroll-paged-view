@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react'
 import {
   View,
@@ -8,7 +7,7 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 
-export default class CarouselPage extends Component {
+export default class PagedView extends Component {
 
   static propTypes = {
     initialPage: PropTypes.number,
@@ -176,17 +175,16 @@ export default class CarouselPage extends Component {
     Animated.parallel(animations).start()
 
     this._lastPos = toValue
+    this._oldPage = this._currentPage
     this._currentPage = page
 
     const { loadIndex } = this.state
 
-    this.props.onPageChange(page)
     if (!loadIndex.includes(page)) {
       loadIndex.push(page)
     }
-    // 先设置state再onPageChange提前加载得知需要scrollView的组件
     this.setState({ loadIndex }, () => {
-      this.props.onPageChangeAfter(page)
+      this.props.onPageChange(page, this._oldPage)
     })
   }
 
