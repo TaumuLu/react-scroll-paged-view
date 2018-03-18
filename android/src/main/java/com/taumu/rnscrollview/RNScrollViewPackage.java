@@ -1,4 +1,4 @@
-package com.terminus.hisensemobile.scrollView;
+package com.taumu.rnscrollview;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;

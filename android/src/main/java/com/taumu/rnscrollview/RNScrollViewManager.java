@@ -1,4 +1,4 @@
-package com.terminus.hisensemobile.scrollView;
+package com.taumu.rnscrollview;
 
 import javax.annotation.Nullable;
 

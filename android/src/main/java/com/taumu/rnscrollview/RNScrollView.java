@@ -1,4 +1,4 @@
-package com.terminus.hisensemobile.scrollView;
+package com.taumu.rnscrollview;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

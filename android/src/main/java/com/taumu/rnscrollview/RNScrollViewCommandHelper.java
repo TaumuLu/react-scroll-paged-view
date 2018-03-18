@@ -7,7 +7,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-package com.terminus.hisensemobile.scrollView;
+package com.taumu.rnscrollview;
 
 import javax.annotation.Nullable;
 
