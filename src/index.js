@@ -1,11 +1,22 @@
 import React, { Component } from 'react'
-import { accAdd, isAndroid, isEmpty, isIOS } from './utils'
+import PropTypes from 'prop-types'
 
+import { accAdd, isAndroid, isEmpty, isIOS } from './utils'
 import { PagedView, ScrollPagedHOC } from './components'
 import AgentScrollView from './components/agent-scroll-view'
 
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
+
+  static propTypes = {
+    onPageChange: PropTypes.func,
+    setResponder: PropTypes.func,
+  }
+
+  static defaultProps = {
+    onPageChange: () => {},
+    setResponder: () => {},
+  }
 
   onPageChange = (index, oldIndex) => {
     const { onPageChange } = this.props
