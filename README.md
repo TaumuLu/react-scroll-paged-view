@@ -13,7 +13,7 @@ ios RN代码完美支持，android则基于RN scrollView改动了部分代码得
 不仅支持RN端，相应的web端组件也有
 
 ## Notice
-**Compatible version "react-native": "~0.54.0"**
+**Compatible version "react-native": "~0.54.0"**  
 The react native 0.47 version uses the support/0.47 branch
 
 ## Demo
@@ -81,7 +81,7 @@ nativeProps | object | undefined | scrollView Props
 
 ## TODO
 - [x] 优化滚动区域索引，使用代理scrollView完成
-- [x] android组件兼容react native不同版本
+- [x] android兼容react native不同版本
 - [ ] 支持web端滚动组件
 - [ ] 更多props配置
 
