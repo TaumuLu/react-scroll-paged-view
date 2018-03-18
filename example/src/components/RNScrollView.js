@@ -1,6 +1,5 @@
 import React from 'react'
-import { ScrollView, Platform, View, StyleSheet, findNodeHandle, requireNativeComponent } from 'react-native'
-import UIManager from 'UIManager'
+import { ScrollView, Platform, View, StyleSheet, findNodeHandle, requireNativeComponent, UIManager } from 'react-native'
 
 export default class RNScrollView extends ScrollView {
 
