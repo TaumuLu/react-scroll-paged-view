@@ -163,3 +163,23 @@ export const findLast = (value, handle) => {
   const arr = value && value.reverse && value.reverse()
   return find(arr, handle)
 }
+
+export const mergeWith = (originObject, mergeObject, handle) => {
+  const originKeys = keys(originObject)
+  const mergeKeys = keys(mergeObject)
+  const reObject = {}
+  originKeys.forEach((key) => {
+    const mergeIndex = mergeKeys.indexOf(key)
+    if (mergeIndex > -1) {
+      reObject[key] = handle(originObject[key], mergeObject[key])
+      mergeKeys.splice(mergeIndex, 1)
+    } else {
+      reObject[key] = originObject[key]
+    }
+  })
+  mergeKeys.forEach((key) => {
+    reObject[key] = mergeObject[key]
+  })
+
+  return reObject
+}

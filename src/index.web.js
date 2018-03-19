@@ -1,12 +1,20 @@
 import React, { Component } from 'react'
-import { mergeWith } from 'lodash'
-import ScrollableTabView from './components/scrollable-tab-view'
-import { accAdd } from './utils'
+import PropTypes from 'prop-types'
 
+import { accAdd, mergeWith } from './utils'
 import { ScrollPagedHOC } from './components'
+import ScrollableTabView from './components/scrollable-tab-view'
 
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
+
+  static propTypes = {
+    onPageChange: PropTypes.func,
+  }
+
+  static defaultProps = {
+    onPageChange: () => {},
+  }
 
   constructor(props) {
     super(props)
@@ -147,4 +155,8 @@ const getMergeProps = (originProps, mergeProps) => {
         return { ...originValue, ...mergeValue }
     }
   })
+}
+
+export {
+  ScrollableTabView
 }
