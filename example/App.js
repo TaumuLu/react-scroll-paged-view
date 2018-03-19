@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import {
   StyleSheet,
+  Platform,
   Text,
-  // Dimensions,
+  Dimensions,
+  NativeModules,
   View
 } from 'react-native'
 import PropTypes from 'prop-types'
@@ -11,7 +13,10 @@ import ScrollPagedView from 'react-scroll-paged-view'
 
 console.disableYellowBox = true
 
-// const height = Dimensions.get('window').height
+let height = Dimensions.get('window').height
+if (Platform.OS === 'android') {
+  height -= NativeModules.StatusBarManager.HEIGHT
+}
 
 export default class App extends Component {
   render() {
@@ -23,7 +28,7 @@ export default class App extends Component {
         >
           {Array.from({ length: 3 }, (val, ind) => {
             return (
-              <InsideScrollView key={ind} text={ind} style={styles[`pageItem_${ind}`]}/>
+              <InsideScrollView key={ind} text={ind + 1} style={styles[`pageItem_${ind}`]}/>
             )
           })}
         </ScrollPagedView>
@@ -44,17 +49,18 @@ class InsideScrollView extends Component {
 
     return (
       <View style={{ flex: 1 }}>
-        <ScrollView>
+        <ScrollView style={{ flex: 1 }}>
           <View style={[styles.wrapView, style]}>
-            <Text style={styles.text}>head: page{text}</Text>
-            {Array.from({ length: 20 }, (val, ind) => {
+            <Text style={styles.text}>head</Text>
+            <Text style={styles.textIndex}>page {text}</Text>
+            {/* {Array.from({ length: 15 }, (val, ind) => {
               return (
                 <View key={ind} text={ind} style={styles.viewItem}>
                   <Text style={styles.text}>{ind}</Text>
                 </View>
               )
-            })}
-            <Text style={styles.text}>foot: page{text}</Text>
+            })} */}
+            <Text style={styles.text}>foot</Text>
           </View>
         </ScrollView>
       </View>
@@ -95,17 +101,24 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 14,
+    fontSize: 40,
+    color: 'white',
+  },
+  textIndex: {
+    fontSize: 80,
     color: 'white',
   },
 
   pageItem_0: {
-    backgroundColor: 'red',
+    backgroundColor: 'blue',
+    height: 1000,
   },
   pageItem_1: {
     backgroundColor: 'green',
+    height,
   },
   pageItem_2: {
-    backgroundColor: 'blue',
+    backgroundColor: 'red',
+    height: 1200,
   },
 })
