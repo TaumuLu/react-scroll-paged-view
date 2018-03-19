@@ -41,12 +41,9 @@ export default class AgentScrollView extends React.Component {
     const method = get(this.props, propsKey)
     if (method) {
       const agentInfo = viewKeys.reduce((p, key) => Object.assign({}, p, { [key]: this[key] || {} }), {})
-      Promise
-        .resolve(method(event, agentInfo))
-        .then(() => {
-          const nativeMethod = get(nativeProps, propsKey)
-          nativeMethod && nativeMethod(event)
-        })
+      method(event, agentInfo)
+      const nativeMethod = get(nativeProps, propsKey)
+      nativeMethod && nativeMethod(event)
     }
   }
 
