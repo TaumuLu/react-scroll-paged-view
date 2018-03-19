@@ -17,7 +17,7 @@ ios RN代码完美支持，android则基于RN scrollView改动了部分代码得
 
 ## Notice
 **Compatible version "react-native": "~0.54.0"**  
-The react native 0.47 version uses the support/0.47 branch  
+The react native 0.47 version uses the 0.1.* version  
 The click events that do not appear in the inside scrollView component can be used by onPressIn  
 
 ## Demo
@@ -97,6 +97,7 @@ webProps(web only) | object | undefined | Web scrollView Props
 - [ ] 优化web端组件
 
 ## Changelog
+- 0.1.0
 - 1.0.0
 - 1.0.1
 - 1.1.0
