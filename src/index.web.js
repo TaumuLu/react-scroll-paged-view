@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { mergeWith } from 'lodash'
-import { ItemTabs } from './components/item-tabs'
+import ScrollableTabView from './components/scrollable-tab-view'
 import { accAdd } from './utils'
 
 import { ScrollPagedHOC } from './components'
@@ -124,12 +124,12 @@ export default class ScrollPagedView extends Component {
 
     return (
       <div style={{ display: 'flex', flex: 1, height, width }}>
-        <ItemTabs
+        <ScrollableTabView
           onChange={this.onChange}
           vertical
         >
           {this.childrenList}
-        </ItemTabs>
+        </ScrollableTabView>
       </div>
     )
   }

@@ -93,3 +93,65 @@ export const set = (object, path, value) => {
     return obj ? obj[key] : null
   }, object)
 }
+
+const getKeys = Object.keys || ((obj) => {
+  const arr = []
+  for (const i in obj) {
+    if (obj.hasOwnProperty(i)) {
+      arr.push(i)
+    }
+  }
+  return arr
+})
+
+const keys = (value) => {
+  const type = getType(value)
+
+  switch (type) {
+    case 'Array':
+    case 'Object':
+      return getKeys(value)
+    default:
+      return []
+  }
+}
+
+export const size = (value) => {
+  if (value) {
+    const type = getType(value)
+    switch (type) {
+      case 'Array':
+        return value.length
+      case 'Object':
+        return keys(value).length
+      default:
+        return value.length || 0
+    }
+  }
+  return 0
+}
+
+export const find = (value, handle) => {
+  if (value) {
+    const type = getType(value)
+    switch (type) {
+      case 'Array':
+        return value.find || ((value) => {
+          const len = size(value)
+          for (let i = 0; i < len; i++) {
+            const item = value[i]
+            if (handle(item, i, value)) return item
+          }
+          return undefined
+        })
+      default:
+        return undefined
+    }
+  }
+  return undefined
+}
+
+export const findLast = (value, handle) => {
+  const arr = value && value.reverse && value.reverse()
+  return find(arr, handle)
+}
