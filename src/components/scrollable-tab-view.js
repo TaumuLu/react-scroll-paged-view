@@ -206,10 +206,11 @@ export default class ScrollableTabView extends React.Component {
     if (!scrollWithoutAnimation && isNoAnimated) {
       this.tabsBox.style.transition = 'none'
     }
+    const oldActiveTab = this.state.activeTab
 
     this.setState({ activeTab, loadTabList }, () => {
       // 检查是否需要重置位置
-      this.props.onChange(this.getResetActiveTab(true))
+      this.props.onChange(this.getResetActiveTab(true), oldActiveTab)
       this.resetPosition()
     })
   }

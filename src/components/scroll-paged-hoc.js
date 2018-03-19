@@ -16,11 +16,11 @@ export default function ScrollPageHOC(WrappedComponent) {
       this.isResponder = false
       this.currentPage = 0
 
-      this.scrollViewRef = []
-      this.scrollViewLayout = []
-      this.scrollViewSize = []
+      // this.scrollViewRef = []
+      // this.scrollViewLayout = []
+      // this.scrollViewSize = []
       // 子元素含有多个scrollview的索引数组
-      this.scrollViewIndex = []
+      // this.scrollViewIndex = []
 
       this._deceleration = 0.997
     }

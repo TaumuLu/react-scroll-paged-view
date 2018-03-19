@@ -8,10 +8,11 @@ npm install react-scroll-paged-view --save
 
 ## Introduction
 Support React & React Native  
+Subcomponents can choose whether or not to use scrollView  
 按页滚动和页内滚动结合，类似京东等app的商品详情页上下页查看  
 ios RN代码完美支持，android则基于RN scrollView改动了部分代码得以支持  
 目前开源的RN项目中并没有内滚动和页滚动结合的，基于项目需要写了这个组件  
-不仅支持RN端，相应的web端组件也有
+不仅支持RN端，相应的web端组件也有，子组件可以选择是否使用scrollView
 
 ## Notice
 **Compatible version "react-native": "~0.54.0"**  
@@ -84,8 +85,9 @@ nativeProps | object | undefined | scrollView Props
 ## TODO
 - [x] 优化滚动区域索引，使用代理scrollView完成
 - [x] android兼容react native不同版本
-- [ ] 支持web端滚动组件
+- [x] 支持web端组件
 - [ ] 更多props配置
+- [ ] 优化web端组件
 
 ## Changelog
 - 1.0.0

@@ -223,7 +223,6 @@ export default class ScrollPagedView extends Component {
         // onPanResponderTerminate={this._onPanResponderTerminate}
 
         onPageChange={this.onPageChange}
-        onPageChangeAfter={this.onPageChangeAfter}
         animationDuration={400}
         blurredZoom={1}
         blurredOpacity={1}
