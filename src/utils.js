@@ -70,7 +70,15 @@ export const isEmpty = (value) => {
 
 const baseGetSet = (path) => {
   const type = getType(path)
-  return type === 'Array' ? path : path.split('.')
+  switch (type) {
+    case 'Array':
+      return path
+    case 'String':
+    case 'Number':
+      return `${path}`.split('.')
+    default:
+      return []
+  }
 }
 
 export const get = (object, path, defaultValue) => {
