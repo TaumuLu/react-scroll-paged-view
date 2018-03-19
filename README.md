@@ -1,5 +1,5 @@
 # react-scroll-paged-view
-Inside scroll, Full page scroll
+scroll view, Inside scroll, Full page scroll
 
 ## Installation
 ```
@@ -101,3 +101,4 @@ webProps(web only) | object | undefined | Web scrollView Props
 - 1.0.0
 - 1.0.1
 - 1.1.0
+- 1.1.1
