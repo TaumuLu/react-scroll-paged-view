@@ -1,12 +1,20 @@
 import React, { Component } from 'react'
-import { mergeWith } from 'lodash'
-import ScrollableTabView from './components/scrollable-tab-view'
-import { accAdd } from './utils'
+import PropTypes from 'prop-types'
 
+import { accAdd, mergeWith } from './utils'
 import { ScrollPagedHOC } from './components'
+import ScrollableTabView from './components/scrollable-tab-view'
 
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
+
+  static propTypes = {
+    onPageChange: PropTypes.func,
+  }
+
+  static defaultProps = {
+    onPageChange: () => {},
+  }
 
   constructor(props) {
     super(props)
@@ -24,13 +32,14 @@ export default class ScrollPagedView extends Component {
     }
   }
 
-  onChange = (index) => {
+  onChange = (index, oldIndex) => {
     const { onPageChange } = this.props
     if (onPageChange) onPageChange(index)
 
     this.currentPage = index
-
+    // 肯定处于边界位置,多此一举设置
     this.isBorder = true
+    this.borderDirection = oldIndex > index ? 'isBottom' : 'isTop'
     this.isResponder = false
   }
 
@@ -64,7 +73,7 @@ export default class ScrollPagedView extends Component {
     const { currentTarget: { scrollHeight, scrollTop, clientHeight } } = e
     const isTop = parseFloat(scrollTop) <= 0
     const isBottom = parseFloat(accAdd(scrollTop, clientHeight).toFixed(2)) >= parseFloat(scrollHeight.toFixed(2))
-
+    this.borderDirection = isTop ? 'isTop' : isBottom ? 'isBottom' : false
     this.isBorder = this.triggerJudge(isTop, isBottom)
     return this.isBorder
   }
@@ -79,7 +88,7 @@ export default class ScrollPagedView extends Component {
       const hasScrollContent = parseFloat(scrollHeight.toFixed(2)) > parseFloat(clientHeight.toFixed(2))
       if (hasScrollContent) {
         // 滚动时再此校验是否到达边界，此举防止滚动之外的元素触发change事件使得this.isBorder置为true
-        this.isBorder ? this.checkIsBorder(e) : this.isBorder
+        if (this.isBorder) this.checkIsBorder(e)
 
         if (this.isBorder) {
           const distance = clientY - startY
@@ -89,6 +98,7 @@ export default class ScrollPagedView extends Component {
               this.isResponder = true
             } else {
               this.isBorder = false
+              this.borderDirection = false
               this.isResponder = false
             }
           }
@@ -106,10 +116,7 @@ export default class ScrollPagedView extends Component {
   }
 
   // 子元素调用一定要传入index值来索引对应数据,且最好执行懒加载
-  ScrollViewMonitor = ({ children, index, pageIndex, webProps = {} }) => {
-    if (index !== undefined && pageIndex !== undefined) {
-      this.scrollViewIndex[pageIndex] = index
-    }
+  ScrollViewMonitor = ({ children, webProps = {} }) => {
     const mergeProps = getMergeProps(this.scrollViewProps, webProps)
 
     return (
@@ -135,7 +142,6 @@ export default class ScrollPagedView extends Component {
   }
 }
 
-
 const getMergeProps = (originProps, mergeProps) => {
   return mergeWith(originProps, mergeProps, (originValue, mergeValue) => {
     const type = {}.toString.call(mergeValue).slice(8, -1).toLowerCase()
@@ -149,4 +155,8 @@ const getMergeProps = (originProps, mergeProps) => {
         return { ...originValue, ...mergeValue }
     }
   })
+}
+
+export {
+  ScrollableTabView
 }

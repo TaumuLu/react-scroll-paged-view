@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import { accAdd, isAndroid, isEmpty, isIOS } from './utils'
-import { PagedView, ScrollPagedHOC } from './components'
+import { ScrollPagedHOC } from './components'
 import AgentScrollView from './components/agent-scroll-view'
+import PagedView from './components/paged-view'
 
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
@@ -223,7 +224,6 @@ export default class ScrollPagedView extends Component {
         // onPanResponderTerminate={this._onPanResponderTerminate}
 
         onPageChange={this.onPageChange}
-        onPageChangeAfter={this.onPageChangeAfter}
         animationDuration={400}
         blurredZoom={1}
         blurredOpacity={1}
@@ -233,4 +233,8 @@ export default class ScrollPagedView extends Component {
       </PagedView>
     )
   }
+}
+
+export {
+  PagedView
 }
