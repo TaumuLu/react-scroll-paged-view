@@ -1,5 +1,5 @@
 # react-scroll-paged-view
-[View README in English](./README.md)
+[View README in English](./README.md)  
 scroll view, Inside scroll, Full page scroll
 
 ## Installation

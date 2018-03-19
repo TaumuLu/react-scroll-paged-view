@@ -1,5 +1,5 @@
 # react-scroll-paged-view
-[以中文查看](./README_zh-CN.md)
+[以中文查看](./README_zh-CN.md)  
 scroll view, Inside scroll, Full page scroll
 
 ## Installation
