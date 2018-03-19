@@ -31,48 +31,48 @@ export default function ScrollPageHOC(WrappedComponent) {
       }
     }
 
-    setScrollViewConfig = (setKey, value, index, handle) => {
-      const { currentPage, scrollViewIndex } = this
-      const setKeyList = [setKey, currentPage]
+    // setScrollViewConfig = (setKey, value, index, handle) => {
+    //   const { currentPage, scrollViewIndex } = this
+    //   const setKeyList = [setKey, currentPage]
 
-      // 子元素含有多个scrollview
-      if (scrollViewIndex[currentPage] !== undefined) {
-        if (!this[setKey][currentPage]) this[setKey][currentPage] = []
+    //   // 子元素含有多个scrollview
+    //   if (scrollViewIndex[currentPage] !== undefined) {
+    //     if (!this[setKey][currentPage]) this[setKey][currentPage] = []
 
-        setKeyList.push(index)
-      }
-      handle && handle(get(this, setKeyList))
+    //     setKeyList.push(index)
+    //   }
+    //   handle && handle(get(this, setKeyList))
 
-      return set(this, setKeyList, value)
-    }
+    //   return set(this, setKeyList, value)
+    // }
 
-    getScrollViewConfig = (getKey) => {
-      const { currentPage, scrollViewIndex } = this
-      const index = scrollViewIndex[currentPage]
+    // getScrollViewConfig = (getKey) => {
+    //   const { currentPage, scrollViewIndex } = this
+    //   const index = scrollViewIndex[currentPage]
 
-      // console.log(currentPage, index, this[getKey])
-      if (index !== undefined) {
-        return get(this, [getKey, currentPage, index])
-      }
+    //   // console.log(currentPage, index, this[getKey])
+    //   if (index !== undefined) {
+    //     return get(this, [getKey, currentPage, index])
+    //   }
 
-      return get(this, [getKey, currentPage])
-    }
+    //   return get(this, [getKey, currentPage])
+    // }
 
-    onUpdate = (_fromValue, handle) => {
-      const now = Date.now()
+    // onUpdate = (_fromValue, handle) => {
+    //   const now = Date.now()
 
-      const value =
-        _fromValue +
-        this._velocity /
-          (1 - this._deceleration) *
-          (1 - Math.exp(-(1 - this._deceleration) * (now - this._startTime)))
+    //   const value =
+    //     _fromValue +
+    //     this._velocity /
+    //       (1 - this._deceleration) *
+    //       (1 - Math.exp(-(1 - this._deceleration) * (now - this._startTime)))
 
-      if (Math.abs(_fromValue - value) < 0.1) {
-        return
-      }
-      handle && handle(value)
-      this.onUpdate(value)
-    }
+    //   if (Math.abs(_fromValue - value) < 0.1) {
+    //     return
+    //   }
+    //   handle && handle(value)
+    //   this.onUpdate(value)
+    // }
 
     triggerJudge = (isTop, isBottom) => {
       switch (this.currentPage) {
