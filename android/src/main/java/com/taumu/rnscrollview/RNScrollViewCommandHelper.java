@@ -23,13 +23,11 @@ public class RNScrollViewCommandHelper {
 
   public static final int COMMAND_SCROLL_TO = 1;
   public static final int COMMAND_SCROLL_TO_END = 2;
-  public static final int COMMAND_FLASH_SCROLL_INDICATORS = 3;
-  public static final int COMMAND_SET_SCROLL_ENABLED = 4;
+  public static final int COMMAND_SET_SCROLL_ENABLED = 3;
 
   public interface ScrollCommandHandler<T> {
     void scrollTo(T scrollView, ScrollToCommandData data);
     void scrollToEnd(T scrollView, ScrollToEndCommandData data);
-    void flashScrollIndicators(T scrollView);
     void setRNScrollEnabled(T scrollView, boolean data);
   }
 
@@ -60,8 +58,6 @@ public class RNScrollViewCommandHelper {
         COMMAND_SCROLL_TO,
         "scrollToEnd",
         COMMAND_SCROLL_TO_END,
-        "flashScrollIndicators",
-        COMMAND_FLASH_SCROLL_INDICATORS,
         "setScrollEnabled",
         COMMAND_SET_SCROLL_ENABLED);
   }
@@ -87,9 +83,6 @@ public class RNScrollViewCommandHelper {
         viewManager.scrollToEnd(scrollView, new ScrollToEndCommandData(animated));
         return;
       }
-      case COMMAND_FLASH_SCROLL_INDICATORS:
-        viewManager.flashScrollIndicators(scrollView);
-        return;
       case COMMAND_SET_SCROLL_ENABLED: {
         boolean isEnable = args.getBoolean(0);
         viewManager.setRNScrollEnabled(scrollView, isEnable);

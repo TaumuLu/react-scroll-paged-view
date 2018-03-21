@@ -1,12 +1,11 @@
 package com.taumu.rnscrollview;
 
-import android.annotation.TargetApi;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.view.ViewCompat;
+import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,21 +23,20 @@ import com.facebook.react.views.scroll.FpsListener;
 import com.facebook.react.views.scroll.OnScrollDispatchHelper;
 import com.facebook.react.views.scroll.ReactScrollViewHelper;
 import com.facebook.react.views.scroll.VelocityHelper;
-import com.facebook.react.views.view.ReactViewBackgroundManager;
+import com.facebook.react.views.view.ReactViewBackgroundDrawable;
 
 import java.lang.reflect.Field;
 
 import javax.annotation.Nullable;
 
 
-@TargetApi(11)
 public class RNScrollView extends ScrollView implements ReactClippingViewGroup, ViewGroup.OnHierarchyChangeListener, View.OnLayoutChangeListener {
 
-  private static @Nullable Field sScrollerField;
+  private static Field sScrollerField;
   private static boolean sTriedToGetScrollerField = false;
 
   private final OnScrollDispatchHelper mOnScrollDispatchHelper = new OnScrollDispatchHelper();
-  private final @Nullable OverScroller mScroller;
+  private final OverScroller mScroller;
   private final VelocityHelper mVelocityHelper = new VelocityHelper();
 
   private @Nullable Rect mClippingRect;
@@ -48,12 +46,13 @@ public class RNScrollView extends ScrollView implements ReactClippingViewGroup, 
   private boolean mRemoveClippedSubviews;
   static private boolean mScrollEnabled = true;
   private boolean mSendMomentumEvents;
-  private @Nullable FpsListener mFpsListener = null;
+  private @Nullable
+  FpsListener mFpsListener = null;
   private @Nullable String mScrollPerfTag;
   private @Nullable Drawable mEndBackground;
   private int mEndFillColor = Color.TRANSPARENT;
   private View mContentView;
-  private ReactViewBackgroundManager mReactBackgroundManager;
+  private @Nullable ReactViewBackgroundDrawable mReactBackgroundDrawable;
 
   public RNScrollView(ReactContext context) {
     this(context, null);
@@ -62,16 +61,6 @@ public class RNScrollView extends ScrollView implements ReactClippingViewGroup, 
   public RNScrollView(ReactContext context, @Nullable FpsListener fpsListener) {
     super(context);
     mFpsListener = fpsListener;
-    mReactBackgroundManager = new ReactViewBackgroundManager(this);
-
-    mScroller = getOverScrollerFromParent();
-    setOnHierarchyChangeListener(this);
-    setScrollBarStyle(SCROLLBARS_OUTSIDE_OVERLAY);
-  }
-
-  @Nullable
-  private OverScroller getOverScrollerFromParent() {
-    OverScroller scroller;
 
     if (!sTriedToGetScrollerField) {
       sTriedToGetScrollerField = true;
@@ -88,40 +77,38 @@ public class RNScrollView extends ScrollView implements ReactClippingViewGroup, 
 
     if (sScrollerField != null) {
       try {
-        Object scrollerValue = sScrollerField.get(this);
-        if (scrollerValue instanceof OverScroller) {
-          scroller = (OverScroller) scrollerValue;
+        Object scroller = sScrollerField.get(this);
+        if (scroller instanceof OverScroller) {
+          mScroller = (OverScroller) scroller;
         } else {
           Log.w(
             ReactConstants.TAG,
             "Failed to cast mScroller field in ScrollView (probably due to OEM changes to AOSP)! " +
               "This app will exhibit the bounce-back scrolling bug :(");
-          scroller = null;
+          mScroller = null;
         }
       } catch (IllegalAccessException e) {
         throw new RuntimeException("Failed to get mScroller from ScrollView!", e);
       }
     } else {
-      scroller = null;
+      mScroller = null;
     }
 
-    return scroller;
+    setOnHierarchyChangeListener(this);
+    setScrollBarStyle(SCROLLBARS_OUTSIDE_OVERLAY);
   }
 
   public void setSendMomentumEvents(boolean sendMomentumEvents) {
     mSendMomentumEvents = sendMomentumEvents;
   }
 
-  public void setScrollPerfTag(@Nullable String scrollPerfTag) {
+  public void setScrollPerfTag(String scrollPerfTag) {
     mScrollPerfTag = scrollPerfTag;
   }
 
   public void setScrollEnabled(boolean scrollEnabled) {
     mScrollEnabled = scrollEnabled;
-  }
-
-  public void flashScrollIndicators() {
-    awakenScrollBars();
+    // Log.i("setScrollEnabled", "value:" + scrollEnabled + " setValue:" + mScrollEnabled);
   }
 
   @Override
@@ -177,6 +164,7 @@ public class RNScrollView extends ScrollView implements ReactClippingViewGroup, 
 
   @Override
   public boolean onInterceptTouchEvent(MotionEvent ev) {
+    // Log.i("onInterceptTouchEvent", "value:" + mScrollEnabled);
     if (!mScrollEnabled) {
       return false;
     }
@@ -193,8 +181,18 @@ public class RNScrollView extends ScrollView implements ReactClippingViewGroup, 
     return false;
   }
 
+//  @Override
+//  public boolean dispatchTouchEvent(MotionEvent ev) {
+//    Log.i("dispatchTouchEvent", "value:" + mScrollEnabled);
+//    if (!mScrollEnabled) {
+//      return false;
+//    }
+//    return super.dispatchTouchEvent(ev);
+//  }
+
   @Override
   public boolean onTouchEvent(MotionEvent ev) {
+    // Log.i("onTouchEvent", "value:" + mScrollEnabled);
     if (!mScrollEnabled) {
       return false;
     }
@@ -272,7 +270,7 @@ public class RNScrollView extends ScrollView implements ReactClippingViewGroup, 
         0,
         scrollWindowHeight / 2);
 
-      ViewCompat.postInvalidateOnAnimation(this);
+      postInvalidateOnAnimation();
 
       // END FB SCROLLVIEW CHANGE
     } else {
@@ -282,7 +280,7 @@ public class RNScrollView extends ScrollView implements ReactClippingViewGroup, 
     if (mSendMomentumEvents || isScrollPerfLoggingEnabled()) {
       mFlinging = true;
       enableFpsListener();
-      ReactScrollViewHelper.emitScrollMomentumBeginEvent(this, 0, velocityY);
+      ReactScrollViewHelper.emitScrollMomentumBeginEvent(this);
       Runnable r = new Runnable() {
         @Override
         public void run() {
@@ -292,14 +290,11 @@ public class RNScrollView extends ScrollView implements ReactClippingViewGroup, 
             ReactScrollViewHelper.emitScrollMomentumEndEvent(RNScrollView.this);
           } else {
             mDoneFlinging = true;
-            ViewCompat.postOnAnimationDelayed(
-                RNScrollView.this,
-                this,
-                ReactScrollViewHelper.MOMENTUM_DELAY);
+            RNScrollView.this.postOnAnimationDelayed(this, ReactScrollViewHelper.MOMENTUM_DELAY);
           }
         }
       };
-      ViewCompat.postOnAnimationDelayed(this, r, ReactScrollViewHelper.MOMENTUM_DELAY);
+      postOnAnimationDelayed(r, ReactScrollViewHelper.MOMENTUM_DELAY);
     }
   }
 
@@ -400,29 +395,48 @@ public class RNScrollView extends ScrollView implements ReactClippingViewGroup, 
     }
   }
 
-  @Override
   public void setBackgroundColor(int color) {
-    mReactBackgroundManager.setBackgroundColor(color);
+    if (color == Color.TRANSPARENT && mReactBackgroundDrawable == null) {
+      // don't do anything, no need to allocate ReactBackgroundDrawable for transparent background
+    } else {
+      getOrCreateReactViewBackground().setColor(color);
+    }
   }
 
   public void setBorderWidth(int position, float width) {
-    mReactBackgroundManager.setBorderWidth(position, width);
+    getOrCreateReactViewBackground().setBorderWidth(position, width);
   }
 
   public void setBorderColor(int position, float color, float alpha) {
-    mReactBackgroundManager.setBorderColor(position, color, alpha);
+    getOrCreateReactViewBackground().setBorderColor(position, color, alpha);
   }
 
   public void setBorderRadius(float borderRadius) {
-    mReactBackgroundManager.setBorderRadius(borderRadius);
+    getOrCreateReactViewBackground().setRadius(borderRadius);
   }
 
   public void setBorderRadius(float borderRadius, int position) {
-    mReactBackgroundManager.setBorderRadius(borderRadius, position);
+    getOrCreateReactViewBackground().setRadius(borderRadius, position);
   }
 
   public void setBorderStyle(@Nullable String style) {
-    mReactBackgroundManager.setBorderStyle(style);
+    getOrCreateReactViewBackground().setBorderStyle(style);
   }
 
+  private ReactViewBackgroundDrawable getOrCreateReactViewBackground() {
+    if (mReactBackgroundDrawable == null) {
+      mReactBackgroundDrawable = new ReactViewBackgroundDrawable();
+      Drawable backgroundDrawable = getBackground();
+      super.setBackground(null);  // required so that drawable callback is cleared before we add the
+      // drawable back as a part of LayerDrawable
+      if (backgroundDrawable == null) {
+        super.setBackground(mReactBackgroundDrawable);
+      } else {
+        LayerDrawable layerDrawable =
+            new LayerDrawable(new Drawable[]{mReactBackgroundDrawable, backgroundDrawable});
+        super.setBackground(layerDrawable);
+      }
+    }
+    return mReactBackgroundDrawable;
+  }
 }
