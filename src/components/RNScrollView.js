@@ -118,14 +118,17 @@ const styles = StyleSheet.create({
   },
 })
 
-
 const nativeOnlyProps = {
   nativeOnly: {
     sendMomentumEvents: true,
   },
 }
-const AndroidScrollView = requireNativeComponent(
-  'RNScrollView',
-  ScrollView,
-  nativeOnlyProps
-)
+
+let AndroidScrollView
+if (Platform.OS !== 'ios') {
+  AndroidScrollView = requireNativeComponent(
+    'RNScrollView',
+    ScrollView,
+    nativeOnlyProps
+  )
+}
