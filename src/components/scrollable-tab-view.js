@@ -92,7 +92,7 @@ export default class ScrollableTabView extends React.Component {
     const { startX, startY, state: { activeTab }, props: { scrollWithoutAnimation, vertical } } = this
     const distance = vertical ? clientY - startY : clientX - startX
 
-    if (this.isMove(distance)) {
+    if (this.isMoveBorder(distance)) {
       const customSize = this.moveDistance = (activeTab * -this.containerSize) + distance
 
       if (!scrollWithoutAnimation) {
@@ -156,7 +156,7 @@ export default class ScrollableTabView extends React.Component {
   }
 
   // 判断未无限滚动时是否到头不可拖动
-  isMove = (distance) => {
+  isMoveBorder = (distance) => {
     const { locked, infinite } = this.props
     if (locked) return false
     if (infinite) return infinite
@@ -224,8 +224,10 @@ export default class ScrollableTabView extends React.Component {
     this.startY = clientY
     // 是否为反向滚动
     this.isScroll = false
-    // 此类变量可用于web端区分点击事件
+    // 是否达成触摸，此类变量可用于web端区分点击事件
     this.isTouch = false
+    // 是否判断过移动方向，只判断一次，判断过后不再判断
+    this.isMove = false
 
     if (this.timer) clearTimeout(this.timer)
   }
@@ -235,23 +237,25 @@ export default class ScrollableTabView extends React.Component {
     const { targetTouches } = e
     const { clientX, clientY } = targetTouches[0] || {}
     const { startX, startY } = this
-    // 是否达成触摸
-    if (clientX !== startX || clientY !== startY) {
-      this.isTouch = true
+    if (!this.isMove) {
+      this.isMove = true
+      // 是否达成触摸
+      if (clientX !== startX || clientY !== startY) {
+        this.isTouch = true
+      }
+      // 判断滚动方向是否正确
+      const horDistance = Math.abs(clientX - startX)
+      const verDistance = Math.abs(clientY - startY)
+      const { vertical } = this.props
+      if (vertical ? verDistance <= horDistance : horDistance <= verDistance) {
+        this.isScroll = true
+      }
     }
 
     if (!this.isScroll) {
-      const { vertical } = this.props
-      // 是否上下滚动，防止上下滚动时出现抖动
-      const horDistance = Math.abs(clientX - startX)
-      const verDistance = Math.abs(clientY - startY)
-      if (vertical ? verDistance > horDistance : horDistance > verDistance) {
-        // 手拖动动画
-        this.setBoxAnimation({ clientX, clientY })
-        e.preventDefault()
-      } else {
-        this.isScroll = true
-      }
+      // 手拖动动画
+      this.setBoxAnimation({ clientX, clientY })
+      e.preventDefault()
     }
   }
 
@@ -288,7 +292,7 @@ export default class ScrollableTabView extends React.Component {
     const distance = vertical ? endY - startY : endX - startX
     this.touchEndTime = Date.now()
 
-    if (this.isMove(distance)) {
+    if (this.isMoveBorder(distance)) {
       const diffTime = this.touchEndTime - this.touchSartTime
       // 满足移动tab条件
       if ((diffTime <= longSwipesMs || Math.abs(distance) >= judgeSize) && distance !== 0) {
