@@ -1,2 +1,12 @@
 example/
+node_modules/**/*
+build
 *.gif
+.idea
+.gradle/
+gradlew
+gradlew.bat
+gradle/
+*.properties
+npm-debug.log
+.vscode/
