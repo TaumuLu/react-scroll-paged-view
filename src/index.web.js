@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import { accAdd, mergeWith } from './utils'
+import { accAdd, getMergeProps } from './utils'
 import { ScrollPagedHOC } from './components'
 import ScrollableTabView from './components/scrollable-tab-view'
 
@@ -10,26 +10,14 @@ export default class ScrollPagedView extends Component {
 
   static propTypes = {
     onPageChange: PropTypes.func,
+    height: PropTypes.string,
+    width: PropTypes.string,
   }
 
   static defaultProps = {
     onPageChange: () => {},
-  }
-
-  constructor(props) {
-    super(props)
-
-    this.scrollViewProps = {
-      onTouchStart: this._onTouchStart,
-      onTouchMove: this._onTouchMove,
-      onTouchEnd: this._onTouchEnd,
-      onScroll: this._onScroll,
-      style: {
-        flex: 1,
-        overflow: 'scroll',
-        position: 'relative',
-      },
-    }
+    height: document.documentElement.clientHeight,
+    width: document.documentElement.clientWidth,
   }
 
   onChange = (index, oldIndex) => {
@@ -117,7 +105,17 @@ export default class ScrollPagedView extends Component {
 
   // 子元素调用一定要传入index值来索引对应数据,且最好执行懒加载
   ScrollViewMonitor = ({ children, webProps = {} }) => {
-    const mergeProps = getMergeProps(this.scrollViewProps, webProps)
+    const mergeProps = getMergeProps({
+      onTouchStart: this._onTouchStart,
+      onTouchMove: this._onTouchMove,
+      onTouchEnd: this._onTouchEnd,
+      onScroll: this._onScroll,
+      style: {
+        flex: 1,
+        overflow: 'scroll',
+        position: 'relative',
+      },
+    }, webProps)
 
     return (
       <div {...mergeProps}>
@@ -127,7 +125,7 @@ export default class ScrollPagedView extends Component {
   }
 
   render() {
-    const { height = '100%', width = '100%' } = this.props
+    const { height, width } = this.props
 
     return (
       <div style={{ display: 'flex', flex: 1, height, width }}>
@@ -140,21 +138,6 @@ export default class ScrollPagedView extends Component {
       </div>
     )
   }
-}
-
-const getMergeProps = (originProps, mergeProps) => {
-  return mergeWith(originProps, mergeProps, (originValue, mergeValue) => {
-    const type = {}.toString.call(mergeValue).slice(8, -1).toLowerCase()
-
-    switch (type) {
-      case 'array':
-        return [...originValue, ...mergeValue]
-      case 'function':
-        return (...params) => { originValue(...params); mergeValue(...params) }
-      default:
-        return { ...originValue, ...mergeValue }
-    }
-  })
 }
 
 export {

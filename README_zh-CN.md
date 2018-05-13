@@ -20,9 +20,9 @@ ios RN代码完美支持，android则基于RN scrollView改动了部分代码得
 **没有出现在内部scrollView组件中的点击事件可以由用nPressIn代替**  
 
 ## Demo
-| IOS | Android |
-| --- | ------- |
-| ![IOS](./demo.ios.gif) | ![Android](./demo.android.gif) |
+| IOS | Android | Web |
+| --- | ------- | --- |
+| ![IOS](./demo.ios.gif) | ![Android](./demo.android.gif) | ![Web](./demo.web.gif) |
 
 ## Usage
 
@@ -76,14 +76,14 @@ Name | propType | default value | description
 --- | --- | --- | ---
 onPageChange | function | (pageIndex) => {} | Switch paging callback
 setResponder(native only) | function | (isResponder) => {} | Gesture switch state callback
+height(web only) | css unit | document.documentElement.clientHeight | Web scrollView Props
+width(web only) | css unit | document.documentElement.clientWidth | Web scrollView Props
 
 ### Inside scrollView
 Name | propType | default value | description
 --- | --- | --- | ---
-nativeProps(native only) | object | undefined | RN scrollView Props
-webProps(web only) | object | undefined | Web scrollView Props
-height(web only) | css unit | '100%' | Web scrollView Props
-width(web only) | css unit | '100%' | Web scrollView Props
+nativeProps(native only) | object | {} | RN scrollView Props
+webProps(web only) | object | {} | Web scrollView Props
 
 ## Export module
 - default - ScrollPagedView
@@ -94,10 +94,12 @@ width(web only) | css unit | '100%' | Web scrollView Props
 - [x] 优化滚动区域索引，使用代理scrollView完成
 - [x] android兼容react native不同版本
 - [x] 支持web端组件
+- [x] 优化web端组件
+- [x] 统一兼容react native不同版本
 - [ ] 更多props配置
-- [ ] 优化web端组件
 
 ## Changelog
 - 0.1.*
 - 1.0.*
 - 1.1.*
+- 1.2.*

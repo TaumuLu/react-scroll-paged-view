@@ -20,9 +20,9 @@ Currently there is no internal scrolling and page scrolling in the open source R
 **The click events that do not appear in the inside scrollView component can be used by onPressIn instead**  
 
 ## Demo
-| IOS | Android |
-| --- | ------- |
-| ![IOS](./demo.ios.gif) | ![Android](./demo.android.gif) |
+| IOS | Android | Web |
+| --- | ------- | --- |
+| ![IOS](./demo.ios.gif) | ![Android](./demo.android.gif) | ![Web](./demo.web.gif) |
 
 ## Usage
 
@@ -76,14 +76,14 @@ Name | propType | default value | description
 --- | --- | --- | ---
 onPageChange | function | (pageIndex) => {} | Switch paging callback
 setResponder(native only) | function | (isResponder) => {} | Gesture switch state callback
+height(web only) | css unit | document.documentElement.clientHeight | Web scrollView Props
+width(web only) | css unit | document.documentElement.clientWidth | Web scrollView Props
 
 ### Inside scrollView
 Name | propType | default value | description
 --- | --- | --- | ---
-nativeProps(native only) | object | undefined | RN scrollView Props
-webProps(web only) | object | undefined | Web scrollView Props
-height(web only) | css unit | '100%' | Web scrollView Props
-width(web only) | css unit | '100%' | Web scrollView Props
+nativeProps(native only) | object | {} | RN scrollView Props
+webProps(web only) | object | {} | Web scrollView Props
 
 ## Export module
 - default - ScrollPagedView
@@ -94,10 +94,12 @@ width(web only) | css unit | '100%' | Web scrollView Props
 - [x] Optimize scroll region index, use proxy scrollView to complete
 - [x] Android compatible React Native different versions
 - [x] Support web side components
+- [x] Optimize web side components
+- [x] Uniformly compatible with different versions of React Native
 - [ ] More props configuration
-- [ ] Optimize web side components
 
 ## Changelog
 - 0.1.*
 - 1.0.*
 - 1.1.*
+- 1.2.*

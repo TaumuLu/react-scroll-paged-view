@@ -1,0 +1,11 @@
+{
+  "name": "example-web",
+  "version": "0.1.0",
+  "dependencies": {
+    "react": "^16.3.2",
+    "react-art": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-native-web": "^0.6.1"
+  },
+  "scripts": {}
+}

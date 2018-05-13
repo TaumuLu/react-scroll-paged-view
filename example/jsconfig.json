@@ -4,19 +4,18 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
-      "example": "example",
-      "src": "src"
     }
   },
   "exclude": [
     "node_modules",
+    "web_modules",
     "android",
     "ios",
     "public",
+    "build",
     "vendor"
   ],
   "include": [
-    "example",
     "src"
   ]
 }

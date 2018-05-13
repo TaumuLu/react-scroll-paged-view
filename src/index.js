@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import { accAdd, isAndroid, isEmpty, isIOS } from './utils'
+import { accAdd, isAndroid, isEmpty, isIOS, getMergeProps } from './utils'
 import { ScrollPagedHOC } from './components'
 import AgentScrollView from './components/agent-scroll-view'
 import PagedView from './components/paged-view'
@@ -163,22 +163,25 @@ export default class ScrollPagedView extends Component {
   }
 
   // 子元素调用一定要传入index值来索引对应数据,且最好执行懒加载
-  ScrollViewMonitor = (props) => {
+  ScrollViewMonitor = ({ children, webProps = {} }) => {
+    const mergeProps = getMergeProps({
+      onContentSizeChange: this._onContentSizeChange,
+      onMomentumScrollEnd: this._onMomentumScrollEnd,
+      onScrollEndDrag: this._onScrollEndDrag,
+      onTouchStart: this._onTouchStart,
+      onTouchMove: this._onTouchMove,
+      onTouchEnd: this._onTouchEnd,
+      showsVerticalScrollIndicator: false,
+      bounces: false,
+      style: { flex: 1 },
+    }, webProps)
+
     return (
       <AgentScrollView
-        {...props}
-        onContentSizeChange={this._onContentSizeChange}
-        onMomentumScrollEnd={this._onMomentumScrollEnd}
-        onScrollEndDrag={this._onScrollEndDrag}
-        onTouchStart={this._onTouchStart}
-        onTouchMove={this._onTouchMove}
-        onTouchEnd={this._onTouchEnd}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        style={{ flex: 1 }}
-        // overScrollMode={'never'}
-        // scrollEnabled={false}
-      />
+        {...mergeProps}
+      >
+        {children}
+      </AgentScrollView>
     )
   }
 
