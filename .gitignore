@@ -116,7 +116,7 @@ node_modules/
 bin/
 app/components_eevee/
 components_vendor/
-lib/server/
+lib/
 Pampasfile.js
 npm-debug.log
 dump.rdb

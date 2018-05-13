@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 
-import ScrollPagedView from '../lib'
+import ScrollPagedView from 'react-scroll-paged-view'
 
 console.disableYellowBox = true
 
