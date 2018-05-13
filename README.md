@@ -95,7 +95,7 @@ webProps(web only) | object | {} | Web scrollView Props
 - [x] Android compatible React Native different versions
 - [x] Support web side components
 - [x] Optimize web side components
-- [x] Uniformly compatible with different versions of React Native
+- [ ] Uniformly compatible with different versions of React Native
 - [ ] More props configuration
 
 ## Changelog

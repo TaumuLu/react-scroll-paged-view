@@ -95,7 +95,7 @@ webProps(web only) | object | {} | Web scrollView Props
 - [x] android兼容react native不同版本
 - [x] 支持web端组件
 - [x] 优化web端组件
-- [x] 统一兼容react native不同版本
+- [ ] 统一兼容react native不同版本
 - [ ] 更多props配置
 
 ## Changelog
