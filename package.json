@@ -1,6 +1,6 @@
 {
   "name": "react-scroll-paged-view",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Inside scroll, Full page scroll",
   "main": "./lib",
   "scripts": {
@@ -21,6 +21,8 @@
     "react",
     "react-native",
     "scrollView",
+    "Full page scroll",
+    "Full screen scroll",
     "scroll",
     "paged",
     "view"

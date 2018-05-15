@@ -16,8 +16,8 @@ export default class ScrollPagedView extends Component {
 
   static defaultProps = {
     onPageChange: () => {},
-    height: document.documentElement.clientHeight,
-    width: document.documentElement.clientWidth,
+    height: typeof document !== 'undefined' ? document.documentElement.clientHeight : '100%',
+    width: typeof document !== 'undefined' ? document.documentElement.clientWidth : '100%',
   }
 
   onChange = (index, oldIndex) => {
