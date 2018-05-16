@@ -280,7 +280,8 @@ export default class ScrollableTabView extends React.Component {
     const { clientX, clientY } = changedTouches[0] || {}
     this.endX = clientX
     this.endY = clientY
-    if (!this.isScroll) {
+    // 触发Move事件才能去判断是否跳转
+    if (!this.isScroll && this.isMove) {
       this.isGoToPage()
     }
     this.autoPlay()
