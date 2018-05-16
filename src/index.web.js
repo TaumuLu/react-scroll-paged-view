@@ -10,20 +10,12 @@ export default class ScrollPagedView extends Component {
 
   static propTypes = {
     onPageChange: PropTypes.func,
-    height: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
-    width: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
+    style: PropTypes.object,
   }
 
   static defaultProps = {
     onPageChange: () => {},
-    height: typeof document !== 'undefined' ? document.documentElement.clientHeight : '100%',
-    width: typeof document !== 'undefined' ? document.documentElement.clientWidth : '100%',
+    style: {},
   }
 
   onChange = (index, oldIndex) => {
@@ -131,10 +123,10 @@ export default class ScrollPagedView extends Component {
   }
 
   render() {
-    const { height, width } = this.props
+    const { style } = this.props
 
     return (
-      <div style={{ display: 'flex', flex: 1, height, width }}>
+      <div style={{ ...defaultStyle, ...style }}>
         <ScrollableTabView
           onChange={this.onChange}
           vertical
@@ -145,6 +137,15 @@ export default class ScrollPagedView extends Component {
     )
   }
 }
+
+const defaultStyle = {
+  flex: 1,
+  display: 'flex',
+  boxSizing: 'border-box',
+  height: typeof document !== 'undefined' ? document.documentElement.clientHeight : '100%',
+  width: typeof document !== 'undefined' ? document.documentElement.clientWidth : '100%',
+}
+
 
 export {
   ScrollableTabView

@@ -76,8 +76,7 @@ Name | propType | default value | description
 --- | --- | --- | ---
 onPageChange | function | (pageIndex) => {} | Switch paging callback
 setResponder(native only) | function | (isResponder) => {} | Gesture switch state callback
-height(web only) | css unit | document.documentElement.clientHeight | Web scrollView Props
-width(web only) | css unit | document.documentElement.clientWidth | Web scrollView Props
+style | object | {} | ScrollPagedView style
 
 ### Inside scrollView
 Name | propType | default value | description

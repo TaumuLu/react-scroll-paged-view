@@ -12,11 +12,13 @@ export default class ScrollPagedView extends Component {
   static propTypes = {
     onPageChange: PropTypes.func,
     setResponder: PropTypes.func,
+    style: PropTypes.object,
   }
 
   static defaultProps = {
     onPageChange: () => {},
     setResponder: () => {},
+    style: {},
   }
 
   onPageChange = (index, oldIndex) => {
@@ -217,6 +219,8 @@ export default class ScrollPagedView extends Component {
   }
 
   render() {
+    const { style } = this.props
+
     return (
       <PagedView
         onStartShouldSetPanResponder={this._startResponder}
@@ -230,6 +234,7 @@ export default class ScrollPagedView extends Component {
         animationDuration={400}
         blurredZoom={1}
         blurredOpacity={1}
+        style={style}
         vertical
       >
         {this.childrenList}
