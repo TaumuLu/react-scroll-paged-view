@@ -10,8 +10,14 @@ export default class ScrollPagedView extends Component {
 
   static propTypes = {
     onPageChange: PropTypes.func,
-    height: PropTypes.string,
-    width: PropTypes.string,
+    height: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    width: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
   }
 
   static defaultProps = {
