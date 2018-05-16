@@ -144,11 +144,11 @@ export const getMergeProps = (originProps, mergeProps) => {
     const type = getType(originValue)
 
     switch (type) {
-      case 'array':
+      case 'Array':
         return [...originValue, ...mergeValue]
-      case 'function':
+      case 'Function':
         return (...params) => { originValue(...params); mergeValue(...params) }
-      case 'object':
+      case 'Object':
         return { ...originValue, ...mergeValue }
       default:
         return mergeValue
