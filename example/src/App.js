@@ -25,8 +25,6 @@ export default class App extends Component {
         <ScrollPagedView
           onPageChange={this._onPageChange}
           setResponder={this._setResponder}
-          width={document.documentElement.clientWidth}
-          height={document.documentElement.clientHeight}
         >
           {Array.from({ length: 3 }, (val, ind) => {
             return (
