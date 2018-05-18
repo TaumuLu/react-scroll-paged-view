@@ -1,9 +1,7 @@
 node_modules/
 build/
 lib/
-
 bin/
-gradle/
 
 .vscode/
 .idea/
