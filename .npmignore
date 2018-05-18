@@ -1,17 +1,18 @@
 example/
-node_modules/
+src/
 
-.vscode/
-.idea/
-.gradle/
-.settings/
+build
+bin
+gradle
+
+.vscode
+.idea
+.gradle
+.settings
 
 .classpath
 .project
 
-build/
-bin/
-gradle/
 
 *.gif
 npm-debug.log
