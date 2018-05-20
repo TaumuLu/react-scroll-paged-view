@@ -19,7 +19,7 @@ export default class ScrollableTabView extends React.Component {
     dotActiveStyle: PropTypes.object,
     initialPage: PropTypes.number,
     autoPlay: PropTypes.bool,
-    autoplayTimeout: PropTypes.number,
+    autoPlayTime: PropTypes.number,
     renderTabBar: PropTypes.func,
     vertical: PropTypes.bool,
     onChange: PropTypes.func,
@@ -33,7 +33,7 @@ export default class ScrollableTabView extends React.Component {
     tabLabels: [],
     initialPage: 0,
     autoPlay: false,
-    autoplayTimeout: 2,
+    autoPlayTime: 2,
     vertical: false,
     onChange: () => {},
   }
@@ -142,9 +142,9 @@ export default class ScrollableTabView extends React.Component {
   }
 
   autoPlay = () => {
-    const { autoPlay, autoplayTimeout } = this.props
+    const { autoPlay, autoPlayTime } = this.props
     if (autoPlay) {
-      const time = isNaN(autoplayTimeout) ? 2 : autoplayTimeout
+      const time = isNaN(autoPlayTime) ? 2 : autoPlayTime
       if (this.timer) clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         const { activeTab } = this.state
