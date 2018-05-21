@@ -37,6 +37,9 @@ export default class ScrollPagedView extends Component {
     this.startY = clientY
 
     this.isEnd = false
+    // 是否达成触摸滑动操作，此类变量可用于web端区分点击事件
+    // 所有children共享类变量，从当前组件获取
+    this.isTouch = false
   }
 
   _onTouchEnd = (e) => {
@@ -70,6 +73,12 @@ export default class ScrollPagedView extends Component {
     const { currentTarget: { scrollHeight, clientHeight } } = e
 
     const { startY, startX } = this
+    // 是否达成触摸滑动操作
+    if (!this.isTouch) {
+      if (clientX !== startX || clientY !== startY) {
+        this.isTouch = true
+      }
+    }
     if (Math.abs(clientY - startY) > Math.abs(clientX - startX)) {
       const hasScrollContent = parseFloat(scrollHeight.toFixed(2)) > parseFloat(clientHeight.toFixed(2))
       if (hasScrollContent) {

@@ -224,7 +224,7 @@ export default class ScrollableTabView extends React.Component {
     this.startY = clientY
     // 是否为反向滚动
     this.isScroll = false
-    // 是否达成触摸，此类变量可用于web端区分点击事件
+    // 是否达成触摸滑动操作，此类变量可用于web端区分点击事件
     this.isTouch = false
     // 是否判断过移动方向，只判断一次，判断过后不再判断
     this.isMove = false
@@ -239,7 +239,7 @@ export default class ScrollableTabView extends React.Component {
     const { startX, startY } = this
     if (!this.isMove) {
       this.isMove = true
-      // 是否达成触摸
+      // 是否达成触摸滑动操作
       if (clientX !== startX || clientY !== startY) {
         this.isTouch = true
       }
