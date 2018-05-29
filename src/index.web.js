@@ -10,17 +10,20 @@ export default class ScrollPagedView extends Component {
 
   static propTypes = {
     onPageChange: PropTypes.func,
+    pageProps: PropTypes.object,
     style: PropTypes.object,
   }
 
   static defaultProps = {
     onPageChange: () => {},
+    pageProps: {},
     style: {},
   }
 
   onChange = (index, oldIndex) => {
-    const { onPageChange } = this.props
+    const { onPageChange, pageProps } = this.props
     if (onPageChange) onPageChange(index)
+    if (pageProps.onChange) pageProps.onChange(index, oldIndex)
 
     this.currentPage = index
     // 肯定处于边界位置,多此一举设置
@@ -132,11 +135,12 @@ export default class ScrollPagedView extends Component {
   }
 
   render() {
-    const { style } = this.props
+    const { style, pageProps } = this.props
 
     return (
       <div style={{ ...defaultStyle, ...style }}>
         <ScrollableTabView
+          {...pageProps}
           onChange={this.onChange}
           vertical
         >

@@ -76,6 +76,7 @@ Name | propType | default value | description
 --- | --- | --- | ---
 onPageChange | function | (pageIndex) => {} | Switch paging callback
 setResponder(native only) | function | (isResponder) => {} | Gesture switch state callback
+pageProps(web only) | object | {} | ScrollableTabView Props
 style | object | {} | ScrollPagedView style
 
 ### Inside scrollView
