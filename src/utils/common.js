@@ -57,23 +57,13 @@ export const set = (object, path, value) => {
   }, object)
 }
 
-const getKeys = Object.keys || ((obj) => {
-  const arr = []
-  for (const i in obj) {
-    if (obj.hasOwnProperty(i)) {
-      arr.push(i)
-    }
-  }
-  return arr
-})
-
 const keys = (value) => {
   const type = getType(value)
 
   switch (type) {
     case 'Array':
     case 'Object':
-      return getKeys(value)
+      return Object.keys(value)
     default:
       return []
   }
@@ -94,19 +84,21 @@ export const size = (value) => {
   return 0
 }
 
+const getFind = (value, handle) => {
+  const len = size(value)
+  for (let i = 0; i < len; i++) {
+    const item = value[i]
+    if (handle(item, i, value)) return item
+  }
+  return undefined
+}
+
 export const find = (value, handle) => {
   if (value) {
     const type = getType(value)
     switch (type) {
       case 'Array':
-        return value.find || ((value) => {
-          const len = size(value)
-          for (let i = 0; i < len; i++) {
-            const item = value[i]
-            if (handle(item, i, value)) return item
-          }
-          return undefined
-        })
+        return value.find ? value.find(handle) : getFind(value, handle)
       default:
         return undefined
     }
