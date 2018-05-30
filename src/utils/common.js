@@ -107,7 +107,7 @@ export const find = (value, handle) => {
 }
 
 export const findLast = (value, handle) => {
-  const arr = value && value.reverse && value.reverse()
+  const arr = value && value.reverse && value.slice().reverse()
   return find(arr, handle)
 }
 
