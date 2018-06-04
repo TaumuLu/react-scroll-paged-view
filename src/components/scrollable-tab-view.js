@@ -5,7 +5,7 @@ import { size, get, find, findLast } from '../utils'
 
 const transitionParams = 'all 0.5s'
 const longSwipesMs = 300
-const resetTime = 450
+// const resetTime = 450
 
 export default class ScrollableTabView extends React.Component {
   static propTypes = {
@@ -36,6 +36,9 @@ export default class ScrollableTabView extends React.Component {
     autoPlayTime: 2,
     vertical: false,
     onChange: () => {},
+    dotStyle: {},
+    dotWrapStyle: {},
+    dotActiveStyle: {},
   }
 
   constructor(props) {
@@ -52,6 +55,8 @@ export default class ScrollableTabView extends React.Component {
       loadTabList: [initialPage],
     }
     this.containerSize = 0
+    // 记录视图真实activeTab，懒调整下一tab
+    this.boxActiveTab = initialPage
   }
 
   componentDidMount() {
@@ -67,7 +72,7 @@ export default class ScrollableTabView extends React.Component {
 
   componentWillUnmount() {
     clearTimeout(this.timer)
-    clearTimeout(this.resetTimer)
+    // clearTimeout(this.resetTimer)
   }
 
   // 手动后置设置style 防止手动改变style后render不更新
@@ -80,12 +85,11 @@ export default class ScrollableTabView extends React.Component {
     }
   }
 
-  getTransform = (customSize, currentState = this.state) => {
+  getTransform = (customSize) => {
     const { vertical } = this.props
-    const { activeTab } = currentState
     const suffix = vertical ? 'Y' : 'X'
 
-    return `translate${suffix}(${customSize || activeTab * -this.containerSize}px)`
+    return `translate${suffix}(${customSize || this.boxActiveTab * -this.containerSize}px)`
   }
 
   setBoxAnimation = ({ clientX, clientY }) => {
@@ -95,9 +99,9 @@ export default class ScrollableTabView extends React.Component {
     if (this.isMoveBorder(distance)) {
       const customSize = this.moveDistance = (activeTab * -this.containerSize) + distance
 
-      if (!scrollWithoutAnimation) {
-        this.tabsBox.style.transition = 'none'
-      }
+      // if (!scrollWithoutAnimation) {
+      this.tabsBox.style.transition = 'none'
+      // }
       this.tabsBox.style.transform = this.getTransform(customSize)
     }
   }
@@ -120,18 +124,19 @@ export default class ScrollableTabView extends React.Component {
     }
   }
 
-  getResetActiveTab = (isRealActiveTab) => {
+  // 计算下一重置activeTab，针对无限滚动
+  getResetActiveTab = (activeTab) => {
     const { infinite } = this.props
-    const { activeTab } = this.state
+    // const { activeTab } = this.state
     let resetActiveTab = activeTab
 
     if (infinite) {
       if (activeTab === 0) resetActiveTab = this.tabsLen - 2
       if (activeTab === this.tabsLen - 1) resetActiveTab = 1
 
-      if (isRealActiveTab) {
-        return resetActiveTab - 1
-      }
+      // if (isRealActiveTab) {
+      //   return resetActiveTab - 1
+      // }
     }
 
     return resetActiveTab
@@ -172,29 +177,29 @@ export default class ScrollableTabView extends React.Component {
     return React.Children.map(children, handleFunc)
   }
 
-  resetPosition = () => {
-    this.resetTimer = setTimeout(() => {
-      const { activeTab } = this.state
-      const { scrollWithoutAnimation, infinite } = this.props
-      if (infinite) {
-        const resetActiveTab = this.getResetActiveTab()
+  // resetPosition = () => {
+  //   this.resetTimer = setTimeout(() => {
+  //     const { activeTab } = this.state
+  //     const { scrollWithoutAnimation, infinite } = this.props
+  //     if (infinite) {
+  //       const resetActiveTab = this.getResetActiveTab()
 
-        if (resetActiveTab !== activeTab) {
-          if (!scrollWithoutAnimation) {
-            this.tabsBox.style.transition = 'none'
-          }
-          this.tabsBox.style.transform = this.getTransform(null, { activeTab: resetActiveTab })
-          const loadTabList = this.state.loadTabList.slice()
-          if (!loadTabList.includes(+resetActiveTab)) {
-            loadTabList.push(+resetActiveTab)
-          }
-          requestAnimationFrame(() => {
-            this.setState({ activeTab: resetActiveTab, loadTabList })
-          })
-        }
-      }
-    }, resetTime)
-  }
+  //       if (resetActiveTab !== activeTab) {
+  //         if (!scrollWithoutAnimation) {
+  //           this.tabsBox.style.transition = 'none'
+  //         }
+  //         this.tabsBox.style.transform = this.getTransform(null, { activeTab: resetActiveTab })
+  //         const loadTabList = this.state.loadTabList.slice()
+  //         if (!loadTabList.includes(+resetActiveTab)) {
+  //           loadTabList.push(+resetActiveTab)
+  //         }
+  //         requestAnimationFrame(() => {
+  //           this.setState({ activeTab: resetActiveTab, loadTabList })
+  //         })
+  //       }
+  //     }
+  //   }, resetTime)
+  // }
 
   // 所有页面切换都走此方法，用于控制按需加载
   goToPage = (activeTab, isNoAnimated = false) => {
@@ -207,11 +212,14 @@ export default class ScrollableTabView extends React.Component {
       this.tabsBox.style.transition = 'none'
     }
     const oldActiveTab = this.state.activeTab
+    const resetActiveTab = this.getResetActiveTab(activeTab)
+    // 保存视图当前滚动的位置，不跟随重置的activeTab
+    this.boxActiveTab = activeTab
 
-    this.setState({ activeTab, loadTabList }, () => {
+    this.setState({ activeTab: resetActiveTab, loadTabList }, () => {
+      this.props.onChange(resetActiveTab, oldActiveTab)
       // 检查是否需要重置位置
-      this.props.onChange(this.getResetActiveTab(true), oldActiveTab)
-      this.resetPosition()
+      // this.resetPosition()
     })
   }
 
@@ -268,7 +276,7 @@ export default class ScrollableTabView extends React.Component {
       comStart += gap
 
       element.style.transform = this.getTransform(comStart)
-      if (comStart === end) {
+      if (gap > 0 ? comStart >= end : comStart <= end) {
         clearInterval(this.timer)
         callBack && callBack()
       }
@@ -306,7 +314,9 @@ export default class ScrollableTabView extends React.Component {
           })
         } else {
           this.tabsBox.style.transition = transitionParams
-          this.goToPage(activeTab)
+          requestAnimationFrame(() => {
+            this.goToPage(activeTab)
+          })
         }
         // 否则判断是否无动画更新回去
       } else if (scrollWithoutAnimation) {
@@ -330,13 +340,6 @@ export default class ScrollableTabView extends React.Component {
       this.tabChildren = this.setInfiniteChildren()
     }
     this.tabsLen = size(this.tabChildren)
-    const containerStype = vertical ? {
-      overflowY: 'hidden',
-      flexDirection: 'row',
-    } : {
-      overflowX: 'hidden',
-      flexDirection: 'column',
-    }
     let eventProps = {}
     if (!locked) {
       eventProps = {
@@ -348,7 +351,7 @@ export default class ScrollableTabView extends React.Component {
 
     return (
       <div
-        style={mergeStyle(Style.tabsContainer, containerStype)}
+        style={mergeStyle(Style.tabsContainer, getContainerStyle(vertical))}
         ref={this.setWrapRef}
       >
         {!!renderTabBar &&
@@ -442,6 +445,19 @@ const DotNav = ({
 }
 
 const mergeStyle = (...styles) => styles.reduce((p, c) => ({ ...(p || {}), ...(c || {}) }), {})
+
+const getContainerStyle = (vertical) => {
+  if (vertical) {
+    return {
+      overflowY: 'hidden',
+      flexDirection: 'row',
+    }
+  }
+  return {
+    overflowX: 'hidden',
+    flexDirection: 'column',
+  }
+}
 
 export const Style = {
   tabsContainer: {
