@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import { accAdd, mergeWith } from './utils'
+import { accAdd, getMergeProps } from './utils'
 import { ScrollPagedHOC } from './components'
 import ScrollableTabView from './components/scrollable-tab-view'
 
@@ -10,31 +10,20 @@ export default class ScrollPagedView extends Component {
 
   static propTypes = {
     onPageChange: PropTypes.func,
+    pageProps: PropTypes.object,
+    style: PropTypes.object,
   }
 
   static defaultProps = {
     onPageChange: () => {},
-  }
-
-  constructor(props) {
-    super(props)
-
-    this.scrollViewProps = {
-      onTouchStart: this._onTouchStart,
-      onTouchMove: this._onTouchMove,
-      onTouchEnd: this._onTouchEnd,
-      onScroll: this._onScroll,
-      style: {
-        flex: 1,
-        overflow: 'scroll',
-        position: 'relative',
-      },
-    }
+    pageProps: {},
+    style: {},
   }
 
   onChange = (index, oldIndex) => {
-    const { onPageChange } = this.props
+    const { onPageChange, pageProps } = this.props
     if (onPageChange) onPageChange(index)
+    if (pageProps.onChange) pageProps.onChange(index, oldIndex)
 
     this.currentPage = index
     // 肯定处于边界位置,多此一举设置
@@ -51,6 +40,9 @@ export default class ScrollPagedView extends Component {
     this.startY = clientY
 
     this.isEnd = false
+    // 是否达成触摸滑动操作，此类变量可用于web端区分点击事件
+    // 所有children共享类变量，从当前组件获取
+    this.isTouch = false
   }
 
   _onTouchEnd = (e) => {
@@ -84,6 +76,12 @@ export default class ScrollPagedView extends Component {
     const { currentTarget: { scrollHeight, clientHeight } } = e
 
     const { startY, startX } = this
+    // 是否达成触摸滑动操作
+    if (!this.isTouch) {
+      if (clientX !== startX || clientY !== startY) {
+        this.isTouch = true
+      }
+    }
     if (Math.abs(clientY - startY) > Math.abs(clientX - startX)) {
       const hasScrollContent = parseFloat(scrollHeight.toFixed(2)) > parseFloat(clientHeight.toFixed(2))
       if (hasScrollContent) {
@@ -117,7 +115,17 @@ export default class ScrollPagedView extends Component {
 
   // 子元素调用一定要传入index值来索引对应数据,且最好执行懒加载
   ScrollViewMonitor = ({ children, webProps = {} }) => {
-    const mergeProps = getMergeProps(this.scrollViewProps, webProps)
+    const mergeProps = getMergeProps({
+      onTouchStart: this._onTouchStart,
+      onTouchMove: this._onTouchMove,
+      onTouchEnd: this._onTouchEnd,
+      onScroll: this._onScroll,
+      style: {
+        flex: 1,
+        overflow: 'scroll',
+        position: 'relative',
+      },
+    }, webProps)
 
     return (
       <div {...mergeProps}>
@@ -127,11 +135,12 @@ export default class ScrollPagedView extends Component {
   }
 
   render() {
-    const { height = '100%', width = '100%' } = this.props
+    const { style, pageProps } = this.props
 
     return (
-      <div style={{ display: 'flex', flex: 1, height, width }}>
+      <div style={{ ...defaultStyle, ...style }}>
         <ScrollableTabView
+          {...pageProps}
           onChange={this.onChange}
           vertical
         >
@@ -142,20 +151,14 @@ export default class ScrollPagedView extends Component {
   }
 }
 
-const getMergeProps = (originProps, mergeProps) => {
-  return mergeWith(originProps, mergeProps, (originValue, mergeValue) => {
-    const type = {}.toString.call(mergeValue).slice(8, -1).toLowerCase()
-
-    switch (type) {
-      case 'array':
-        return [...originValue, ...mergeValue]
-      case 'function':
-        return (...params) => { originValue(...params); mergeValue(...params) }
-      default:
-        return { ...originValue, ...mergeValue }
-    }
-  })
+const defaultStyle = {
+  flex: 1,
+  display: 'flex',
+  boxSizing: 'border-box',
+  height: typeof document !== 'undefined' ? document.documentElement.clientHeight : '100%',
+  width: typeof document !== 'undefined' ? document.documentElement.clientWidth : '100%',
 }
+
 
 export {
   ScrollableTabView

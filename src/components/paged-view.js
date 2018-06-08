@@ -221,10 +221,11 @@ export default class PagedView extends Component {
     }
 
     const { wrapStyle, containerStyle, boxStyle } = this.getViewStyle()
+    const { style } = this.props
     const { loadIndex } = this.state
 
     return (
-      <View style={wrapStyle}>
+      <View style={[style, wrapStyle]}>
         <Animated.View
           style={containerStyle}
           {...this._panResponder.panHandlers}

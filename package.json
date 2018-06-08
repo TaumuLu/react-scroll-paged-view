@@ -1,9 +1,11 @@
 {
   "name": "react-scroll-paged-view",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "Inside scroll, Full page scroll",
-  "main": "./src",
+  "main": "./lib",
   "scripts": {
+    "build": "rm -rf ./lib && babel src/ --out-dir lib/",
+    "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,13 +21,20 @@
     "react",
     "react-native",
     "scrollView",
+    "Full page scroll",
+    "Full screen scroll",
     "scroll",
     "paged",
     "view"
   ],
   "homepage": "https://github.com/TaumuLu/react-scroll-paged-view#readme",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "eslint": "^3.3.1",
     "eslint-config-airbnb": "13.0.0",
     "eslint-plugin-babel": "^4.0.0",
@@ -34,5 +43,6 @@
     "eslint-plugin-markdown": "1.0.0-beta.3",
     "eslint-plugin-react": "^6.1.2",
     "eslint-tinker": "^0.4.0"
-  }
+  },
+  "dependencies": {}
 }

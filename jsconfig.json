@@ -12,10 +12,12 @@
     "android",
     "ios",
     "public",
-    "build",
-    "vendor"
+    "vendor",
+    "example-rn",
+    "lib"
   ],
   "include": [
+    "app",
     "src"
   ]
 }
