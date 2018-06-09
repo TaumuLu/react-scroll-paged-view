@@ -18,7 +18,7 @@ ios RN代码完美支持，android则基于RN scrollView改动了部分代码得
 ## Notice
 **兼容至"react-native": "~0.54.0"版本**  
 **react native0.47版本的使用0.1.\*版本**  
-**没有出现在内部scrollView组件中的点击事件可以由用nPressIn代替**  
+**没有出现在内部scrollView组件中的点击事件可以由用onPressIn代替**  
 
 ## Demo
 | IOS | Android | Web |

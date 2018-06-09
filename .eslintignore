@@ -2,3 +2,4 @@ build/*
 public/*
 vendor/*
 lib/*
+example/node_modules/*

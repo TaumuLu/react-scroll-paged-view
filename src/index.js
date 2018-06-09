@@ -39,7 +39,7 @@ export default class ScrollPagedView extends Component {
     if (isAndroid) {
       if (this.currentRef) {
         this.currentRef.setScrollEnabled(!flag)
-        // currentRef.setNativeProps({
+        // this.currentRef.setNativeProps({
         //   scrollEnabled: !flag,
         // })
         // callBack && callBack(currentRef)
