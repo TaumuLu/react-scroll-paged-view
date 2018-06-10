@@ -1,428 +1,284 @@
 package com.taumu.rnscrollview;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
 
-import android.annotation.TargetApi;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.support.v4.view.ViewCompat;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.OverScroller;
 import android.widget.ScrollView;
-
-import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.common.ReactConstants;
-import com.facebook.react.uimanager.MeasureSpecAssertions;
-import com.facebook.react.uimanager.ReactClippingViewGroup;
-import com.facebook.react.uimanager.ReactClippingViewGroupHelper;
+import com.facebook.react.views.modal.ReactModalHostView;
 import com.facebook.react.views.scroll.FpsListener;
-import com.facebook.react.views.scroll.OnScrollDispatchHelper;
+import com.facebook.react.views.scroll.ReactScrollView;
 import com.facebook.react.views.scroll.ReactScrollViewHelper;
-import com.facebook.react.views.scroll.VelocityHelper;
-import com.facebook.react.views.view.ReactViewBackgroundManager;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import javax.annotation.Nullable;
 
 
-@TargetApi(11)
-public class RNScrollView extends ScrollView implements ReactClippingViewGroup, ViewGroup.OnHierarchyChangeListener, View.OnLayoutChangeListener {
+public class RNScrollView extends ReactScrollView {
 
-  private static @Nullable Field sScrollerField;
-  private static boolean sTriedToGetScrollerField = false;
-
-  private final OnScrollDispatchHelper mOnScrollDispatchHelper = new OnScrollDispatchHelper();
-  private final @Nullable OverScroller mScroller;
-  private final VelocityHelper mVelocityHelper = new VelocityHelper();
-
-  private @Nullable Rect mClippingRect;
-  private boolean mDoneFlinging;
-  private boolean mDragging;
-  private boolean mFlinging;
-  private boolean mRemoveClippedSubviews;
   static private boolean mScrollEnabled = true;
-  private boolean mSendMomentumEvents;
-  private @Nullable FpsListener mFpsListener = null;
-  private @Nullable String mScrollPerfTag;
-  private @Nullable Drawable mEndBackground;
-  private int mEndFillColor = Color.TRANSPARENT;
-  private View mContentView;
-  private ReactViewBackgroundManager mReactBackgroundManager;
+  private Class scrollViewClass = ScrollView.class;
+  private boolean mDragging;
 
   public RNScrollView(ReactContext context) {
-    this(context, null);
+    super(context);
   }
 
   public RNScrollView(ReactContext context, @Nullable FpsListener fpsListener) {
-    super(context);
-    mFpsListener = fpsListener;
-    mReactBackgroundManager = new ReactViewBackgroundManager(this);
-
-    mScroller = getOverScrollerFromParent();
-    setOnHierarchyChangeListener(this);
-    setScrollBarStyle(SCROLLBARS_OUTSIDE_OVERLAY);
-  }
-
-  @Nullable
-  private OverScroller getOverScrollerFromParent() {
-    OverScroller scroller;
-
-    if (!sTriedToGetScrollerField) {
-      sTriedToGetScrollerField = true;
-      try {
-        sScrollerField = ScrollView.class.getDeclaredField("mScroller");
-        sScrollerField.setAccessible(true);
-      } catch (NoSuchFieldException e) {
-        Log.w(
-          ReactConstants.TAG,
-          "Failed to get mScroller field for ScrollView! " +
-            "This app will exhibit the bounce-back scrolling bug :(");
-      }
-    }
-
-    if (sScrollerField != null) {
-      try {
-        Object scrollerValue = sScrollerField.get(this);
-        if (scrollerValue instanceof OverScroller) {
-          scroller = (OverScroller) scrollerValue;
-        } else {
-          Log.w(
-            ReactConstants.TAG,
-            "Failed to cast mScroller field in ScrollView (probably due to OEM changes to AOSP)! " +
-              "This app will exhibit the bounce-back scrolling bug :(");
-          scroller = null;
-        }
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException("Failed to get mScroller from ScrollView!", e);
-      }
-    } else {
-      scroller = null;
-    }
-
-    return scroller;
-  }
-
-  public void setSendMomentumEvents(boolean sendMomentumEvents) {
-    mSendMomentumEvents = sendMomentumEvents;
-  }
-
-  public void setScrollPerfTag(@Nullable String scrollPerfTag) {
-    mScrollPerfTag = scrollPerfTag;
-  }
-
-  public void setScrollEnabled(boolean scrollEnabled) {
-    mScrollEnabled = scrollEnabled;
-  }
-
-  public void flashScrollIndicators() {
-    awakenScrollBars();
-  }
-
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    MeasureSpecAssertions.assertExplicitMeasureSpec(widthMeasureSpec, heightMeasureSpec);
-
-    setMeasuredDimension(
-        MeasureSpec.getSize(widthMeasureSpec),
-        MeasureSpec.getSize(heightMeasureSpec));
-  }
-
-  @Override
-  protected void onLayout(boolean changed, int l, int t, int r, int b) {
-    // Call with the present values in order to re-layout if necessary
-    scrollTo(getScrollX(), getScrollY());
-  }
-
-  @Override
-  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-    super.onSizeChanged(w, h, oldw, oldh);
-    if (mRemoveClippedSubviews) {
-      updateClippingRect();
-    }
-  }
-
-  @Override
-  protected void onAttachedToWindow() {
-    super.onAttachedToWindow();
-    if (mRemoveClippedSubviews) {
-      updateClippingRect();
-    }
-  }
-
-  @Override
-  protected void onScrollChanged(int x, int y, int oldX, int oldY) {
-    super.onScrollChanged(x, y, oldX, oldY);
-
-    if (mOnScrollDispatchHelper.onScrollChanged(x, y)) {
-      if (mRemoveClippedSubviews) {
-        updateClippingRect();
-      }
-
-      if (mFlinging) {
-        mDoneFlinging = false;
-      }
-
-      ReactScrollViewHelper.emitScrollEvent(
-        this,
-        mOnScrollDispatchHelper.getXFlingVelocity(),
-        mOnScrollDispatchHelper.getYFlingVelocity());
-    }
+    super(context, fpsListener);
   }
 
   @Override
   public boolean onInterceptTouchEvent(MotionEvent ev) {
+    Log.i("Test", "onInterceptTouchEvent: " + mScrollEnabled);
     if (!mScrollEnabled) {
       return false;
     }
 
-    if (super.onInterceptTouchEvent(ev)) {
+    // if (super.onInterceptTouchEvent()) {
       // 会将滑动时的触摸操作停止
       // NativeGestureUtil.notifyNativeGestureStarted(this, ev);
-      ReactScrollViewHelper.emitScrollBeginDragEvent(this);
-      mDragging = true;
-      enableFpsListener();
-      return true;
+    ReactScrollViewHelper.emitScrollBeginDragEvent(this);
+    mDragging = true;
+
+    invokeEnableFpsListener();
+    return true;
+    // }
+    //
+    // return false;
+  }
+
+  // public boolean invokeOnInterceptTouchEvent(MotionEvent event) {
+  //   Class classSV = ScrollView.class;
+  //   //使用MethodType构造出要调用方法的返回类型
+  //   // MethodType methodType = MethodType.methodType(void.class);
+  //
+  //   try {
+  //     Method onInterceptTouchEvent = classSV.getDeclaredMethod("onInterceptTouchEvent", MotionEvent.class);
+  //     Object test = onInterceptTouchEvent.invoke(this, event);
+  //     return (boolean) test;
+  //   } catch (Exception e) {
+  //     e.printStackTrace();
+  //   }
+  //   return false;
+  // }
+  //
+  // public boolean superOnInterceptTouchEvent(MotionEvent ev) {
+  //   Log.i("Test", "superOnInterceptTouchEvent: ");
+  //   /*
+  //    * This method JUST determines whether we want to intercept the motion.
+  //    * If we return true, onMotionEvent will be called and we do the actual
+  //    * scrolling there.
+  //    */
+  //
+  //   /*
+  //    * Shortcut the most recurring case: the user is in the dragging
+  //    * state and he is moving his finger.  We want to intercept this
+  //    * motion.
+  //    */
+  //   final int action = ev.getAction();
+  //   boolean mIsBeingDragged = getInvokeField("mIsBeingDragged");
+  //   if ((action == MotionEvent.ACTION_MOVE) && (mIsBeingDragged)) {
+  //     return true;
+  //   }
+  //
+  //   /*
+  //    * Don't try to intercept touch if we can't scroll anyway.
+  //    */
+  //   if (getScrollY() == 0 && !canScrollVertically(1)) {
+  //     return false;
+  //   }
+  //   VelocityTracker mVelocityTracker = getInvokeField("mVelocityTracker");
+  //   final int INVALID_POINTER = getInvokeField("INVALID_POINTER");
+  //   OverScroller mScroller = getInvokeField("mScroller");
+  //
+  //   switch (action & MotionEvent.ACTION_MASK) {
+  //     case MotionEvent.ACTION_MOVE: {
+  //       /*
+  //        * mIsBeingDragged == false, otherwise the shortcut would have caught it. Check
+  //        * whether the user has moved far enough from his original down touch.
+  //        */
+  //
+  //       /*
+  //        * Locally do absolute value. mLastMotionY is set to the y value
+  //        * of the down event.
+  //        */
+  //       final int activePointerId = getInvokeField("mActivePointerId");
+  //       if (activePointerId == INVALID_POINTER) {
+  //         // If we don't have a valid id, the touch down wasn't on content.
+  //         break;
+  //       }
+  //
+  //       final int pointerIndex = ev.findPointerIndex(activePointerId);
+  //       final String TAG = getInvokeField("TAG");
+  //       if (pointerIndex == -1) {
+  //         Log.e(TAG, "Invalid pointerId=" + activePointerId
+  //                 + " in onInterceptTouchEvent");
+  //         break;
+  //       }
+  //
+  //       final int y = (int) ev.getY(pointerIndex);
+  //
+  //       int mLastMotionY = getInvokeField("mLastMotionY");
+  //       final int yDiff = Math.abs(y - mLastMotionY);
+  //
+  //       int mTouchSlop = getInvokeField("mTouchSlop");
+  //       if (yDiff > mTouchSlop && (getNestedScrollAxes() & SCROLL_AXIS_VERTICAL) == 0) {
+  //         mIsBeingDragged = true;
+  //         mLastMotionY = setInvokeField("mLastMotionY", y);
+  //         invokeMethod("initVelocityTrackerIfNotExists");
+  //         invokeMethod("initVelocityTrackerIfNotExists");
+  //         mVelocityTracker.addMovement(ev);
+  //         setInvokeField("mNestedYOffset", 0);
+  //         Object mScrollStrictSpan = getInvokeField("mScrollStrictSpan");
+  //         if (mScrollStrictSpan == null) {
+  //           mScrollStrictSpan = setInvokeField("mScrollStrictSpan",  strictModeInvokeMethod("enterCriticalSpan", "ScrollView-scroll"));
+  //         }
+  //         final ViewParent parent = getParent();
+  //         if (parent != null) {
+  //           parent.requestDisallowInterceptTouchEvent(true);
+  //         }
+  //       }
+  //       break;
+  //     }
+  //
+  //     case MotionEvent.ACTION_DOWN: {
+  //       final int y = (int) ev.getY();
+  //       boolean isInChild = inChild((int) ev.getX(), (int) y);
+  //       if (!isInChild) {
+  //         mIsBeingDragged = false;
+  //         invokeMethod("recycleVelocityTracker");
+  //         break;
+  //       }
+  //
+  //       /*
+  //        * Remember location of down touch.
+  //        * ACTION_DOWN always refers to pointer index 0.
+  //        */
+  //       int mLastMotionY = setInvokeField("mLastMotionY", y);
+  //       int mActivePointerId = setInvokeField("mActivePointerId", ev.getPointerId(0));
+  //
+  //       invokeMethod("initOrResetVelocityTracker");
+  //       mVelocityTracker.addMovement(ev);
+  //       /*
+  //        * If being flinged and user touches the screen, initiate drag;
+  //        * otherwise don't.  mScroller.isFinished should be false when
+  //        * being flinged.
+  //        */
+  //
+  //       mIsBeingDragged = !mScroller.isFinished();
+  //       Object mScrollStrictSpan = getInvokeField("mScrollStrictSpan");
+  //       if (mIsBeingDragged && mScrollStrictSpan == null) {
+  //         mScrollStrictSpan = setInvokeField("mScrollStrictSpan", strictModeInvokeMethod("enterCriticalSpan", "ScrollView-scroll"));
+  //       }
+  //       startNestedScroll(SCROLL_AXIS_VERTICAL);
+  //       break;
+  //     }
+  //
+  //     case MotionEvent.ACTION_CANCEL:
+  //     case MotionEvent.ACTION_UP:
+  //       /* Release the drag */
+  //       mIsBeingDragged = setInvokeField("mIsBeingDragged", false);
+  //       int mActivePointerId = setInvokeField("mActivePointerId", INVALID_POINTER);
+  //       invokeMethod("recycleVelocityTracker");
+  //       int mScrollX = getInvokeField("mScrollX");
+  //       int mScrollY = getInvokeField("mScrollY");
+  //
+  //       if (mScroller.springBack(mScrollX, mScrollY, 0, 0, 0, (int) invokeMethod("getScrollRange"))) {
+  //         postInvalidateOnAnimation();
+  //       }
+  //       stopNestedScroll();
+  //       break;
+  //     case MotionEvent.ACTION_POINTER_UP:
+  //       invokeMethod("onSecondaryPointerUp", ev);
+  //       break;
+  //   }
+  //
+  //   /*
+  //    * The only time we want to intercept motion events is if we are in the
+  //    * drag mode.
+  //    */
+  //   return mIsBeingDragged;
+  // }
+
+  // private boolean inChild(int x, int y) {
+  //   if (getChildCount() > 0) {
+  //     final int scrollY = getInvokeField("mScrollY");
+  //     final View child = getChildAt(0);
+  //     return !(y < child.getTop() - scrollY
+  //             || y >= child.getBottom() - scrollY
+  //             || x < child.getLeft()
+  //             || x >= child.getRight());
+  //   }
+  //   return false;
+  // }
+
+  // public <T> T getInvokeField(String fieldName) {
+  //   try {
+  //     Field field = ScrollView.class.getDeclaredField(fieldName);
+  //     field.setAccessible(true);
+  //     return (T) field.get(this);
+  //   } catch (Exception e) {
+  //     e.printStackTrace();
+  //   }
+  //   return null;
+  // }
+  //
+  // public <T> T setInvokeField(String fieldName, T value) {
+  //   try {
+  //     Field field = scrollViewClass.getDeclaredField(fieldName);
+  //     field.setAccessible(true);
+  //     field.set(this, value);
+  //   } catch (Exception e) {
+  //     e.printStackTrace();
+  //   }
+  //   return value;
+  // }
+  //
+  // public <T> T invokeMethod(String methodName, Object... params) {
+  //   try {
+  //     Method method = ScrollView.class.getDeclaredMethod(methodName);
+  //     method.setAccessible(true);
+  //     return (T) method.invoke(this, params);
+  //   } catch (Exception e) {
+  //     e.printStackTrace();
+  //   }
+  //   return null;
+  // }
+  //
+  // public <T> T strictModeInvokeMethod(String methodName, Object... params) {
+  //   try {
+  //     Method method = StrictMode.class.getDeclaredMethod(methodName);
+  //     method.setAccessible(true);
+  //     return (T) method.invoke(this, params);
+  //   } catch (Exception e) {
+  //     e.printStackTrace();
+  //   }
+  //   return null;
+  // }
+
+  public void invokeEnableFpsListener() {
+    Class classRSV = ReactScrollView.class;
+
+    try {
+      Method enableFpsListener = classRSV.getDeclaredMethod("enableFpsListener");
+      enableFpsListener.invoke(this);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
-
-    return false;
   }
-
-  @Override
-  public boolean onTouchEvent(MotionEvent ev) {
-    if (!mScrollEnabled) {
-      return false;
-    }
-
-    mVelocityHelper.calculateVelocity(ev);
-    int action = ev.getAction() & MotionEvent.ACTION_MASK;
-    if (action == MotionEvent.ACTION_UP && mDragging) {
-      ReactScrollViewHelper.emitScrollEndDragEvent(
-        this,
-        mVelocityHelper.getXVelocity(),
-        mVelocityHelper.getYVelocity());
-      mDragging = false;
-      disableFpsListener();
-    }
-
-    return super.onTouchEvent(ev);
-  }
-
-  @Override
-  public void setRemoveClippedSubviews(boolean removeClippedSubviews) {
-    if (removeClippedSubviews && mClippingRect == null) {
-      mClippingRect = new Rect();
-    }
-    mRemoveClippedSubviews = removeClippedSubviews;
-    updateClippingRect();
-  }
-
-  @Override
-  public boolean getRemoveClippedSubviews() {
-    return mRemoveClippedSubviews;
-  }
-
-  @Override
-  public void updateClippingRect() {
-    if (!mRemoveClippedSubviews) {
-      return;
-    }
-
-    Assertions.assertNotNull(mClippingRect);
-
-    ReactClippingViewGroupHelper.calculateClippingRect(this, mClippingRect);
-    View contentView = getChildAt(0);
-    if (contentView instanceof ReactClippingViewGroup) {
-      ((ReactClippingViewGroup) contentView).updateClippingRect();
-    }
-  }
-
-  @Override
-  public void getClippingRect(Rect outClippingRect) {
-    outClippingRect.set(Assertions.assertNotNull(mClippingRect));
-  }
-
-  @Override
-  public void fling(int velocityY) {
-    if (mScroller != null) {
-      // FB SCROLLVIEW CHANGE
-
-      // We provide our own version of fling that uses a different call to the standard OverScroller
-      // which takes into account the possibility of adding new content while the ScrollView is
-      // animating. Because we give essentially no max Y for the fling, the fling will continue as long
-      // as there is content. See #onOverScrolled() to see the second part of this change which properly
-      // aborts the scroller animation when we get to the bottom of the ScrollView content.
-
-      int scrollWindowHeight = getHeight() - getPaddingBottom() - getPaddingTop();
-
-      mScroller.fling(
-        getScrollX(),
-        getScrollY(),
-        0,
-        velocityY,
-        0,
-        0,
-        0,
-        Integer.MAX_VALUE,
-        0,
-        scrollWindowHeight / 2);
-
-      ViewCompat.postInvalidateOnAnimation(this);
-
-      // END FB SCROLLVIEW CHANGE
-    } else {
-      super.fling(velocityY);
-    }
-
-    if (mSendMomentumEvents || isScrollPerfLoggingEnabled()) {
-      mFlinging = true;
-      enableFpsListener();
-      ReactScrollViewHelper.emitScrollMomentumBeginEvent(this, 0, velocityY);
-      Runnable r = new Runnable() {
-        @Override
-        public void run() {
-          if (mDoneFlinging) {
-            mFlinging = false;
-            disableFpsListener();
-            ReactScrollViewHelper.emitScrollMomentumEndEvent(RNScrollView.this);
-          } else {
-            mDoneFlinging = true;
-            ViewCompat.postOnAnimationDelayed(
-                RNScrollView.this,
-                this,
-                ReactScrollViewHelper.MOMENTUM_DELAY);
-          }
-        }
-      };
-      ViewCompat.postOnAnimationDelayed(this, r, ReactScrollViewHelper.MOMENTUM_DELAY);
-    }
-  }
-
-  private void enableFpsListener() {
-    if (isScrollPerfLoggingEnabled()) {
-      Assertions.assertNotNull(mFpsListener);
-      Assertions.assertNotNull(mScrollPerfTag);
-      mFpsListener.enable(mScrollPerfTag);
-    }
-  }
-
-  private void disableFpsListener() {
-    if (isScrollPerfLoggingEnabled()) {
-      Assertions.assertNotNull(mFpsListener);
-      Assertions.assertNotNull(mScrollPerfTag);
-      mFpsListener.disable(mScrollPerfTag);
-    }
-  }
-
-  private boolean isScrollPerfLoggingEnabled() {
-    return mFpsListener != null && mScrollPerfTag != null && !mScrollPerfTag.isEmpty();
-  }
-
-  private int getMaxScrollY() {
-    int contentHeight = mContentView.getHeight();
-    int viewportHeight = getHeight() - getPaddingBottom() - getPaddingTop();
-    return Math.max(0, contentHeight - viewportHeight);
-  }
-
-  @Override
-  public void draw(Canvas canvas) {
-    if (mEndFillColor != Color.TRANSPARENT) {
-      final View content = getChildAt(0);
-      if (mEndBackground != null && content != null && content.getBottom() < getHeight()) {
-        mEndBackground.setBounds(0, content.getBottom(), getWidth(), getHeight());
-        mEndBackground.draw(canvas);
-      }
-    }
-    super.draw(canvas);
-  }
-
-  public void setEndFillColor(int color) {
-    if (color != mEndFillColor) {
-      mEndFillColor = color;
-      mEndBackground = new ColorDrawable(mEndFillColor);
-    }
-  }
-
-  @Override
-  protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
-    if (mScroller != null) {
-      // FB SCROLLVIEW CHANGE
-
-      // This is part two of the reimplementation of fling to fix the bounce-back bug. See #fling() for
-      // more information.
-
-      if (!mScroller.isFinished() && mScroller.getCurrY() != mScroller.getFinalY()) {
-        int scrollRange = getMaxScrollY();
-        if (scrollY >= scrollRange) {
-          mScroller.abortAnimation();
-          scrollY = scrollRange;
-        }
-      }
-
-      // END FB SCROLLVIEW CHANGE
-    }
-
-    super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
-  }
-
-  @Override
-  public void onChildViewAdded(View parent, View child) {
-    mContentView = child;
-    mContentView.addOnLayoutChangeListener(this);
-  }
-
-  @Override
-  public void onChildViewRemoved(View parent, View child) {
-    mContentView.removeOnLayoutChangeListener(this);
-    mContentView = null;
-  }
-
-  /**
-   * Called when a mContentView's layout has changed. Fixes the scroll position if it's too large
-   * after the content resizes. Without this, the user would see a blank ScrollView when the scroll
-   * position is larger than the ScrollView's max scroll position after the content shrinks.
-   */
-  @Override
-  public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-    if (mContentView == null) {
-      return;
-    }
-
-    int currentScrollY = getScrollY();
-    int maxScrollY = getMaxScrollY();
-    if (currentScrollY > maxScrollY) {
-      scrollTo(getScrollX(), maxScrollY);
-    }
-  }
-
-  @Override
-  public void setBackgroundColor(int color) {
-    mReactBackgroundManager.setBackgroundColor(color);
-  }
-
-  public void setBorderWidth(int position, float width) {
-    mReactBackgroundManager.setBorderWidth(position, width);
-  }
-
-  public void setBorderColor(int position, float color, float alpha) {
-    mReactBackgroundManager.setBorderColor(position, color, alpha);
-  }
-
-  public void setBorderRadius(float borderRadius) {
-    mReactBackgroundManager.setBorderRadius(borderRadius);
-  }
-
-  public void setBorderRadius(float borderRadius, int position) {
-    mReactBackgroundManager.setBorderRadius(borderRadius, position);
-  }
-
-  public void setBorderStyle(@Nullable String style) {
-    mReactBackgroundManager.setBorderStyle(style);
-  }
-
 }
