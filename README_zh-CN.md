@@ -1,6 +1,6 @@
 # react-scroll-paged-view
 [View README in English](./README.md)  
-scroll view, Inside scroll, Full page scroll
+滚动视图，内滚动，整页滚动，嵌套滚动视图  
 
 ## Installation
 ```
