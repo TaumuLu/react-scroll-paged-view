@@ -19,7 +19,7 @@ In addition, an additional core function module is provided. The RN side is a Pa
 ~~**Compatible version "react-native": "~0.54.0"**~~  
 ~~**The react native 0.47 version uses the 0.1.\* version**~~  
 **Has been perfectly compatible with the above RN version, directly install the latest package**  
-**The click events that do not appear in the inside scrollView component can be used by onPressIn instead**  
+**Click events that do not appear in the internal scrollView component can be replaced with onPressIn**  
 
 ## Demo
 | IOS | Android | Web |
@@ -89,11 +89,11 @@ webProps(web only) | object | {} | Web scrollView Props
 
 ## Export module
 - default - ScrollPagedView
-- RN - PagedView
-- Web - ScrollableTabView
+- ScrollTabView
 
-### ScrollableTabView
-The web version of react-native-scrollable-tab-view provides similar functionality  
+### ScrollTabView
+The web version is similar to react-native-scrollable-tab-view and provides similar functionality  
+The functionality of the Rn version is not as complete as the Web version, and the follow-up continues to improve  
 
 ### Properties
 Name | propType | default value | description
@@ -118,9 +118,10 @@ dotActiveStyle | object | {} | Dot activation style
 - [x] Support web side components
 - [x] Optimize web side components
 - [x] Optimize web infinite scrolling
-- [x] Perfect web-side ScrollableTabView
-- [ ] Perfect rn end PagedView achieves consistency with web performance
-- [ ] Uniformly compatible with different versions of React Native
+- [x] Perfect web-side ScrollTabView
+- [x] Optimize structure, code, unified naming
+- [x] Uniformly compatible with different versions of React Native
+- [ ] Perfect rn end ScrollTabView achieves consistency with web performance
 - [ ] More props configuration
 
 ## Changelog
@@ -128,3 +129,5 @@ dotActiveStyle | object | {} | Dot activation style
 - 1.0.*
 - 1.1.*
 - 1.2.*
+- 1.3.*
+- 1.5.*

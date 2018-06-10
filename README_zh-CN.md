@@ -13,13 +13,13 @@ npm install react-scroll-paged-view --save
 按页滚动和页内滚动结合，类似京东等app的商品详情页上下页查看  
 ios RN代码完美支持，android则基于RN scrollView改动了部分代码得以支持  
 目前开源的RN项目中并没有内滚动和页滚动结合的，基于项目需要写了这个组件  
-此外还额外提供了核心功能模块，rn端为PagedView，web端为ScrollableTabView  
+此外还额外提供了核心功能模块ScrollTabView可供使用
 
 ## Notice
 ~~**兼容至"react-native": "~0.54.0"版本**~~  
 ~~**react native0.47版本的使用0.1.\*版本**~~  
 **已完美兼容以上RN的版本，直接安装最新的包即可**  
-**没有出现在内部scrollView组件中的点击事件可以由用onPressIn代替**  
+**没有出现在内部scrollView组件中的点击事件可以用onPressIn代替**  
 
 ## Demo
 | IOS | Android | Web |
@@ -89,11 +89,11 @@ webProps(web only) | object | {} | Web scrollView Props
 
 ## Export module
 - default - ScrollPagedView
-- RN - PagedView
-- Web - ScrollableTabView
+- ScrollTabView
 
-### ScrollableTabView
-web版的react-native-scrollable-tab-view，提供的功能也类似  
+### ScrollTabView
+web版的类似于react-native-scrollable-tab-view，提供的功能也类似  
+rn版的功能不如web版的完整，后续继续完善  
 
 ### Properties
 Name | propType | default value | description
@@ -118,9 +118,10 @@ dotActiveStyle | object | {} | dot激活样式
 - [x] 支持web端组件
 - [x] 优化web端组件
 - [x] 优化web无限滚动
-- [x] 完善web端ScrollableTabView
-- [ ] 完善rn端PagedView达到和web端表现一致
-- [ ] 统一兼容react native不同版本
+- [x] 完善web端ScrollTabView
+- [x] 优化结构、代码，统一命名
+- [x] 统一兼容react native不同版本
+- [ ] 完善rn端ScrollTabView达到和web端表现一致
 - [ ] 更多props配置
 
 ## Changelog
@@ -128,3 +129,5 @@ dotActiveStyle | object | {} | dot激活样式
 - 1.0.*
 - 1.1.*
 - 1.2.*
+- 1.3.*
+- 1.5.*

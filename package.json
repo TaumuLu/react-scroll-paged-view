@@ -1,6 +1,6 @@
 {
   "name": "react-scroll-paged-view",
-  "version": "1.3.1",
+  "version": "1.5.1",
   "description": "Inside scroll, Full page scroll",
   "main": "./lib",
   "scripts": {

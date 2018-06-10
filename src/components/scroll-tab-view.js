@@ -7,22 +7,33 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 
-export default class PagedView extends Component {
+export default class ScrollTabView extends Component {
 
   static propTypes = {
     initialPage: PropTypes.number,
     vertical: PropTypes.bool,
-    animationDuration: PropTypes.number,
+    duration: PropTypes.number,
     onPageChange: PropTypes.func,
-
+    onStartShouldSetPanResponder: PropTypes.func,
+    onStartShouldSetPanResponderCapture: PropTypes.func,
+    onMoveShouldSetPanResponder: PropTypes.func,
+    onMoveShouldSetPanResponderCapture: PropTypes.func,
+    onPanResponderTerminationRequest: PropTypes.func,
+    onPanResponderTerminate: PropTypes.func,
     children: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
     initialPage: 0,
-    animationDuration: 150,
     vertical: false,
+    duration: 200,
     onPageChange: () => {},
+    onStartShouldSetPanResponder: defaultResponder(true),
+    onStartShouldSetPanResponderCapture: defaultResponder(false),
+    onMoveShouldSetPanResponder: defaultResponder(true),
+    onMoveShouldSetPanResponderCapture: defaultResponder(false),
+    onPanResponderTerminationRequest: defaultResponder(true),
+    onPanResponderTerminate: defaultResponderCallback,
   }
 
   constructor(props) {
@@ -38,12 +49,12 @@ export default class PagedView extends Component {
 
   componentWillMount() {
     const {
-      onStartShouldSetPanResponder = defaultResponder(true),
-      onStartShouldSetPanResponderCapture = defaultResponder(false),
-      onMoveShouldSetPanResponder = defaultResponder(true),
-      onMoveShouldSetPanResponderCapture = defaultResponder(false),
-      onPanResponderTerminationRequest = defaultResponder(true),
-      onPanResponderTerminate = (evt, gestureState) => {},
+      onStartShouldSetPanResponder,
+      onStartShouldSetPanResponderCapture,
+      onMoveShouldSetPanResponder,
+      onMoveShouldSetPanResponderCapture,
+      onPanResponderTerminationRequest,
+      onPanResponderTerminate,
     } = this.props
 
     this._panResponder = PanResponder.create({
@@ -52,12 +63,12 @@ export default class PagedView extends Component {
       onMoveShouldSetPanResponder,
       onMoveShouldSetPanResponderCapture,
       onPanResponderTerminationRequest,
+      onPanResponderTerminate,
 
-      onPanResponderGrant: (evt, gestureState) => {},
+      onPanResponderGrant: defaultResponderCallback,
       onPanResponderMove: this._onPanResponderMove,
       onPanResponderRelease: this._onPanResponderRelease,
-      onPanResponderTerminate,
-      onShouldBlockNativeResponder: (evt, gestureState) => true,
+      onShouldBlockNativeResponder: defaultResponder(true),
     })
   }
 
@@ -105,6 +116,7 @@ export default class PagedView extends Component {
   _onPanResponderRelease = (evt, gestureState) => {
     const suffix = this.props.vertical ? 'y' : 'x'
     this._lastPos += gestureState[`d${suffix}`]
+
     const page = this._getPageForOffset(this._lastPos, gestureState[`d${suffix}`])
     this.animateToPage(page)
   }
@@ -118,14 +130,11 @@ export default class PagedView extends Component {
     let index
 
     if (diff < 0) {
-      // Scrolling forwards
       index = Math.ceil(boxPos)
     } else {
-      // Scrolling backwards
       index = Math.floor(boxPos)
     }
 
-    // Make sure index is within bounds
     if (index < 0) {
       index = 0
     } else if (index > this.props.children.length - 1) {
@@ -158,6 +167,7 @@ export default class PagedView extends Component {
   }
 
   animateToPage(page) {
+    const { duration, onPageChange } = this.props
     const animations = []
     // if (this._currentPage !== page) {
     // }
@@ -167,7 +177,7 @@ export default class PagedView extends Component {
     animations.push(
       Animated.timing(this.state.pos, {
         toValue,
-        duration: this.props.animationDuration,
+        duration,
         easing: Easing.out(Easing.ease),
       })
     )
@@ -184,7 +194,7 @@ export default class PagedView extends Component {
       loadIndex.push(page)
     }
     this.setState({ loadIndex }, () => {
-      this.props.onPageChange(page, this._oldPage)
+      onPageChange(page, this._oldPage)
     })
   }
 
@@ -200,6 +210,11 @@ export default class PagedView extends Component {
     return React.Children.map(children, handleFunc)
   }
 
+  _onLayout = ({ nativeEvent }) => {
+    const { width, height } = nativeEvent.layout || {}
+    this._runAfterMeasurements(width, height)
+  }
+
   render() {
     this.childrenList = this._children()
     this.len = this.childrenList.length
@@ -209,12 +224,8 @@ export default class PagedView extends Component {
       return (
         <View style={{ flex: 1 }}>
           <View
-            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'transparent' }}
-            onLayout={(evt) => {
-              const width = evt.nativeEvent.layout.width
-              const height = evt.nativeEvent.layout.height
-              this._runAfterMeasurements(width, height)
-            }}
+            style={initialStyle}
+            onLayout={this._onLayout}
           />
         </View>
       )
@@ -247,7 +258,11 @@ export default class PagedView extends Component {
 }
 
 
+const initialStyle = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'transparent' }
+
 const defaultResponder = isResponder => (evt, gestureState) => isResponder
+
+const defaultResponderCallback = (evt, gestureState) => {}
 
 const setViewStyle = (styleList = [], addStyleList = []) => {
   return styleList.map((itemStyle = {}, i) => {

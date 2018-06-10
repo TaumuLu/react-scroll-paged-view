@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { accAdd, getMergeProps } from './utils'
 import { ScrollPagedHOC } from './components'
-import ScrollableTabView from './components/scrollable-tab-view'
+import ScrollTabView from './components/scroll-tab-view'
 
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
@@ -139,13 +139,13 @@ export default class ScrollPagedView extends Component {
 
     return (
       <div style={{ ...defaultStyle, ...style }}>
-        <ScrollableTabView
+        <ScrollTabView
           {...pageProps}
           onChange={this.onChange}
           vertical
         >
           {this.childrenList}
-        </ScrollableTabView>
+        </ScrollTabView>
       </div>
     )
   }
@@ -161,5 +161,5 @@ const defaultStyle = {
 
 
 export {
-  ScrollableTabView
+  ScrollTabView
 }

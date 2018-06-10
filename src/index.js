@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { accAdd, isAndroid, isEmpty, isIOS, getMergeProps } from './utils'
 import { ScrollPagedHOC } from './components'
 import AgentScrollView from './components/agent-scroll-view'
-import PagedView from './components/paged-view'
+import ScrollTabView from './components/scroll-tab-view'
 
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
@@ -170,7 +170,7 @@ export default class ScrollPagedView extends Component {
   }
 
   // 子元素调用一定要传入index值来索引对应数据,且最好执行懒加载
-  ScrollViewMonitor = ({ children, webProps = {} }) => {
+  ScrollViewMonitor = ({ children, nativeProps = {} }) => {
     const mergeProps = getMergeProps({
       onContentSizeChange: this._onContentSizeChange,
       onMomentumScrollEnd: this._onMomentumScrollEnd,
@@ -181,7 +181,7 @@ export default class ScrollPagedView extends Component {
       showsVerticalScrollIndicator: false,
       bounces: false,
       style: { flex: 1 },
-    }, webProps)
+    }, nativeProps)
 
     return (
       <AgentScrollView
@@ -227,7 +227,7 @@ export default class ScrollPagedView extends Component {
     const { style } = this.props
 
     return (
-      <PagedView
+      <ScrollTabView
         onStartShouldSetPanResponder={this._startResponder}
         onMoveShouldSetPanResponder={this._moveResponder}
         onStartShouldSetPanResponderCapture={this._startResponderCapture}
@@ -236,18 +236,16 @@ export default class ScrollPagedView extends Component {
         // onPanResponderTerminate={this._onPanResponderTerminate}
 
         onPageChange={this.onPageChange}
-        animationDuration={400}
-        blurredZoom={1}
-        blurredOpacity={1}
+        duration={400}
         style={style}
         vertical
       >
         {this.childrenList}
-      </PagedView>
+      </ScrollTabView>
     )
   }
 }
 
 export {
-  PagedView
+  ScrollTabView
 }

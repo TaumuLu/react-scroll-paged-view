@@ -7,7 +7,7 @@ const transitionParams = 'all 0.5s'
 const longSwipesMs = 300
 // const resetTime = 450
 
-export default class ScrollableTabView extends React.Component {
+export default class ScrollTabView extends React.Component {
   static propTypes = {
     scrollWithoutAnimation: PropTypes.bool,
     locked: PropTypes.bool,
