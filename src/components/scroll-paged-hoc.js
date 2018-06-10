@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { get, set } from '../utils'
 
 export default function ScrollPageHOC(WrappedComponent) {
-  return class ScrollPage extends WrappedComponent {
+  return class ScrollPaged extends WrappedComponent {
 
     static childContextTypes = {
       ScrollView: PropTypes.func,

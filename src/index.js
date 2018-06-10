@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import { accAdd, isAndroid, isEmpty, isIOS, getMergeProps } from './utils'
-import { ScrollPagedHOC } from './components'
+import ScrollPagedHOC from './components/scroll-paged-hoc'
 import AgentScrollView from './components/agent-scroll-view'
 import ScrollTabView from './components/scroll-tab-view'
 

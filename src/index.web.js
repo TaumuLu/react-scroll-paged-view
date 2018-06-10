@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import { accAdd, getMergeProps } from './utils'
-import { ScrollPagedHOC } from './components'
+import ScrollPagedHOC from './components/scroll-paged-hoc'
 import ScrollTabView from './components/scroll-tab-view'
 
 @ScrollPagedHOC

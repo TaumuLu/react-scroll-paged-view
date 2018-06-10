@@ -7,6 +7,11 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 
+
+const defaultResponder = isResponder => (evt, gestureState) => isResponder
+
+const defaultResponderCallback = (evt, gestureState) => {}
+
 export default class ScrollTabView extends Component {
 
   static propTypes = {
@@ -259,10 +264,6 @@ export default class ScrollTabView extends Component {
 
 
 const initialStyle = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'transparent' }
-
-const defaultResponder = isResponder => (evt, gestureState) => isResponder
-
-const defaultResponderCallback = (evt, gestureState) => {}
 
 const setViewStyle = (styleList = [], addStyleList = []) => {
   return styleList.map((itemStyle = {}, i) => {
