@@ -16,8 +16,9 @@ ios RN代码完美支持，android则基于RN scrollView改动了部分代码得
 此外还额外提供了核心功能模块，rn端为PagedView，web端为ScrollableTabView  
 
 ## Notice
-**兼容至"react-native": "~0.54.0"版本**  
-**react native0.47版本的使用0.1.\*版本**  
+~~**兼容至"react-native": "~0.54.0"版本**~~  
+~~**react native0.47版本的使用0.1.\*版本**~~  
+**已完美兼容以上RN的版本，直接安装最新的包即可**  
 **没有出现在内部scrollView组件中的点击事件可以由用onPressIn代替**  
 
 ## Demo

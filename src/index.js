@@ -30,8 +30,13 @@ export default class ScrollPagedView extends Component {
     this.isBorder = true
     this.borderDirection = oldIndex > index ? 'isBottom' : 'isTop'
     this.isChange = true
-
-    this.setResponder(true)
+    // 这里本来是在onPageChange事件后设置true意味着外层View夺权
+    // 但android外层组件一旦夺权无法再传递给子组件，这里指ScrollView
+    // 应此外层先放权拦截，这样之后的事件流还是会经过外层view但不处理，被子层ScrollView处理
+    // 这样做的目的是页面却换后如果下次事件不是切换页面那么子层ScrollView还能响应滚动，而不是到第二次才作出反应
+    // 之后的如果需要翻页外层View也能随时拦截掉给自己处理而不被子层ScrollView的onInterceptTouchEvent事件给取消掉
+    // 可以参考RNScrollView.java里的onInterceptTouchEvent方法
+    this.setResponder(false)
   }
 
   // 暂未观测出设置的先后顺序影响

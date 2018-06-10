@@ -16,8 +16,9 @@ Currently there is no internal scrolling and page scrolling in the open source R
 In addition, an additional core function module is provided. The RN side is a PagedView, and the web side is a ScrollableTabView  
 
 ## Notice
-**Compatible version "react-native": "~0.54.0"**  
-**The react native 0.47 version uses the 0.1.\* version**  
+~~**Compatible version "react-native": "~0.54.0"**~~  
+~~**The react native 0.47 version uses the 0.1.\* version**~~  
+**Has been perfectly compatible with the above RN version, directly install the latest package**  
 **The click events that do not appear in the inside scrollView component can be used by onPressIn instead**  
 
 ## Demo

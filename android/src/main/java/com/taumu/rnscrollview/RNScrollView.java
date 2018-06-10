@@ -29,10 +29,8 @@ import javax.annotation.Nullable;
 
 
 public class RNScrollView extends ReactScrollView {
-
-  static private boolean mScrollEnabled = true;
-  private Class scrollViewClass = ScrollView.class;
-  private boolean mDragging;
+  // private Class scrollViewClass = ScrollView.class;
+  private Class reactScrollViewClass = ReactScrollView.class;
 
   public RNScrollView(ReactContext context) {
     super(context);
@@ -44,7 +42,7 @@ public class RNScrollView extends ReactScrollView {
 
   @Override
   public boolean onInterceptTouchEvent(MotionEvent ev) {
-    Log.i("Test", "onInterceptTouchEvent: " + mScrollEnabled);
+    boolean mScrollEnabled = getInvokeField(reactScrollViewClass, "mScrollEnabled");
     if (!mScrollEnabled) {
       return false;
     }
@@ -52,14 +50,48 @@ public class RNScrollView extends ReactScrollView {
     // if (super.onInterceptTouchEvent()) {
       // 会将滑动时的触摸操作停止
       // NativeGestureUtil.notifyNativeGestureStarted(this, ev);
+    // 这里不调用父类的方法去判断是否拦截，是否拦截取决与mScrollEnabled
     ReactScrollViewHelper.emitScrollBeginDragEvent(this);
-    mDragging = true;
+    setInvokeField(reactScrollViewClass, "mDragging", true);
 
-    invokeEnableFpsListener();
+    invokeMethod(reactScrollViewClass, "enableFpsListener");
     return true;
     // }
     //
     // return false;
+  }
+
+  public <T> T getInvokeField(Class fieldClass, String fieldName) {
+    try {
+      Field field = fieldClass.getDeclaredField(fieldName);
+      field.setAccessible(true);
+      return (T) field.get(this);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  public <T> T setInvokeField(Class fieldClass, String fieldName, T value) {
+    try {
+      Field field = fieldClass.getDeclaredField(fieldName);
+      field.setAccessible(true);
+      field.set(this, value);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return value;
+  }
+
+  public <T> T invokeMethod(Class methodClass, String methodName, Object... params) {
+    try {
+      Method method = methodClass.getDeclaredMethod(methodName);
+      method.setAccessible(true);
+      return (T) method.invoke(this, params);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   // public boolean invokeOnInterceptTouchEvent(MotionEvent event) {
@@ -226,59 +258,4 @@ public class RNScrollView extends ReactScrollView {
   //   }
   //   return false;
   // }
-
-  // public <T> T getInvokeField(String fieldName) {
-  //   try {
-  //     Field field = ScrollView.class.getDeclaredField(fieldName);
-  //     field.setAccessible(true);
-  //     return (T) field.get(this);
-  //   } catch (Exception e) {
-  //     e.printStackTrace();
-  //   }
-  //   return null;
-  // }
-  //
-  // public <T> T setInvokeField(String fieldName, T value) {
-  //   try {
-  //     Field field = scrollViewClass.getDeclaredField(fieldName);
-  //     field.setAccessible(true);
-  //     field.set(this, value);
-  //   } catch (Exception e) {
-  //     e.printStackTrace();
-  //   }
-  //   return value;
-  // }
-  //
-  // public <T> T invokeMethod(String methodName, Object... params) {
-  //   try {
-  //     Method method = ScrollView.class.getDeclaredMethod(methodName);
-  //     method.setAccessible(true);
-  //     return (T) method.invoke(this, params);
-  //   } catch (Exception e) {
-  //     e.printStackTrace();
-  //   }
-  //   return null;
-  // }
-  //
-  // public <T> T strictModeInvokeMethod(String methodName, Object... params) {
-  //   try {
-  //     Method method = StrictMode.class.getDeclaredMethod(methodName);
-  //     method.setAccessible(true);
-  //     return (T) method.invoke(this, params);
-  //   } catch (Exception e) {
-  //     e.printStackTrace();
-  //   }
-  //   return null;
-  // }
-
-  public void invokeEnableFpsListener() {
-    Class classRSV = ReactScrollView.class;
-
-    try {
-      Method enableFpsListener = classRSV.getDeclaredMethod("enableFpsListener");
-      enableFpsListener.invoke(this);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
 }
