@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import { accAdd, getMergeProps } from './utils'
+import { accAdd, getMergeProps, noop } from './utils'
 import ScrollPagedHOC from './components/scroll-paged-hoc'
 import ScrollTabView from './components/scroll-tab-view'
 
@@ -9,27 +9,27 @@ import ScrollTabView from './components/scroll-tab-view'
 export default class ScrollPagedView extends Component {
 
   static propTypes = {
-    onPageChange: PropTypes.func,
+    onChange: PropTypes.func,
     pageProps: PropTypes.object,
     style: PropTypes.object,
   }
 
   static defaultProps = {
-    onPageChange: () => {},
+    onChange: noop,
     pageProps: {},
     style: {},
   }
 
   onChange = (index, oldIndex) => {
-    const { onPageChange, pageProps } = this.props
-    if (onPageChange) onPageChange(index)
-    if (pageProps.onChange) pageProps.onChange(index, oldIndex)
+    const { onChange } = this.props
 
     this.currentPage = index
     // 肯定处于边界位置,多此一举设置
     this.isBorder = true
     this.borderDirection = oldIndex > index ? 'isBottom' : 'isTop'
     this.isResponder = false
+
+    onChange(index, oldIndex)
   }
 
   _onTouchStart = (e) => {

@@ -1,6 +1,8 @@
 # react-scroll-paged-view
 [以中文查看](./README_zh-CN.md)  
-scroll view, Inside scroll, Full page scroll, Nesting ScrollView
+[If you are interested in my development process, you may read it, I believe you will gain something](./Dev_Record.md)  
+
+**scroll view, Inside scroll, Full page scroll, Nesting ScrollView**  
 
 ## Installation
 ```
@@ -34,15 +36,15 @@ import ScrollPagedView from 'react-scroll-paged-view'
 import InsideScrollView from './InsideScrollView'
 
 ...
-    _onPageChange = (pageIndex) => {
+    _onChange = (pageIndex) => {
         ...
     }
 
     render() {
         return (
             <ScrollPagedView
-                onPageChange={this._onPageChange}
-                setResponder={this._setResponder}
+                onChange={this._onChange}
+                onResponder={this._onResponder}
             >
                 <InsideScrollView />
                 <InsideScrollView />
@@ -74,12 +76,12 @@ import InsideScrollView from './InsideScrollView'
 ## Properties
 
 ### ScrollPagedView
-Name | propType | default value | description
---- | --- | --- | ---
-onPageChange | function | (pageIndex) => {} | Switch paging callback
-setResponder(native only) | function | (isResponder) => {} | Gesture switch state callback
-pageProps(web only) | object | {} | ScrollableTabView Props
-style | object | {} | ScrollPagedView style
+| Name | propType | default value | description |
+| --- | --- | --- | --- |
+| onChange | function | (pageIndex, oldPageIndex) => {} | Switch paging callback |
+| onResponder(native only) | function | (isResponder) => {} | Gesture switch state callback |
+| pageProps(web only) | object | {} | ScrollableTabView Props |
+| style | object | {} | ScrollPagedView style |
 
 ### Inside scrollView
 Name | propType | default value | description
@@ -96,21 +98,23 @@ The web version is similar to react-native-scrollable-tab-view and provides simi
 The functionality of the Rn version is not as complete as the Web version, and the follow-up continues to improve  
 
 ### Properties
-Name | propType | default value | description
---- | --- | --- | ---
-scrollWithoutAnimation | bool | false | Click on the top tab to toggle whether there is animation
-locked | bool | false | Whether to allow drag toggle
-infinite | bool | false | Whether it is an infinite scroll view
-isDot | bool | false | Is there a bottom dot
-tabLabels | array | [] | Tab index, using the children array index by default
-initialPage | number | 0 | Initial page index
-autoPlay | bool | false | Whether to auto rotate
-autoPlayTime | number | 2 | Automatic carousel interval (in seconds)
-vertical | bool | false | Whether to switch the view vertically
-onChange | function | () => {} | Toggle tab callback
-dotStyle | object | {} | Dot style
-dotWrapStyle | object | {} | Dot external style
-dotActiveStyle | object | {} | Dot activation style
+| Name | propType | default value | description |
+| --- | --- | --- | --- |
+| scrollWithoutAnimation | bool | false | Click on the top tab to toggle whether there is animation |
+| locked | bool | false | Whether to allow drag toggle |
+| infinite | bool | false | Whether it is an infinite scroll view |
+| isDot | bool | false | Is there a bottom dot |
+| tabLabels | array | [] | Tab index, using the children array index by default |
+| initialPage | number | 0 | Initial page index |
+| autoPlay | bool | false | Whether to auto rotate |
+| autoPlayTime | number | 2 | Automatic carousel interval (in seconds) |
+| vertical | bool | false | Whether to switch the view vertically |
+| dotStyle | object | {} | Dot style |
+| dotWrapStyle | object | {} | Dot external style |
+| dotActiveStyle | object | {} | Dot activation style |
+| onChange | function | () => {} | Toggle tab callback |
+| renderTabBar | function | () => {} | tabBar component |
+| duration(native only) | number | 200 | Animation duration |
 
 ## TODO
 - [x] Optimize scroll region index, use proxy scrollView to complete
@@ -121,6 +125,7 @@ dotActiveStyle | object | {} | Dot activation style
 - [x] Perfect web-side ScrollTabView
 - [x] Optimize structure, code, unified naming
 - [x] Uniformly compatible with different versions of React Native
+- [x] Record development process
 - [ ] Perfect rn end ScrollTabView achieves consistency with web performance
 - [ ] More props configuration
 

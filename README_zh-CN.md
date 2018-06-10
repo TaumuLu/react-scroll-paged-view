@@ -1,6 +1,8 @@
 # react-scroll-paged-view
 [View README in English](./README.md)  
-滚动视图，内滚动，整页滚动，嵌套滚动视图  
+[如果你对我的开发过程感兴趣不妨读读，相信会有所收获](./Dev_Record.md)  
+
+**滚动视图，内滚动，整页滚动，嵌套滚动视图**  
 
 ## Installation
 ```
@@ -34,15 +36,15 @@ import ScrollPagedView from 'react-scroll-paged-view'
 import InsideScrollView from './InsideScrollView'
 
 ...
-    _onPageChange = (pageIndex) => {
+    _onChange = (pageIndex) => {
         ...
     }
 
     render() {
         return (
             <ScrollPagedView
-                onPageChange={this._onPageChange}
-                setResponder={this._setResponder}
+                onChange={this._onChange}
+                onResponder={this._onResponder}
             >
                 <InsideScrollView />
                 <InsideScrollView />
@@ -74,12 +76,12 @@ import InsideScrollView from './InsideScrollView'
 ## Properties
 
 ### ScrollPagedView
-Name | propType | default value | description
---- | --- | --- | ---
-onPageChange | function | (pageIndex) => {} | 分页切换回调
-setResponder(native only) | function | (isResponder) => {} | 手势状态改变时的回调
-pageProps(web only) | object | {} | 整页滚动组件props
-style | object | {} | ScrollPagedView样式
+| Name | propType | default value | description |
+| --- | --- | --- | --- |
+| onChange | function | (pageIndex, oldPageIndex) => {} | 分页切换回调 |
+| onResponder(native only) | function | (isResponder) => {} | 手势状态改变时的回调 |
+| pageProps(web only) | object | {} | 整页滚动组件props |
+| style | object | {} | ScrollPagedView样式 |
 
 ### Inside scrollView
 Name | propType | default value | description
@@ -96,21 +98,23 @@ web版的类似于react-native-scrollable-tab-view，提供的功能也类似
 rn版的功能不如web版的完整，后续继续完善  
 
 ### Properties
-Name | propType | default value | description
---- | --- | --- | ---
-scrollWithoutAnimation | bool | false | 点击顶部tab切换是否有动画
-locked | bool | false | 是否允许拖动切换
-infinite | bool | false | 是否为无限滚动视图
-isDot | bool | false | 是否有底部dot
-tabLabels | array | [] | tab索引，默认使用children数组索引
-initialPage | number | 0 | 初始页索引
-autoPlay | bool | false | 是否自动轮播
-autoPlayTime | number | 2 | 自动轮播间隔时间(以秒为单位)
-vertical | bool | false | 是否为垂直切换视图
-onChange | function | () => {} | 切换tab回调
-dotStyle | object | {} | dot样式
-dotWrapStyle | object | {} | dot外部样式
-dotActiveStyle | object | {} | dot激活样式
+| Name | propType | default value | description |
+| --- | --- | --- | --- |
+| scrollWithoutAnimation | bool | false | 点击顶部tab切换是否有动画 |
+| locked | bool | false | 是否允许拖动切换 |
+| infinite | bool | false | 是否为无限滚动视图 |
+| isDot | bool | false | 是否有底部dot |
+| tabLabels | array | [] | tab索引，默认使用children数组索引 |
+| initialPage | number | 0 | 初始页索引 |
+| autoPlay | bool | false | 是否自动轮播 |
+| autoPlayTime | number | 2 | 自动轮播间隔时间(以秒为单位) |
+| vertical | bool | false | 是否为垂直切换视图 |
+| dotStyle | object | {} | dot样式 |
+| dotWrapStyle | object | {} | dot外部样式 |
+| dotActiveStyle | object | {} | dot激活样式 |
+| onChange | function | () => {} | 切换tab回调 |
+| renderTabBar | function | () => {} | tabBar组件 |
+| duration(native only) | number | 200 | 动画持续时间 |
 
 ## TODO
 - [x] 优化滚动区域索引，使用代理scrollView完成
@@ -121,6 +125,7 @@ dotActiveStyle | object | {} | dot激活样式
 - [x] 完善web端ScrollTabView
 - [x] 优化结构、代码，统一命名
 - [x] 统一兼容react native不同版本
+- [x] 记录开发过程
 - [ ] 完善rn端ScrollTabView达到和web端表现一致
 - [ ] 更多props配置
 

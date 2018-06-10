@@ -23,8 +23,8 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
         <ScrollPagedView
-          onPageChange={this._onPageChange}
-          setResponder={this._setResponder}
+          onChange={this._onChange}
+          onResponder={this._onResponder}
         >
           {Array.from({ length: 3 }, (val, ind) => {
             return (

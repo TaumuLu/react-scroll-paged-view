@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import { accAdd, isAndroid, isEmpty, isIOS, getMergeProps } from './utils'
+import { accAdd, isAndroid, isEmpty, isIOS, getMergeProps, noop } from './utils'
 import ScrollPagedHOC from './components/scroll-paged-hoc'
 import AgentScrollView from './components/agent-scroll-view'
 import ScrollTabView from './components/scroll-tab-view'
@@ -10,33 +10,35 @@ import ScrollTabView from './components/scroll-tab-view'
 export default class ScrollPagedView extends Component {
 
   static propTypes = {
-    onPageChange: PropTypes.func,
-    setResponder: PropTypes.func,
+    onChange: PropTypes.func,
+    onResponder: PropTypes.func,
+    pageProps: PropTypes.object,
     style: PropTypes.object,
   }
 
   static defaultProps = {
-    onPageChange: () => {},
-    setResponder: () => {},
+    onChange: noop,
+    onResponder: noop,
+    pageProps: {},
     style: {},
   }
 
-  onPageChange = (index, oldIndex) => {
-    const { onPageChange } = this.props
-    if (onPageChange) onPageChange(index)
-
+  onChange = (index, oldIndex) => {
+    const { onChange } = this.props
     this.currentPage = index
     // 肯定处于边界位置,多此一举设置
     this.isBorder = true
     this.borderDirection = oldIndex > index ? 'isBottom' : 'isTop'
     this.isChange = true
-    // 这里本来是在onPageChange事件后设置true意味着外层View夺权
+    // 这里本来是在onChange事件后设置true意味着外层View夺权
     // 但android外层组件一旦夺权无法再传递给子组件，这里指ScrollView
     // 应此外层先放权拦截，这样之后的事件流还是会经过外层view但不处理，被子层ScrollView处理
     // 这样做的目的是页面却换后如果下次事件不是切换页面那么子层ScrollView还能响应滚动，而不是到第二次才作出反应
     // 之后的如果需要翻页外层View也能随时拦截掉给自己处理而不被子层ScrollView的onInterceptTouchEvent事件给取消掉
     // 可以参考RNScrollView.java里的onInterceptTouchEvent方法
     this.setResponder(false)
+
+    onChange(index, oldIndex)
   }
 
   // 暂未观测出设置的先后顺序影响
@@ -53,11 +55,9 @@ export default class ScrollPagedView extends Component {
 
     this.isResponder = flag
 
-    // ios单独处理阻止外层scrollView滑动
-    if (isIOS) {
-      const { setResponder } = this.props
-      setResponder && setResponder(flag)
-    }
+    // ios可以单独处理阻止外层scrollView滑动
+    const { onResponder } = this.props
+    onResponder && onResponder(flag)
   }
 
   _onContentSizeChange = (oldSize, newSize) => {
@@ -224,19 +224,19 @@ export default class ScrollPagedView extends Component {
   }
 
   render() {
-    const { style } = this.props
+    const { style, pageProps } = this.props
 
     return (
       <ScrollTabView
+        duration={400}
+        {...pageProps}
         onStartShouldSetPanResponder={this._startResponder}
         onMoveShouldSetPanResponder={this._moveResponder}
         onStartShouldSetPanResponderCapture={this._startResponderCapture}
         onMoveShouldSetPanResponderCapture={this._moveResponderCapture}
         onPanResponderTerminationRequest={this._onPanResponderTerminationRequest}
         // onPanResponderTerminate={this._onPanResponderTerminate}
-
-        onPageChange={this.onPageChange}
-        duration={400}
+        onChange={this.onChange}
         style={style}
         vertical
       >

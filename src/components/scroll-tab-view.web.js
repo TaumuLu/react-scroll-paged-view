@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { size, get, find, findLast } from '../utils'
+import { size, get, find, findLast, noop } from '../utils'
 
 const transitionParams = 'all 0.5s'
 const longSwipesMs = 300
@@ -14,15 +14,15 @@ export default class ScrollTabView extends React.Component {
     infinite: PropTypes.bool,
     isDot: PropTypes.bool,
     tabLabels: PropTypes.array,
-    dotStyle: PropTypes.object,
-    dotWrapStyle: PropTypes.object,
-    dotActiveStyle: PropTypes.object,
     initialPage: PropTypes.number,
     autoPlay: PropTypes.bool,
     autoPlayTime: PropTypes.number,
-    renderTabBar: PropTypes.func,
     vertical: PropTypes.bool,
+    dotStyle: PropTypes.object,
+    dotWrapStyle: PropTypes.object,
+    dotActiveStyle: PropTypes.object,
     onChange: PropTypes.func,
+    renderTabBar: PropTypes.func,
   }
 
   static defaultProps = {
@@ -35,10 +35,11 @@ export default class ScrollTabView extends React.Component {
     autoPlay: false,
     autoPlayTime: 2,
     vertical: false,
-    onChange: () => {},
     dotStyle: {},
     dotWrapStyle: {},
     dotActiveStyle: {},
+    onChange: noop,
+    renderTabBar: noop,
   }
 
   constructor(props) {

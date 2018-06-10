@@ -6,11 +6,11 @@ import {
   Animated
 } from 'react-native'
 import PropTypes from 'prop-types'
+import { noop } from '../utils'
 
 
 const defaultResponder = isResponder => (evt, gestureState) => isResponder
 
-const defaultResponderCallback = (evt, gestureState) => {}
 
 export default class ScrollTabView extends Component {
 
@@ -18,7 +18,7 @@ export default class ScrollTabView extends Component {
     initialPage: PropTypes.number,
     vertical: PropTypes.bool,
     duration: PropTypes.number,
-    onPageChange: PropTypes.func,
+    onChange: PropTypes.func,
     onStartShouldSetPanResponder: PropTypes.func,
     onStartShouldSetPanResponderCapture: PropTypes.func,
     onMoveShouldSetPanResponder: PropTypes.func,
@@ -32,13 +32,13 @@ export default class ScrollTabView extends Component {
     initialPage: 0,
     vertical: false,
     duration: 200,
-    onPageChange: () => {},
+    onChange: noop,
     onStartShouldSetPanResponder: defaultResponder(true),
     onStartShouldSetPanResponderCapture: defaultResponder(false),
     onMoveShouldSetPanResponder: defaultResponder(true),
     onMoveShouldSetPanResponderCapture: defaultResponder(false),
     onPanResponderTerminationRequest: defaultResponder(true),
-    onPanResponderTerminate: defaultResponderCallback,
+    onPanResponderTerminate: noop,
   }
 
   constructor(props) {
@@ -70,7 +70,7 @@ export default class ScrollTabView extends Component {
       onPanResponderTerminationRequest,
       onPanResponderTerminate,
 
-      onPanResponderGrant: defaultResponderCallback,
+      onPanResponderGrant: noop,
       onPanResponderMove: this._onPanResponderMove,
       onPanResponderRelease: this._onPanResponderRelease,
       onShouldBlockNativeResponder: defaultResponder(true),
@@ -172,7 +172,7 @@ export default class ScrollTabView extends Component {
   }
 
   animateToPage(page) {
-    const { duration, onPageChange } = this.props
+    const { duration, onChange } = this.props
     const animations = []
     // if (this._currentPage !== page) {
     // }
@@ -199,7 +199,7 @@ export default class ScrollTabView extends Component {
       loadIndex.push(page)
     }
     this.setState({ loadIndex }, () => {
-      onPageChange(page, this._oldPage)
+      onChange(page, this._oldPage)
     })
   }
 

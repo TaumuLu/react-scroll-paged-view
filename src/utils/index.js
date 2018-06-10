@@ -6,6 +6,8 @@ export const isIOS = Platform.OS === 'ios'
 
 export const isAndroid = Platform.OS === 'android'
 
+export const noop = () => {}
+
 export const getType = (object) => {
   return Object.prototype.toString.call(object).slice(8, -1)
 }
