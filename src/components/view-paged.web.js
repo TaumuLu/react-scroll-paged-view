@@ -1,46 +1,16 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
-import { size, get, find, findLast, noop } from '../utils'
+import { size, get, find, findLast } from '../utils'
+import { propTypes, defaultProps } from '../utils/propTypes'
+
 
 const transitionParams = 'all 0.5s'
 const longSwipesMs = 300
 // const resetTime = 450
 
-export default class ScrollTabView extends React.Component {
-  static propTypes = {
-    scrollWithoutAnimation: PropTypes.bool,
-    locked: PropTypes.bool,
-    infinite: PropTypes.bool,
-    isDot: PropTypes.bool,
-    tabLabels: PropTypes.array,
-    initialPage: PropTypes.number,
-    autoPlay: PropTypes.bool,
-    autoPlayTime: PropTypes.number,
-    vertical: PropTypes.bool,
-    dotStyle: PropTypes.object,
-    dotWrapStyle: PropTypes.object,
-    dotActiveStyle: PropTypes.object,
-    onChange: PropTypes.func,
-    renderTabBar: PropTypes.func,
-  }
-
-  static defaultProps = {
-    scrollWithoutAnimation: false,
-    locked: false,
-    infinite: false,
-    isDot: false,
-    tabLabels: [],
-    initialPage: 0,
-    autoPlay: false,
-    autoPlayTime: 2,
-    vertical: false,
-    dotStyle: {},
-    dotWrapStyle: {},
-    dotActiveStyle: {},
-    onChange: noop,
-    renderTabBar: noop,
-  }
+export default class ViewPaged extends React.Component {
+  static propTypes = propTypes.WebViewPaged
+  static defaultProps = defaultProps.WebViewPaged
 
   constructor(props) {
     const { infinite } = props
@@ -329,7 +299,7 @@ export default class ScrollTabView extends React.Component {
   }
 
   render() {
-    const { children, tabLabels, infinite, isDot, dotWrapStyle, dotStyle, dotActiveStyle, locked, renderTabBar, vertical } = this.props
+    const { children, tabLabels, infinite, isDot, dotWrapStyle, dotStyle, dotActiveStyle, locked, renderTabBar, vertical, style } = this.props
     const { activeTab, loadTabList } = this.state
 
     this.tabChildren = this._children(
@@ -352,8 +322,8 @@ export default class ScrollTabView extends React.Component {
 
     return (
       <div
-        style={mergeStyle(Style.tabsContainer, getContainerStyle(vertical))}
         ref={this.setWrapRef}
+        style={mergeStyle(style, Style.tabsContainer, getContainerStyle(vertical))}
       >
         {!!renderTabBar &&
           renderTabBar({
@@ -422,9 +392,9 @@ const DotNav = ({
   tabChildren,
   activeTab,
   goToPage,
-  dotActiveStyle = {},
-  dotStyle = {},
   dotWrapStyle = {},
+  dotStyle = {},
+  dotActiveStyle = {},
   tabsLen,
 }) => {
   if (isDot) {
@@ -460,13 +430,17 @@ const getContainerStyle = (vertical) => {
   }
 }
 
+
 export const Style = {
   tabsContainer: {
     flex: 1,
     display: 'flex',
     position: 'relative',
+    boxSizing: 'border-box',
     height: '100%',
     width: '100%',
+    // height: typeof document !== 'undefined' ? document.documentElement.clientHeight : '100%',
+    // width: typeof document !== 'undefined' ? document.documentElement.clientWidth : '100%',
   },
   tabsBox: {
     flex: 1,

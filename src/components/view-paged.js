@@ -1,45 +1,13 @@
 import React, { Component } from 'react'
-import {
-  View,
-  PanResponder,
-  Easing,
-  Animated
-} from 'react-native'
-import PropTypes from 'prop-types'
+import { View, PanResponder, Easing, Animated } from 'react-native'
+
 import { noop } from '../utils'
+import { propTypes, defaultProps } from '../utils/propTypes'
 
 
-const defaultResponder = isResponder => (evt, gestureState) => isResponder
-
-
-export default class ScrollTabView extends Component {
-
-  static propTypes = {
-    initialPage: PropTypes.number,
-    vertical: PropTypes.bool,
-    duration: PropTypes.number,
-    onChange: PropTypes.func,
-    onStartShouldSetPanResponder: PropTypes.func,
-    onStartShouldSetPanResponderCapture: PropTypes.func,
-    onMoveShouldSetPanResponder: PropTypes.func,
-    onMoveShouldSetPanResponderCapture: PropTypes.func,
-    onPanResponderTerminationRequest: PropTypes.func,
-    onPanResponderTerminate: PropTypes.func,
-    children: PropTypes.array.isRequired,
-  }
-
-  static defaultProps = {
-    initialPage: 0,
-    vertical: false,
-    duration: 200,
-    onChange: noop,
-    onStartShouldSetPanResponder: defaultResponder(true),
-    onStartShouldSetPanResponderCapture: defaultResponder(false),
-    onMoveShouldSetPanResponder: defaultResponder(true),
-    onMoveShouldSetPanResponderCapture: defaultResponder(false),
-    onPanResponderTerminationRequest: defaultResponder(true),
-    onPanResponderTerminate: noop,
-  }
+export default class ViewPaged extends Component {
+  static propTypes = propTypes.RnViewPaged
+  static defaultProps = defaultProps.RnViewPaged
 
   constructor(props) {
     super(props)
@@ -60,6 +28,7 @@ export default class ScrollTabView extends Component {
       onMoveShouldSetPanResponderCapture,
       onPanResponderTerminationRequest,
       onPanResponderTerminate,
+      onShouldBlockNativeResponder,
     } = this.props
 
     this._panResponder = PanResponder.create({
@@ -69,11 +38,11 @@ export default class ScrollTabView extends Component {
       onMoveShouldSetPanResponderCapture,
       onPanResponderTerminationRequest,
       onPanResponderTerminate,
+      onShouldBlockNativeResponder,
 
       onPanResponderGrant: noop,
       onPanResponderMove: this._onPanResponderMove,
       onPanResponderRelease: this._onPanResponderRelease,
-      onShouldBlockNativeResponder: defaultResponder(true),
     })
   }
 

@@ -1,26 +1,23 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import { accAdd, isAndroid, isEmpty, isIOS, getMergeProps, noop } from './utils'
+import { accAdd, isAndroid, isEmpty, getMergeProps, noop } from './utils'
 import ScrollPagedHOC from './components/scroll-paged-hoc'
 import AgentScrollView from './components/agent-scroll-view'
-import ScrollTabView from './components/scroll-tab-view'
+import ViewPaged from './components/view-paged'
+
+import { propTypes, defaultProps } from './utils/propTypes'
+
 
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
-
   static propTypes = {
-    onChange: PropTypes.func,
+    ...propTypes.RnViewPaged,
     onResponder: PropTypes.func,
-    pageProps: PropTypes.object,
-    style: PropTypes.object,
   }
-
   static defaultProps = {
-    onChange: noop,
+    ...defaultProps.RnViewPaged,
     onResponder: noop,
-    pageProps: {},
-    style: {},
   }
 
   onChange = (index, oldIndex) => {
@@ -224,12 +221,10 @@ export default class ScrollPagedView extends Component {
   }
 
   render() {
-    const { style, pageProps } = this.props
-
     return (
-      <ScrollTabView
+      <ViewPaged
         duration={400}
-        {...pageProps}
+        {...this.props}
         onStartShouldSetPanResponder={this._startResponder}
         onMoveShouldSetPanResponder={this._moveResponder}
         onStartShouldSetPanResponderCapture={this._startResponderCapture}
@@ -237,15 +232,14 @@ export default class ScrollPagedView extends Component {
         onPanResponderTerminationRequest={this._onPanResponderTerminationRequest}
         // onPanResponderTerminate={this._onPanResponderTerminate}
         onChange={this.onChange}
-        style={style}
         vertical
       >
         {this.childrenList}
-      </ScrollTabView>
+      </ViewPaged>
     )
   }
 }
 
 export {
-  ScrollTabView
+  ViewPaged
 }

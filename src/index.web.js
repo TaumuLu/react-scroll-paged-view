@@ -3,22 +3,15 @@ import PropTypes from 'prop-types'
 
 import { accAdd, getMergeProps, noop } from './utils'
 import ScrollPagedHOC from './components/scroll-paged-hoc'
-import ScrollTabView from './components/scroll-tab-view'
+import ViewPaged from './components/view-paged'
+
+import { propTypes, defaultProps } from './utils/propTypes'
+
 
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
-
-  static propTypes = {
-    onChange: PropTypes.func,
-    pageProps: PropTypes.object,
-    style: PropTypes.object,
-  }
-
-  static defaultProps = {
-    onChange: noop,
-    pageProps: {},
-    style: {},
-  }
+  static propTypes = propTypes.WebViewPaged
+  static defaultProps = defaultProps.WebViewPaged
 
   onChange = (index, oldIndex) => {
     const { onChange } = this.props
@@ -135,31 +128,18 @@ export default class ScrollPagedView extends Component {
   }
 
   render() {
-    const { style, pageProps } = this.props
-
     return (
-      <div style={{ ...defaultStyle, ...style }}>
-        <ScrollTabView
-          {...pageProps}
-          onChange={this.onChange}
-          vertical
-        >
-          {this.childrenList}
-        </ScrollTabView>
-      </div>
+      <ViewPaged
+        {...this.props}
+        onChange={this.onChange}
+        vertical
+      >
+        {this.childrenList}
+      </ViewPaged>
     )
   }
 }
 
-const defaultStyle = {
-  flex: 1,
-  display: 'flex',
-  boxSizing: 'border-box',
-  height: typeof document !== 'undefined' ? document.documentElement.clientHeight : '100%',
-  width: typeof document !== 'undefined' ? document.documentElement.clientWidth : '100%',
-}
-
-
 export {
-  ScrollTabView
+  ViewPaged
 }

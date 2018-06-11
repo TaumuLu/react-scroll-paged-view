@@ -115,6 +115,7 @@ The functionality of the Rn version is not as complete as the Web version, and t
 | onChange | function | () => {} | Toggle tab callback |
 | renderTabBar | function | () => {} | tabBar component |
 | duration(native only) | number | 200 | Animation duration |
+| style | object | {} | ScrollTabView style |
 
 ## TODO
 - [x] Optimize scroll region index, use proxy scrollView to complete

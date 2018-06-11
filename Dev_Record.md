@@ -89,7 +89,9 @@ scrollEnabled的值只是作为scrollView的props传入
 
 ### 回到起点
 在纠结于上述解决方案时，我并未去深入了解真正的原因，但也在一次次尝试中渐渐找到了问题所在  
-还是需要了解android的事件流机制，在一番学习后我了解了部分机制，事件流和dom的有点类似，捕获、目标、冒泡，但在事件捕获阶段不同，android会调用dispatchTouchEvent来分发事件，在此期间会调用onInterceptTouchEvent来判断是否需要拦截，好了，到这里才找到我们的主角，问题就出在onInterceptTouchEvent这个方法上，之前一直做的努力都是在重写这个方法，要弄明白这个方法的处理才是关键所在，并不能陷入如何去调用祖父类这样的实现上  
+还是需要了解android的事件流机制，在一番学习后我了解了部分机制，触摸事件流和dom的看似有点类似，捕获、目标、冒泡，但其实本质上不同，dom的事件模型是广播和扩散，android的是责任链模式，他们的表现形式类似
+
+但在事件捕获阶段不同，android会调用dispatchTouchEvent来分发事件，在此期间会调用onInterceptTouchEvent来判断是否需要拦截，好了，到这里才找到我们的主角，问题就出在onInterceptTouchEvent这个方法上，之前一直做的努力都是在重写这个方法，要弄明白这个方法的处理才是关键所在，并不能陷入如何去调用祖父类这样的实现上  
 
 #### onInterceptTouchEvent
 

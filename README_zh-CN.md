@@ -115,6 +115,7 @@ rn版的功能不如web版的完整，后续继续完善
 | onChange | function | () => {} | 切换tab回调 |
 | renderTabBar | function | () => {} | tabBar组件 |
 | duration(native only) | number | 200 | 动画持续时间 |
+| style | object | {} | ScrollTabView样式 |
 
 ## TODO
 - [x] 优化滚动区域索引，使用代理scrollView完成
