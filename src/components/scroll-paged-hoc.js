@@ -34,6 +34,18 @@ export default function ScrollPageHOC(WrappedComponent) {
       }
     }
 
+    getViewPagedInstance() {
+      const { withRef } = this.props
+      if (!withRef) {
+        console.warn('To access the viewPage instance, you need to specify withRef=true in the props')
+      }
+      return this.viewPagedRef
+    }
+
+    setViewPagedRef = (ref) => {
+      this.viewPagedRef = ref
+    }
+
     // setScrollViewConfig = (setKey, value, index, handle) => {
     //   const { currentPage, scrollViewIndex } = this
     //   const setKeyList = [setKey, currentPage]

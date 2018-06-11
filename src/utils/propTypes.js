@@ -11,6 +11,8 @@ const viewPagedCommon = {
     vertical: PropTypes.bool,
     onChange: PropTypes.func,
     style: PropTypes.object,
+    duration: PropTypes.number,
+    withRef: PropTypes.bool,
     // children: PropTypes.array.isRequired,
   },
   defaultProps: {
@@ -18,20 +20,21 @@ const viewPagedCommon = {
     vertical: false,
     onChange: noop,
     style: {},
+    duration: 400,
+    withRef: false,
   },
 }
 
 export const propTypes = {
   RnViewPaged: {
     ...viewPagedCommon.propTypes,
-    duration: PropTypes.number,
     onStartShouldSetPanResponder: PropTypes.func,
     onStartShouldSetPanResponderCapture: PropTypes.func,
     onMoveShouldSetPanResponder: PropTypes.func,
     onMoveShouldSetPanResponderCapture: PropTypes.func,
     onPanResponderTerminationRequest: PropTypes.func,
-    onPanResponderTerminate: PropTypes.func,
     onShouldBlockNativeResponder: PropTypes.func,
+    onPanResponderTerminate: PropTypes.func,
   },
   WebViewPaged: {
     ...viewPagedCommon.propTypes,
@@ -51,23 +54,24 @@ export const propTypes = {
 
 export const defaultProps = {
   RnViewPaged: {
-    duration: 200,
+    ...viewPagedCommon.defaultProps,
     onStartShouldSetPanResponder: defaultResponder(true),
     onStartShouldSetPanResponderCapture: defaultResponder(false),
     onMoveShouldSetPanResponder: defaultResponder(true),
     onMoveShouldSetPanResponderCapture: defaultResponder(false),
     onPanResponderTerminationRequest: defaultResponder(true),
-    onPanResponderTerminate: noop,
     onShouldBlockNativeResponder: defaultResponder(true),
+    onPanResponderTerminate: noop,
   },
   WebViewPaged: {
+    ...viewPagedCommon.defaultProps,
     scrollWithoutAnimation: false,
     locked: false,
     infinite: false,
     isDot: false,
     tabLabels: [],
     autoPlay: false,
-    autoPlayTime: 2,
+    autoPlayTime: 2000,
     dotStyle: {},
     dotWrapStyle: {},
     dotActiveStyle: {},

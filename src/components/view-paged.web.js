@@ -4,16 +4,14 @@ import { size, get, find, findLast } from '../utils'
 import { propTypes, defaultProps } from '../utils/propTypes'
 
 
-const transitionParams = 'all 0.5s'
 const longSwipesMs = 300
-// const resetTime = 450
 
 export default class ViewPaged extends React.Component {
   static propTypes = propTypes.WebViewPaged
   static defaultProps = defaultProps.WebViewPaged
 
   constructor(props) {
-    const { infinite } = props
+    const { infinite, duration } = props
     let { initialPage } = props
 
     if (infinite) {
@@ -28,6 +26,7 @@ export default class ViewPaged extends React.Component {
     this.containerSize = 0
     // 记录视图真实activeTab，懒调整下一tab
     this.boxActiveTab = initialPage
+    this.transition = `all ${duration / 1000}s ease-out`
   }
 
   componentDidMount() {
@@ -50,7 +49,7 @@ export default class ViewPaged extends React.Component {
   setStyle = (withoutTransition = this.props.scrollWithoutAnimation) => {
     if (this.tabsBox) {
       requestAnimationFrame(() => {
-        this.tabsBox.style.transition = withoutTransition ? 'none' : transitionParams
+        this.tabsBox.style.transition = withoutTransition ? 'none' : this.transition
         this.tabsBox.style.transform = this.getTransform()
       })
     }
@@ -120,14 +119,13 @@ export default class ViewPaged extends React.Component {
   autoPlay = () => {
     const { autoPlay, autoPlayTime } = this.props
     if (autoPlay) {
-      const time = isNaN(autoPlayTime) ? 2 : autoPlayTime
       if (this.timer) clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         const { activeTab } = this.state
         const nextIndex = activeTab + 1
         this.goToPage(nextIndex)
         this.autoPlay()
-      }, time * 1000)
+      }, autoPlayTime)
     }
   }
 
@@ -169,7 +167,7 @@ export default class ViewPaged extends React.Component {
   //         })
   //       }
   //     }
-  //   }, resetTime)
+  //   }, 450)
   // }
 
   // 所有页面切换都走此方法，用于控制按需加载
@@ -284,7 +282,7 @@ export default class ViewPaged extends React.Component {
             this.goToPage(activeTab)
           })
         } else {
-          this.tabsBox.style.transition = transitionParams
+          this.tabsBox.style.transition = this.transition
           requestAnimationFrame(() => {
             this.goToPage(activeTab)
           })
@@ -323,7 +321,7 @@ export default class ViewPaged extends React.Component {
     return (
       <div
         ref={this.setWrapRef}
-        style={mergeStyle(style, Style.tabsContainer, getContainerStyle(vertical))}
+        style={mergeStyle(mergeStyle(defaultStyle, style), Style.tabsContainer, getContainerStyle(vertical))}
       >
         {!!renderTabBar &&
           renderTabBar({
@@ -431,16 +429,17 @@ const getContainerStyle = (vertical) => {
 }
 
 
+const defaultStyle = {
+  height: typeof document !== 'undefined' ? document.documentElement.clientHeight : '100%',
+  width: '100%',
+}
+
 export const Style = {
   tabsContainer: {
     flex: 1,
     display: 'flex',
     position: 'relative',
     boxSizing: 'border-box',
-    height: '100%',
-    width: '100%',
-    // height: typeof document !== 'undefined' ? document.documentElement.clientHeight : '100%',
-    // width: typeof document !== 'undefined' ? document.documentElement.clientWidth : '100%',
   },
   tabsBox: {
     flex: 1,

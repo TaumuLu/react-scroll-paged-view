@@ -221,10 +221,12 @@ export default class ScrollPagedView extends Component {
   }
 
   render() {
+    const { onResponder, ...otherProps } = this.props
+
     return (
       <ViewPaged
-        duration={400}
-        {...this.props}
+        {...otherProps}
+        ref={this.setViewPagedRef}
         onStartShouldSetPanResponder={this._startResponder}
         onMoveShouldSetPanResponder={this._moveResponder}
         onStartShouldSetPanResponderCapture={this._startResponderCapture}

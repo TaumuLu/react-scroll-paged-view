@@ -131,6 +131,7 @@ export default class ScrollPagedView extends Component {
     return (
       <ViewPaged
         {...this.props}
+        ref={this.setViewPagedRef}
         onChange={this.onChange}
         vertical
       >
