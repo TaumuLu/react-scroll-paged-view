@@ -1,6 +1,6 @@
 # react-scroll-paged-view
 [View README in English](./README.md)  
-[如果你对我的开发过程感兴趣不妨读读，相信会有所收获](./Dev_Record.md)  
+[如果你对我的开发过程感兴趣不妨读读，相信会有所收获](./doc/Dev_Record.md)  
 
 **滚动视图，内滚动，整页滚动，嵌套滚动视图**  
 
@@ -22,6 +22,7 @@ iOS RN代码完美支持，Android则提供了原生包支持，基于RN ScrollV
 ~~**react native0.47版本的使用0.1.\*版本**~~  
 **已完美兼容以上RN的版本，直接安装最新的包即可**  
 **没有出现在内部ScrollView组件中的点击事件可以用onPressIn代替**  
+**web版的ViewPaged需要设置高度，默认高度是document.documentElement.clientHeight**  
 
 ## Demo
 | IOS | Android | Web |
@@ -143,7 +144,7 @@ rn版的功能不如web版的完整，后续继续完善
 - [x] 完善web端ViewPaged
 - [x] 优化结构、代码，统一命名
 - [x] 统一兼容React Native不同版本
-- [x] 记录开发过程
+- [x] 记录开发过程
 - [ ] 完善RN端ViewPaged达到和web端表现一致
 - [ ] 更多props配置
 

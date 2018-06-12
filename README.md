@@ -1,6 +1,6 @@
 # react-scroll-paged-view
 [以中文查看](./README_zh-CN.md)  
-[If you are interested in my development process, you may read it, I believe you will gain something](./Dev_Record.md)  
+[If you are interested in my development process, you may read it, I believe you will gain something](./doc/Dev_Record.md)  
 
 **scroll view, Inside scroll, Full page scroll, Nesting ScrollView**  
 
@@ -22,6 +22,7 @@ In addition, the core functional module ViewPaged is also available for use
 ~~**The react native 0.47 version uses the 0.1.\* version**~~  
 **Has been perfectly compatible with the above RN version, directly install the latest package**  
 **Click events that do not appear in the internal ScrollView component can be replaced with onPressIn**  
+**Web version of ViewPaged needs to set the height, the default height is document.documentElement.clientHeight**  
 
 ## Demo
 | IOS | Android | Web |
