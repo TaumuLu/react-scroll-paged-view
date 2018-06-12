@@ -154,3 +154,4 @@ The functionality of the Rn version is not as complete as the Web version, and t
 - 1.2.*
 - 1.3.*
 - 1.5.*
+- 1.6.*

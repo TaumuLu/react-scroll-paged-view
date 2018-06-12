@@ -209,16 +209,20 @@ export default class ScrollPagedView extends Component {
     return !this.isResponder
   }
 
-  // android
-  _onPanResponderTerminate = () => {
-    if (this.isResponder) {
-      this.setResponder(false)
+  // android only
+  // _onShouldBlockNativeResponder = () => {
+  //   return true
+  // }
 
-      this.isTerminate = true
-    } else {
-      this.isTerminate = false
-    }
-  }
+  // _onPanResponderTerminate = () => {
+    // if (this.isResponder) {
+    //   this.setResponder(false)
+
+    //   this.isTerminate = true
+    // } else {
+    //   this.isTerminate = false
+    // }
+  // }
 
   render() {
     const { onResponder, ...otherProps } = this.props
@@ -232,6 +236,7 @@ export default class ScrollPagedView extends Component {
         onStartShouldSetPanResponderCapture={this._startResponderCapture}
         onMoveShouldSetPanResponderCapture={this._moveResponderCapture}
         onPanResponderTerminationRequest={this._onPanResponderTerminationRequest}
+        // onShouldBlockNativeResponder={this._onShouldBlockNativeResponder}
         // onPanResponderTerminate={this._onPanResponderTerminate}
         onChange={this.onChange}
         vertical
