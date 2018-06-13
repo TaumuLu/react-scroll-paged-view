@@ -14,6 +14,7 @@ import ScrollPagedView from 'react-scroll-paged-view'
 console.disableYellowBox = true
 
 let height = Dimensions.get('window').height
+const width = Dimensions.get('window').width
 if (Platform.OS === 'android') {
   height -= NativeModules.StatusBarManager.HEIGHT
 }
@@ -25,7 +26,13 @@ export default class App extends Component {
         <ScrollPagedView
           onChange={this._onChange}
           onResponder={this._onResponder}
+          vertical={false}
         >
+          <View style={{ flex: 1, backgroundColor: 'green' }}>
+            <Text style={styles.text}>head</Text>
+            <Text style={styles.textIndex}>page {0}</Text>
+            <Text style={styles.text}>foot</Text>
+          </View>
           {Array.from({ length: 3 }, (val, ind) => {
             return (
               <InsideScrollView key={ind} text={ind + 1} style={styles[`pageItem_${ind}`]}/>
@@ -112,13 +119,19 @@ const styles = StyleSheet.create({
   pageItem_0: {
     backgroundColor: 'blue',
     height: 1000,
+    // height,
+    width: width * 2,
+
   },
   pageItem_1: {
     backgroundColor: 'green',
     height,
+    width,
   },
   pageItem_2: {
     backgroundColor: 'red',
-    height: 1200,
+    // height: 1200,
+    height,
+    width: width * 2,
   },
 })

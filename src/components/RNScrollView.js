@@ -17,9 +17,15 @@ export default class RNScrollView extends ScrollView {
       return reactElement
     }
     const { props } = reactElement
+    const { horizontal, ...otherProps } = props
 
+    if (horizontal) {
+      return (
+        <AndroidHorizontalScrollView {...otherProps}/>
+      )
+    }
     return (
-      <AndroidScrollView {...props}/>
+      <AndroidScrollView {...otherProps}/>
     )
   }
 }
@@ -31,9 +37,15 @@ const nativeOnlyProps = {
 }
 
 let AndroidScrollView
+let AndroidHorizontalScrollView
 if (Platform.OS !== 'ios') {
   AndroidScrollView = requireNativeComponent(
     'RNScrollView',
+    ScrollView,
+    nativeOnlyProps
+  )
+  AndroidHorizontalScrollView = requireNativeComponent(
+    'RNHorizontalScrollView',
     ScrollView,
     nativeOnlyProps
   )

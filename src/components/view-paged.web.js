@@ -232,7 +232,13 @@ export default class ViewPaged extends React.Component {
     if (!this.isScroll) {
       // 手拖动动画
       this.setBoxAnimation({ clientX, clientY })
-      e.preventDefault()
+      // 判断默认行为是否可以被禁用
+      if (e.cancelable) {
+        // 判断默认行为是否已经被禁用
+        if (!e.defaultPrevented) {
+          e.preventDefault()
+        }
+      }
     }
   }
 
@@ -431,7 +437,7 @@ const getContainerStyle = (vertical) => {
 
 const defaultStyle = {
   height: typeof document !== 'undefined' ? document.documentElement.clientHeight : '100%',
-  width: '100%',
+  width: typeof document !== 'undefined' ? document.documentElement.clientWidth : '100%',
 }
 
 export const Style = {

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { get, set } from '../utils'
+import { accAdd } from '../utils'
 
 export default function ScrollPageHOC(WrappedComponent) {
   const { propTypes, defaultProps } = WrappedComponent
@@ -16,7 +16,7 @@ export default function ScrollPageHOC(WrappedComponent) {
       super(props)
 
       this.isBorder = false
-      this.isResponder = false
+      this.isResponder = true
       this.currentPage = 0
 
       // this.scrollViewRef = []
@@ -32,18 +32,6 @@ export default function ScrollPageHOC(WrappedComponent) {
       return {
         ScrollView: this.ScrollViewMonitor,
       }
-    }
-
-    getViewPagedInstance() {
-      const { withRef } = this.props
-      if (!withRef) {
-        console.warn('To access the viewPage instance, you need to specify withRef=true in the props')
-      }
-      return this.viewPagedRef
-    }
-
-    setViewPagedRef = (ref) => {
-      this.viewPagedRef = ref
     }
 
     // setScrollViewConfig = (setKey, value, index, handle) => {
@@ -89,15 +77,36 @@ export default function ScrollPageHOC(WrappedComponent) {
     //   this.onUpdate(value)
     // }
 
-    triggerJudge = (isTop, isBottom) => {
+    triggerJudge(isStart, isEnd) {
       switch (this.currentPage) {
         case 0:
-          return isBottom
+          return isEnd
         case this.len - 1:
-          return isTop
+          return isStart
         default:
-          return (isTop && this.borderDirection === 'isTop') || (isBottom && this.borderDirection === 'isBottom')
+          return (isStart && this.borderDirection === 'isStart') || (isEnd && this.borderDirection === 'isEnd')
       }
+    }
+
+    setBorderValue(startValue, endValue, maxValue) {
+      const isStart = parseFloat(startValue) <= 0
+      const isEnd = parseFloat(accAdd(startValue, endValue).toFixed(2)) >= parseFloat(maxValue.toFixed(2))
+      this.borderDirection = isStart ? 'isStart' : isEnd ? 'isEnd' : false
+      this.isBorder = this.triggerJudge(isStart, isEnd)
+    }
+
+    checkMove(y, x) {
+      const { startY, startX, props: { vertical } } = this
+      const yValue = y - startY
+      const xValue = x - startX
+      if (vertical) {
+        return Math.abs(yValue) > Math.abs(xValue)
+      }
+      return Math.abs(xValue) > Math.abs(yValue)
+    }
+
+    checkScrollContent(sizeValue, layoutValue) {
+      return parseFloat(sizeValue.toFixed(2)) > parseFloat(layoutValue.toFixed(2))
     }
 
     getChildren(children = this.props.children, handleFunc = child => child) {

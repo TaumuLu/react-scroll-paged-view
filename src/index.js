@@ -8,7 +8,6 @@ import ViewPaged from './components/view-paged'
 
 import { propTypes, defaultProps } from './utils/propTypes'
 
-
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
   static propTypes = {
@@ -17,6 +16,7 @@ export default class ScrollPagedView extends Component {
   }
   static defaultProps = {
     ...defaultProps.RnViewPaged,
+    vertical: true,
     onResponder: noop,
   }
 
@@ -25,15 +25,10 @@ export default class ScrollPagedView extends Component {
     this.currentPage = index
     // 肯定处于边界位置,多此一举设置
     this.isBorder = true
-    this.borderDirection = oldIndex > index ? 'isBottom' : 'isTop'
+    this.borderDirection = oldIndex > index ? 'isEnd' : 'isStart'
     this.isChange = true
-    // 这里本来是在onChange事件后设置true意味着外层View夺权
-    // 但android外层组件一旦夺权无法再传递给子组件，这里指ScrollView
-    // 应此外层先放权拦截，这样之后的事件流还是会经过外层view但不处理，被子层ScrollView处理
-    // 这样做的目的是页面却换后如果下次事件不是切换页面那么子层ScrollView还能响应滚动，而不是到第二次才作出反应
-    // 之后的如果需要翻页外层View也能随时拦截掉给自己处理而不被子层ScrollView的onInterceptTouchEvent事件给取消掉
-    // 可以参考RNScrollView.java里的onInterceptTouchEvent方法
-    this.setResponder(false)
+
+    this.setResponder(true)
 
     onChange(index, oldIndex)
   }
@@ -60,8 +55,11 @@ export default class ScrollPagedView extends Component {
   _onContentSizeChange = (oldSize, newSize) => {
     // 修复高度变化后边界已判断操作,只有第一页需要判断
     if (!isEmpty(oldSize)) {
-      const { currentPage, isResponder } = this
-      if (currentPage === 0 && isResponder && newSize.height > oldSize.height) {
+      const { currentPage, isResponder, props: { vertical } } = this
+      const newValue = vertical ? newSize.height : newSize.width
+      const oldValue = vertical ? oldSize.height : oldSize.width
+
+      if (currentPage === 0 && isResponder && newValue > oldValue) {
         this.isBorder = false
         this.borderDirection = false
         this.setResponder(false)
@@ -107,25 +105,33 @@ export default class ScrollPagedView extends Component {
 
   _onMomentumScrollEnd = ({ nativeEvent }) => {
     if (!this.isChange) {
-      const { contentOffset: { y }, contentSize: { height: maxHeight }, layoutMeasurement: { height } } = nativeEvent
-      const isTop = parseFloat(y) <= 0
-      const isBottom = parseFloat(accAdd(y, height).toFixed(2)) >= parseFloat(maxHeight.toFixed(2))
-      this.borderDirection = isTop ? 'isTop' : isBottom ? 'isBottom' : false
-      this.isBorder = this.triggerJudge(isTop, isBottom)
+      const { vertical } = this.props
+      const {
+        contentOffset: { y, x },
+        contentSize: { height: maxHeight, width: maxWidth },
+        layoutMeasurement: { height, width },
+      } = nativeEvent
+      const startValue = vertical ? y : x
+      const endValue = vertical ? height : width
+      const maxValue = vertical ? maxHeight : maxWidth
+
+      this.setBorderValue(startValue, endValue, maxValue)
     }
   }
 
   _onTouchMove = ({ nativeEvent }, { scrollViewSize, scrollViewLayout }) => {
     const { pageX, pageY } = nativeEvent
-    const { startX, startY } = this
+    const { startX, startY, props: { vertical } } = this
 
     this.isChange = false
-    if (Math.abs(pageY - startY) > Math.abs(pageX - startX)) {
-      const hasScrollContent = scrollViewSize.height > scrollViewLayout.height
+    if (this.checkMove(pageY, pageX)) {
+      const sizeValue = vertical ? scrollViewSize.height : scrollViewSize.width
+      const layoutValue = vertical ? scrollViewLayout.height : scrollViewLayout.width
+      const hasScrollContent = this.checkScrollContent(sizeValue, layoutValue)
 
       if (hasScrollContent) {
         if (this.isBorder) {
-          const distance = pageY - startY
+          const distance = vertical ? pageY - startY : pageX - startX
           // 大于1.6为了防抖
           if (distance !== 0 && Math.abs(distance) > 1.6) {
             const direction = distance > 0 // 向上
@@ -168,6 +174,7 @@ export default class ScrollPagedView extends Component {
 
   // 子元素调用一定要传入index值来索引对应数据,且最好执行懒加载
   ScrollViewMonitor = ({ children, nativeProps = {} }) => {
+    const { vertical } = this.props
     const mergeProps = getMergeProps({
       onContentSizeChange: this._onContentSizeChange,
       onMomentumScrollEnd: this._onMomentumScrollEnd,
@@ -183,6 +190,7 @@ export default class ScrollPagedView extends Component {
     return (
       <AgentScrollView
         {...mergeProps}
+        horizontal={!vertical}
       >
         {children}
       </AgentScrollView>
@@ -209,20 +217,16 @@ export default class ScrollPagedView extends Component {
     return !this.isResponder
   }
 
-  // android only
-  // _onShouldBlockNativeResponder = () => {
-  //   return true
-  // }
+  // android
+  _onPanResponderTerminate = () => {
+    if (this.isResponder) {
+      this.setResponder(false)
 
-  // _onPanResponderTerminate = () => {
-    // if (this.isResponder) {
-    //   this.setResponder(false)
-
-    //   this.isTerminate = true
-    // } else {
-    //   this.isTerminate = false
-    // }
-  // }
+      this.isTerminate = true
+    } else {
+      this.isTerminate = false
+    }
+  }
 
   render() {
     const { onResponder, ...otherProps } = this.props
@@ -230,16 +234,13 @@ export default class ScrollPagedView extends Component {
     return (
       <ViewPaged
         {...otherProps}
-        ref={this.setViewPagedRef}
         onStartShouldSetPanResponder={this._startResponder}
         onMoveShouldSetPanResponder={this._moveResponder}
         onStartShouldSetPanResponderCapture={this._startResponderCapture}
         onMoveShouldSetPanResponderCapture={this._moveResponderCapture}
         onPanResponderTerminationRequest={this._onPanResponderTerminationRequest}
-        // onShouldBlockNativeResponder={this._onShouldBlockNativeResponder}
         // onPanResponderTerminate={this._onPanResponderTerminate}
         onChange={this.onChange}
-        vertical
       >
         {this.childrenList}
       </ViewPaged>
