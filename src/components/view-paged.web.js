@@ -437,7 +437,8 @@ const getContainerStyle = (vertical) => {
 
 const defaultStyle = {
   height: typeof document !== 'undefined' ? document.documentElement.clientHeight : '100%',
-  width: typeof document !== 'undefined' ? document.documentElement.clientWidth : '100%',
+  // width: typeof document !== 'undefined' ? document.documentElement.clientWidth : '100%',
+  width: '100%',
 }
 
 export const Style = {

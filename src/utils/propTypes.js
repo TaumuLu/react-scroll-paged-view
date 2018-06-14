@@ -12,6 +12,7 @@ const viewPagedCommon = {
     onChange: PropTypes.func,
     style: PropTypes.object,
     duration: PropTypes.number,
+    withRef: PropTypes.bool,
     // children: PropTypes.array.isRequired,
   },
   defaultProps: {
@@ -20,6 +21,7 @@ const viewPagedCommon = {
     onChange: noop,
     style: {},
     duration: 400,
+    withRef: false,
   },
 }
 
@@ -31,8 +33,8 @@ export const propTypes = {
     onMoveShouldSetPanResponder: PropTypes.func,
     onMoveShouldSetPanResponderCapture: PropTypes.func,
     onPanResponderTerminationRequest: PropTypes.func,
-    onPanResponderTerminate: PropTypes.func,
     onShouldBlockNativeResponder: PropTypes.func,
+    onPanResponderTerminate: PropTypes.func,
   },
   WebViewPaged: {
     ...viewPagedCommon.propTypes,
@@ -58,8 +60,8 @@ export const defaultProps = {
     onMoveShouldSetPanResponder: defaultResponder(true),
     onMoveShouldSetPanResponderCapture: defaultResponder(false),
     onPanResponderTerminationRequest: defaultResponder(true),
-    onPanResponderTerminate: noop,
     onShouldBlockNativeResponder: defaultResponder(true),
+    onPanResponderTerminate: noop,
   },
   WebViewPaged: {
     ...viewPagedCommon.defaultProps,

@@ -109,7 +109,7 @@ export default class ScrollPagedView extends Component {
     if (!this.isResponder) {
       e.stopPropagation()
     // 判断默认行为是否可以被禁用
-    } else if (e.cancelable) { {
+    } else if (e.cancelable) {
       // 判断默认行为是否已经被禁用
       if (!e.defaultPrevented) {
         e.preventDefault()
@@ -144,6 +144,7 @@ export default class ScrollPagedView extends Component {
     return (
       <ViewPaged
         {...this.props}
+        ref={this.setViewPagedRef}
         onChange={this.onChange}
       >
         {this.childrenList}
