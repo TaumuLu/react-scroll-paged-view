@@ -11,18 +11,20 @@ npm install react-scroll-paged-view --save
 
 ## Introduction
 Support React(web) & React Native(RN)  
-ScrollView component that provides child component packaging  
 Full-page scrolling and in-page scrolling  
 iOS RN code is perfectly supported. Android provides native package support. Based on RN ScrollView, some code changes are supported  
 There is no combination of internal scrolling and page scrolling in open source RN projects. Write this component based on need  
 In addition, the core functional module ViewPaged is also available for use  
+ScrollView component that provides subassembly packaging that can optionally be used  
+All pagination loads on demand, don't worry about initial rendering  
+Infinite pagination is also lazy, minimizing the current index page, even when switching quickly  
 
 ## Notice
 ~~**Compatible version "react-native": "~0.54.0"**~~  
 ~~**The react native 0.47 version uses the 0.1.\* version**~~  
 **Has been perfectly compatible with the above RN version, directly install the latest package**  
 **Click events that do not appear in the internal ScrollView component can be replaced with onPressIn**  
-**Web version of ViewPaged needs to set the height, the default height is document.documentElement.clientHeight**  
+**Web version of ViewPaged needs to set the height, the default height is document.documentElement.clientHeight, It is recommended to pass style props given height**  
 
 ## Demo
 | IOS | Android | Web |

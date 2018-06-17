@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 
-import ScrollPagedView from 'react-scroll-paged-view'
+import ScrollPagedView from './temp'
 
 console.disableYellowBox = true
 
@@ -26,13 +26,14 @@ export default class App extends Component {
         <ScrollPagedView
           onChange={this._onChange}
           onResponder={this._onResponder}
-          vertical={false}
+          // vertical={false}
+          // infinite
         >
-          <View style={{ flex: 1, backgroundColor: 'green' }}>
+          {/* <View style={{ flex: 1, backgroundColor: 'green' }}>
             <Text style={styles.text}>head</Text>
             <Text style={styles.textIndex}>page {0}</Text>
             <Text style={styles.text}>foot</Text>
-          </View>
+          </View> */}
           {Array.from({ length: 3 }, (val, ind) => {
             return (
               <InsideScrollView key={ind} text={ind + 1} style={styles[`pageItem_${ind}`]}/>
@@ -120,7 +121,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'blue',
     height: 1000,
     // height,
-    width: width * 2,
+    width,
+    // width: width * 2,
 
   },
   pageItem_1: {
@@ -130,8 +132,9 @@ const styles = StyleSheet.create({
   },
   pageItem_2: {
     backgroundColor: 'red',
-    // height: 1200,
-    height,
-    width: width * 2,
+    height: 1200,
+    // height,
+    width,
+    // width: width * 2,
   },
 })

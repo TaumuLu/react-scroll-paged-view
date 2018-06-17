@@ -11,18 +11,20 @@ npm install react-scroll-paged-view --save
 
 ## Introduction
 支持RN端，相应的web端组件也有  
-提供子组件封装的ScrollView组件  
 整页滚动和页内滚动结合，类似京东等app的商品详情页上下页查看  
 iOS RN代码完美支持，Android则提供了原生包支持，基于RN ScrollView改动了部分代码得以支持  
 目前开源的RN项目中并没有内滚动和页滚动结合的，基于需要写了这个组件  
 此外还额外提供了核心功能模块ViewPaged可供使用  
+提供子组件封装的ScrollView组件，可以选择使用  
+所有分页为按需加载，不必担心初始会全部渲染  
+无限分页也是懒处理，最小程度校准当前索引页，即使快速切换滑动也很流畅  
 
 ## Notice
 ~~**兼容至"react-native": "~0.54.0"版本**~~  
 ~~**react native0.47版本的使用0.1.\*版本**~~  
 **已完美兼容以上RN的版本，直接安装最新的包即可**  
 **没有出现在内部ScrollView组件中的点击事件可以用onPressIn代替**  
-**web版的ViewPaged需要设置高度，默认高度是document.documentElement.clientHeight**  
+**web版的ViewPaged需要设置高度，默认高度是document.documentElement.clientHeight，建议传入style给定高度**  
 
 ## Demo
 | IOS | Android | Web |
