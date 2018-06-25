@@ -1,65 +1,48 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 
-import { accAdd, isAndroid, isEmpty, getMergeProps, noop } from './utils'
-import ScrollPagedHOC from './components/scroll-paged-hoc'
+import { isAndroid, isEmpty, getMergeObject } from './utils'
+
+import ScrollPagedHOC from './decorators/scroll-paged-hoc'
 import AgentScrollView from './components/agent-scroll-view'
-import ViewPaged from './components/view-paged'
+import ViewPaged from './view-paged'
 
-import { propTypes, defaultProps } from './utils/propTypes'
 
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
-  static propTypes = {
-    ...propTypes.RnViewPaged,
-    onResponder: PropTypes.func,
-  }
-  static defaultProps = {
-    ...defaultProps.RnViewPaged,
-    vertical: true,
-    onResponder: noop,
-  }
+  constructor(props) {
+    super(props)
 
-  onChange = (index, oldIndex) => {
-    const { onChange } = this.props
-    this.currentPage = index
-    // 肯定处于边界位置,多此一举设置
-    this.isBorder = true
-    this.borderDirection = oldIndex > index ? 'isEnd' : 'isStart'
-    this.isChange = true
-
-    this.setResponder(true)
-
-    onChange(index, oldIndex)
+    this._viewPagedProps = {
+      onStartShouldSetPanResponder: this._startResponder,
+      onMoveShouldSetPanResponder: this._moveResponder,
+      onStartShouldSetPanResponderCapture: this._startResponderCapture,
+      onMoveShouldSetPanResponderCapture: this._moveResponderCapture,
+      onPanResponderTerminationRequest: this._onPanResponderTerminationRequest,
+      // onShouldBlockNativeResponder: this._onShouldBlockNativeResponder,
+      // onPanResponderTerminate: this._onPanResponderTerminate,
+    }
   }
 
   // 暂未观测出设置的先后顺序影响
-  setResponder = (flag, callBack) => {
+  setResponder(flag) {
     if (isAndroid) {
       if (this.currentRef) {
         this.currentRef.setScrollEnabled(!flag)
         // this.currentRef.setNativeProps({
         //   scrollEnabled: !flag,
         // })
-        // callBack && callBack(currentRef)
       }
     }
-
-    this.isResponder = flag
-
-    // ios可以单独处理阻止外层scrollView滑动
-    const { onResponder } = this.props
-    onResponder && onResponder(flag)
   }
 
   _onContentSizeChange = (oldSize, newSize) => {
     // 修复高度变化后边界已判断操作,只有第一页需要判断
     if (!isEmpty(oldSize)) {
-      const { currentPage, isResponder, props: { vertical } } = this
+      const { isResponder, props: { vertical } } = this
       const newValue = vertical ? newSize.height : newSize.width
       const oldValue = vertical ? oldSize.height : oldSize.width
 
-      if (currentPage === 0 && isResponder && newValue > oldValue) {
+      if (isResponder && newValue > oldValue) {
         this.isBorder = false
         this.borderDirection = false
         this.setResponder(false)
@@ -68,12 +51,10 @@ export default class ScrollPagedView extends Component {
   }
 
   _onTouchStart = ({ nativeEvent }, { scrollViewRef }) => {
-    const { pageX, pageY, timestamp } = nativeEvent
-    this.startX = pageX
-    this.startY = pageY
-    this.startTimestamp = timestamp
+    const { pageX, pageY } = nativeEvent
     this.currentRef = scrollViewRef
-    this.setResponder(false)
+
+    this._TouchStartEvent(pageX, pageY)
   }
 
   // _onTouchEnd = () => {
@@ -104,7 +85,7 @@ export default class ScrollPagedView extends Component {
   }
 
   _onMomentumScrollEnd = ({ nativeEvent }) => {
-    if (!this.isChange) {
+    if (this.isTouchMove) {
       const { vertical } = this.props
       const {
         contentOffset: { y, x },
@@ -121,67 +102,23 @@ export default class ScrollPagedView extends Component {
 
   _onTouchMove = ({ nativeEvent }, { scrollViewSize, scrollViewLayout }) => {
     const { pageX, pageY } = nativeEvent
-    const { startX, startY, props: { vertical } } = this
+    const { vertical } = this.props
 
-    this.isChange = false
-    if (this.checkMove(pageY, pageX)) {
-      const sizeValue = vertical ? scrollViewSize.height : scrollViewSize.width
-      const layoutValue = vertical ? scrollViewLayout.height : scrollViewLayout.width
-      const hasScrollContent = this.checkScrollContent(sizeValue, layoutValue)
-
-      if (hasScrollContent) {
-        if (this.isBorder) {
-          const distance = vertical ? pageY - startY : pageX - startX
-          // 大于1.6为了防抖
-          if (distance !== 0 && Math.abs(distance) > 1.6) {
-            const direction = distance > 0 // 向上
-            // console.log(this.borderDirection, direction, pageY, startY, distance)
-
-            if (this.triggerJudge(direction, !direction)) {
-              this.setResponder(true)
-            } else {
-              this.isBorder = false
-              this.borderDirection = false
-              this.setResponder(false)
-                //  (ref) => {
-                // android手动修复边界反向滚动
-                // if (isAndroid) {
-                //   const { timestamp } = nativeEvent
-                //   this.androidMove = true
-                //   const currentSize = this.getScrollViewConfig('scrollViewSize')
-                //   const currentLayout = this.getScrollViewConfig('scrollViewLayout')
-                //   const currentRef = ref || this.getScrollViewConfig('scrollViewRef')
-                //   const maxHeight = currentSize.height - currentLayout.height
-                //   let y = distance
-                //   if (direction) {
-                //     y = maxHeight - distance
-                //   }
-                //   this._velocity = Math.abs(distance) / (timestamp - this.startTimestamp)
-                //   y = Math.abs(y)
-                //   this._fromValue = y
-
-                //   currentRef.scrollTo({ x: 0, y, animated: false })
-                // }
-              // })
-            }
-          }
-        }
-      } else {
-        this.setResponder(true)
-      }
-    }
+    const sizeValue = vertical ? scrollViewSize.height : scrollViewSize.width
+    const layoutValue = vertical ? scrollViewLayout.height : scrollViewLayout.width
+    this._TouchMoveEvent(pageX, pageY, sizeValue, layoutValue)
   }
 
   // 子元素调用一定要传入index值来索引对应数据,且最好执行懒加载
   ScrollViewMonitor = ({ children, nativeProps = {} }) => {
     const { vertical } = this.props
-    const mergeProps = getMergeProps({
+    const mergeProps = getMergeObject({
       onContentSizeChange: this._onContentSizeChange,
       onMomentumScrollEnd: this._onMomentumScrollEnd,
       onScrollEndDrag: this._onScrollEndDrag,
       onTouchStart: this._onTouchStart,
       onTouchMove: this._onTouchMove,
-      onTouchEnd: this._onTouchEnd,
+      // onTouchEnd: this._onTouchEnd,
       showsVerticalScrollIndicator: false,
       bounces: false,
       style: { flex: 1 },
@@ -190,6 +127,7 @@ export default class ScrollPagedView extends Component {
     return (
       <AgentScrollView
         {...mergeProps}
+        ref={this._scrollViewRef}
         horizontal={!vertical}
       >
         {children}
@@ -217,6 +155,10 @@ export default class ScrollPagedView extends Component {
     return !this.isResponder
   }
 
+  // _onShouldBlockNativeResponder = () => {
+  //   return false
+  // }
+
   // _onPanResponderTerminate = () => {
   //   if (this.isResponder) {
   //     this.setResponder(false)
@@ -226,27 +168,6 @@ export default class ScrollPagedView extends Component {
   //     this.isTerminate = false
   //   }
   // }
-
-  render() {
-    const { onResponder, ...otherProps } = this.props
-
-    return (
-      <ViewPaged
-        {...otherProps}
-        ref={this.setViewPagedRef}
-        onStartShouldSetPanResponder={this._startResponder}
-        onMoveShouldSetPanResponder={this._moveResponder}
-        onStartShouldSetPanResponderCapture={this._startResponderCapture}
-        onMoveShouldSetPanResponderCapture={this._moveResponderCapture}
-        onPanResponderTerminationRequest={this._onPanResponderTerminationRequest}
-        // onShouldBlockNativeResponder={this._onShouldBlockNativeResponder}
-        // onPanResponderTerminate={this._onPanResponderTerminate}
-        onChange={this.onChange}
-      >
-        {this.childrenList}
-      </ViewPaged>
-    )
-  }
 }
 
 export {

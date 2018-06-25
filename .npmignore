@@ -1,6 +1,7 @@
 example/
 src/
 android-old-version/
+doc/
 
 build
 bin

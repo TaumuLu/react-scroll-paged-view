@@ -125,8 +125,10 @@ export const mergeWith = (originObject, mergeObject, handle) => {
   return reObject
 }
 
-export const getMergeProps = (originProps, mergeProps) => {
-  return mergeWith(originProps, mergeProps, (originValue, mergeValue) => {
+export const mergeStyle = (...styles) => styles.reduce((p, c) => ({ ...(p || {}), ...(c || {}) }), {})
+
+export const getMergeObject = (originObject, mergeObject) => {
+  return mergeWith(originObject, mergeObject, (originValue, mergeValue) => {
     const type = getType(originValue)
 
     switch (type) {

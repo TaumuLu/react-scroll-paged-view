@@ -24,11 +24,13 @@ export default class AgentScrollView extends React.Component {
 
   _setScrollViewLayout = (event) => {
     if (event) {
+      const { onLayout } = this.props
       const { layout } = event.nativeEvent
       const height = Math.ceil(layout.height)
       const width = Math.ceil(layout.width)
 
       this.scrollViewLayout = { width, height }
+      onLayout && onLayout()
     }
   }
 

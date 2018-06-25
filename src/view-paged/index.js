@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import { View, PanResponder, Easing, Animated } from 'react-native'
 
-import { noop } from '../utils'
+import { getMergeObject, mergeStyle } from '../utils'
 import ViewPagedHOC from '../decorators/view-paged-hoc'
 
 
 @ViewPagedHOC(Animated, Easing)
 export default class ViewPaged extends Component {
-  componentWillMount() {
+  constructor(props) {
+    super(props)
+
     const {
       onStartShouldSetPanResponder,
       onStartShouldSetPanResponderCapture,
@@ -16,7 +18,7 @@ export default class ViewPaged extends Component {
       onPanResponderTerminationRequest,
       onPanResponderTerminate,
       onShouldBlockNativeResponder,
-    } = this.props
+    } = props
 
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder,
@@ -27,59 +29,49 @@ export default class ViewPaged extends Component {
       onPanResponderTerminate,
       onShouldBlockNativeResponder,
 
-      onPanResponderGrant: noop,
+      onPanResponderGrant: this._onPanResponderGrant,
       onPanResponderMove: this._onPanResponderMove,
       onPanResponderRelease: this._onPanResponderRelease,
     })
   }
 
-  getViewStyle = () => {
-    const { props: { vertical }, state: { pos }, _boxSize } = this
-    let wrapStyle = {
-      flex: 1,
-      overflow: 'hidden',
-    }
-    let containerStyle = { flex: 1 }
-    let boxStyle = {}
-    const styleList = [wrapStyle, containerStyle, boxStyle]
+  getStyle = () => {
+    const { props: { vertical }, state: { pos, width, height }, _boxSize } = this
+    let mergeStyle = {}
 
     if (vertical) {
-      [wrapStyle, containerStyle, boxStyle] = setViewStyle(styleList, [
-        { flexDirection: 'column' },
-        { top: pos, flexDirection: 'column' },
-        { height: _boxSize },
-      ])
+      mergeStyle = {
+        wrapStyle: { flexDirection: 'column' },
+        containerStyle: { top: pos, flexDirection: 'column' },
+        pageStyle: { height: _boxSize, width },
+      }
     } else {
-      [wrapStyle, containerStyle, boxStyle] = setViewStyle(styleList, [
-        { flexDirection: 'row' },
-        { left: pos, flexDirection: 'row' },
-        { width: _boxSize },
-      ])
+      mergeStyle = {
+        wrapStyle: { flexDirection: 'row' },
+        containerStyle: { left: pos, flexDirection: 'row' },
+        pageStyle: { width: _boxSize, height },
+      }
     }
 
-    return {
-      wrapStyle,
-      containerStyle,
-      boxStyle,
-    }
+    return getMergeObject(Style, mergeStyle)
+  }
+
+  _getDistance(gestureState) {
+    const { vertical } = this.props
+    const suffix = vertical ? 'y' : 'x'
+    return gestureState[`d${suffix}`]
+  }
+
+  _onPanResponderGrant = (evt, gestureState) => {
+    this._TouchStartEvent()
   }
 
   _onPanResponderMove = (evt, gestureState) => {
-    const suffix = this.props.vertical ? 'y' : 'x'
-    const nextValue = this._lastPos + gestureState[`d${suffix}`]
-
-    // 加入回弹限制
-    if (nextValue <= 0 && nextValue >= this._maxPos) {
-      this.state.pos.setValue(nextValue)
-    }
+    this._TouchMoveEvent(gestureState)
   }
 
   _onPanResponderRelease = (evt, gestureState) => {
-    const suffix = this.props.vertical ? 'y' : 'x'
-    this._lastPos += gestureState[`d${suffix}`]
-
-    const page = this._getPageForPos(gestureState[`d${suffix}`])
-    this._goToPage(page)
+    this._TouchEndEvent(gestureState)
   }
 
   _onLayout = (e) => {
@@ -99,12 +91,12 @@ export default class ViewPaged extends Component {
   }
 
   render() {
-    const { wrapStyle, containerStyle, boxStyle } = this.getViewStyle()
+    const { wrapStyle, containerStyle, pageStyle } = this.getStyle()
     const { style } = this.props
     const { loadIndex } = this.state
 
     return (
-      <View style={[style, wrapStyle]}>
+      <View style={mergeStyle(style, wrapStyle)}>
         <Animated.View
           style={containerStyle}
           {...this._panResponder.panHandlers}
@@ -113,7 +105,7 @@ export default class ViewPaged extends Component {
             return (
               <View
                 key={index}
-                style={boxStyle}
+                style={pageStyle}
               >
                 {loadIndex.includes(index) ? React.cloneElement(page, { pageIndex: index }) : null}
               </View>
@@ -126,8 +118,8 @@ export default class ViewPaged extends Component {
 }
 
 
-const setViewStyle = (styleList = [], addStyleList = []) => {
-  return styleList.map((itemStyle = {}, i) => {
-    return Object.assign({}, itemStyle, addStyleList[i] || {})
-  })
+export const Style = {
+  wrapStyle: { flex: 1, overflow: 'hidden' },
+  containerStyle: { flex: 1 },
+  pageStyle: {},
 }

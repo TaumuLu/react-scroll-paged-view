@@ -31,6 +31,11 @@ Infinite pagination is also lazy, minimizing the current index page, even when s
 | --- | ------- | --- |
 | ![IOS](./demo.ios.gif) | ![Android](./demo.android.gif) | ![Web](./demo.web.gif) |
 
+### Other
+| Horizontal | Tab | Carousel |
+| ---------- | --- | -------- |
+| ![Horizontal](./demo.horizontal.gif) | | |
+
 ## Usage
 
 ### External Full Page scroll

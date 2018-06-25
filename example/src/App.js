@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 
-import ScrollPagedView from './temp'
+import ScrollPagedView, { ViewPaged } from 'react-scroll-paged-view'
 
 console.disableYellowBox = true
 
@@ -21,25 +21,32 @@ if (Platform.OS === 'android') {
 
 export default class App extends Component {
   render() {
+    const WrapView = ScrollPagedView
+    // const WrapView = ViewPaged
+
     return (
       <View style={styles.container}>
-        <ScrollPagedView
+        <WrapView
           onChange={this._onChange}
           onResponder={this._onResponder}
           // vertical={false}
           // infinite
         >
-          {/* <View style={{ flex: 1, backgroundColor: 'green' }}>
+          <View style={[styles.pageView, { backgroundColor: 'black' }]}>
             <Text style={styles.text}>head</Text>
             <Text style={styles.textIndex}>page {0}</Text>
             <Text style={styles.text}>foot</Text>
-          </View> */}
+          </View>
           {Array.from({ length: 3 }, (val, ind) => {
             return (
-              <InsideScrollView key={ind} text={ind + 1} style={styles[`pageItem_${ind}`]}/>
+              <InsideScrollView
+                key={ind}
+                text={ind + 1}
+                style={styles[`pageItem_${ind}`]}
+              />
             )
           })}
-        </ScrollPagedView>
+        </WrapView>
       </View>
     )
   }
@@ -52,25 +59,18 @@ class InsideScrollView extends Component {
   }
 
   render() {
-    const ScrollView = this.context.ScrollView
+    const WrapView = this.context.ScrollView || View
     const { text, style } = this.props
 
     return (
       <View style={{ flex: 1 }}>
-        <ScrollView style={{ flex: 1 }}>
-          <View style={[styles.wrapView, style]}>
+        <WrapView style={{ flex: 1 }}>
+          <View style={[styles.pageView, style]}>
             <Text style={styles.text}>head</Text>
             <Text style={styles.textIndex}>page {text}</Text>
-            {/* {Array.from({ length: 15 }, (val, ind) => {
-              return (
-                <View key={ind} text={ind} style={styles.viewItem}>
-                  <Text style={styles.text}>{ind}</Text>
-                </View>
-              )
-            })} */}
             <Text style={styles.text}>foot</Text>
           </View>
-        </ScrollView>
+        </WrapView>
       </View>
     )
   }
@@ -79,8 +79,8 @@ class InsideScrollView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    height,
+    width,
     backgroundColor: '#F5FCFF',
   },
   welcome: {
@@ -94,20 +94,13 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 
-  wrapView: {
-    // height: height * 2,
+  pageView: {
+    flex: 1,
     backgroundColor: '#F5FCFF',
     alignItems: 'center',
     paddingVertical: 20,
     justifyContent: 'space-between',
   },
-  viewItem: {
-    flex: 1,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
   text: {
     fontSize: 40,
     color: 'white',
@@ -119,11 +112,8 @@ const styles = StyleSheet.create({
 
   pageItem_0: {
     backgroundColor: 'blue',
-    height: 1000,
-    // height,
+    height: height * 1.5,
     width,
-    // width: width * 2,
-
   },
   pageItem_1: {
     backgroundColor: 'green',
@@ -132,9 +122,7 @@ const styles = StyleSheet.create({
   },
   pageItem_2: {
     backgroundColor: 'red',
-    height: 1200,
-    // height,
-    width,
-    // width: width * 2,
+    height,
+    width: width * 2,
   },
 })

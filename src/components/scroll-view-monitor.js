@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
-import {
-  ScrollView,
-  Animated,
-  PanResponder
- } from 'react-native'
-import { isAndroid } from '../utils'
+import { ScrollView, Animated, PanResponder } from 'react-native'
+// import { isAndroid } from '../utils'
 
 
 export default class ScrollViewMonitor extends Component {
