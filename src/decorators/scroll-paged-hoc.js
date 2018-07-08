@@ -65,7 +65,7 @@ export default function ScrollPageHOC(WrappedComponent) {
       }
     }
 
-    _scrollViewRef = (ref) => {
+    _setScrollViewRef = (ref) => {
       if (ref) {
         // 初次渲染重置状态并保存页数
         this.setResponder(false)

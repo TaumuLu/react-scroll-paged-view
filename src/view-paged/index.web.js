@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
 import Animated from 'animated/lib/targets/react-dom'
 import Easing from 'animated/lib/Easing'
 
@@ -13,7 +14,7 @@ export default class ViewPaged extends Component {
 
     this._touchEvent = {
       onTouchStart: this._onTouchStart,
-      onTouchMove: this._onTouchMove,
+      // onTouchMove: this._onTouchMove,
       onTouchEnd: this._onTouchEnd,
     }
   }
@@ -63,7 +64,6 @@ export default class ViewPaged extends Component {
   }
 
   _onTouchMove = (e) => {
-    e.stopPropagation()
     const targetTouche = get(e, 'targetTouches.0') || {}
     const { clientX, clientY } = targetTouche
     const { startX, startY } = this
@@ -83,14 +83,14 @@ export default class ViewPaged extends Component {
     }
 
     if (!this.isScroll) {
+      e.stopPropagation()
       this._TouchMoveEvent(targetTouche)
-
-      // 判断默认行为是否可以被禁用
-      if (e.cancelable) {
-        // 判断默认行为是否已经被禁用
-        if (!e.defaultPrevented) {
-          e.preventDefault()
-        }
+    }
+    // 判断默认行为是否可以被禁用
+    if (e.cancelable) {
+      // 判断默认行为是否已经被禁用
+      if (!e.defaultPrevented) {
+        e.preventDefault()
       }
     }
   }
@@ -115,13 +115,23 @@ export default class ViewPaged extends Component {
 
   _renderMeasurements(initialStyle) {
     return (
-      <div style={{ width: '100%', height: '100%', flex: 1 }}>
+      <div style={{ width: '100%', height: '100%', flex: 1, display: 'flex' }}>
         <div
           style={initialStyle}
           ref={this._onLayout}
         />
       </div>
     )
+  }
+
+  _setAnimatedDivRef = (ref) => {
+    if (ref && !this._animatedDivRef) {
+      this._animatedDivRef = ref
+      // ReactDOM.findDOMNode(this._animatedDivRef)
+      const divDom = get(ref, 'refs.node')
+      // safari阻止拖动回弹，通过dom绑定事件
+      divDom.addEventListener('touchmove', this._onTouchMove, false)
+    }
   }
 
   render() {
@@ -132,6 +142,7 @@ export default class ViewPaged extends Component {
     return (
       <div style={mergeStyle(style, wrapStyle)}>
         <Animated.div
+          ref={this._setAnimatedDivRef}
           style={containerStyle}
           {...this._touchEvent}
         >

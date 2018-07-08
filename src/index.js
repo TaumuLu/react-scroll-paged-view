@@ -127,7 +127,7 @@ export default class ScrollPagedView extends Component {
     return (
       <AgentScrollView
         {...mergeProps}
-        ref={this._scrollViewRef}
+        ref={this._setScrollViewRef}
         horizontal={!vertical}
       >
         {children}

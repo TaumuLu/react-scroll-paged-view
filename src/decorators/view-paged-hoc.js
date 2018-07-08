@@ -3,8 +3,8 @@ import React from 'react'
 import Connect from './connect'
 import { size, find, findLast } from '../utils'
 
-
-const initialStyle = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'transparent' }
+// position: 'absolute', top: 0, left: 0, right: 0, bottom: 0
+const initialStyle = { flex: 1, backgroundColor: 'transparent' }
 const longSwipesMs = 300
 
 
@@ -32,6 +32,9 @@ export default function ScrollPageHOC(Animated, Easing) {
       }
 
       componentDidMount() {
+        if (super.componentDidMount) {
+          super.componentDidMount()
+        }
         this.autoPlay()
       }
 
