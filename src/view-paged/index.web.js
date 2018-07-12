@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
+// import ReactDOM from 'react-dom'
 import Animated from 'animated/lib/targets/react-dom'
 import Easing from 'animated/lib/Easing'
 
 import { mergeStyle, getMergeObject, get } from '../utils'
+
 import ViewPagedHOC from '../decorators/view-paged-hoc'
 
 

@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "web-start": "export NODE_ENV=development && node server.js",
-    "web-build": "export NODE_ENV=production && webpack --progress --color -p",
+    "web-start": "export NODE_ENV=development && npm run web-dll && node server.js",
+    "web-build": "export NODE_ENV=production && npm run web-dll && webpack --progress --color -p",
+    "web-dll": "rm -rf ./build && webpack --config ./webpack.dll.config.js",
     "test": "jest"
   },
   "dependencies": {

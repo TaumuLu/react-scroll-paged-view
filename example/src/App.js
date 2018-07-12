@@ -29,7 +29,7 @@ export default class App extends Component {
         <WrapView
           onChange={this._onChange}
           onResponder={this._onResponder}
-          // vertical={false}
+          vertical={false}
           // infinite
         >
           <View style={[styles.pageView, { backgroundColor: 'black' }]}>
