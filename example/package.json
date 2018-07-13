@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "web-start": "export NODE_ENV=development && npm run web-dll && node server.js",
-    "web-build": "export NODE_ENV=production && npm run web-dll && webpack --progress --color -p",
-    "web-dll": "rm -rf ./build && webpack --config ./webpack.dll.config.js",
+    "web-start": "export NODE_ENV=development && npm run web-dll && node ./webpack/dev-server.js",
+    "web-build": "export NODE_ENV=production && npm run web-dll && webpack --config ./webpack/webpack.config.js --progress --color -p",
+    "web-dll": "rm -rf ./build && webpack --config ./webpack/webpack.dll.config.js",
     "test": "jest"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-preset-react-native": "4.0.0",
+    "html-webpack-include-assets-plugin": "^1.0.4",
     "html-webpack-plugin": "^3.2.0",
     "jest": "22.4.2",
     "react-test-renderer": "^16.3.0-alpha.1",
