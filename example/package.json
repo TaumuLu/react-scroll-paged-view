@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "web-start": "export NODE_ENV=development && npm run web-dll && node ./webpack/dev-server.js",
-    "web-build": "export NODE_ENV=production && npm run web-dll && webpack --config ./webpack/webpack.config.js --progress --color -p",
+    "web-build": "export NODE_ENV=production && npm run web-dll && webpack --config ./webpack/webpack.config.js --progress --profile --color",
     "web-dll": "rm -rf ./build && webpack --config ./webpack/webpack.dll.config.js",
     "test": "jest"
   },

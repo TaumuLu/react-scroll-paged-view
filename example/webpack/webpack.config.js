@@ -17,12 +17,14 @@ const vendorAssets = glob.sync('./dll/vendor*.dll.js', globOptions)
 
 module.exports = {
   ...config,
+  // mode: 'development',
   entry: './index.js',
   output: {
     path: path.join(context, './build'),
     filename: isDev ? 'assets/scripts/[name].js' : 'assets/scripts/[name]-[chunkhash].js',
     chunkFilename: isDev ? 'assets/scripts/[name].chunk.js' : 'assets/scripts/[name]-[chunkhash].chunk.js',
     publicPath: '/',
+    // libraryTarget: 'commonjs2',
   },
   module: {
     rules: [
@@ -31,19 +33,22 @@ module.exports = {
         loader: 'babel-loader',
         // exclude: /node_modules/,
         // include: [
-        //   path.resolve(context, 'node_modules/react-scroll-paged-view'),
+        //   path.join(context, 'node_modules/react-scroll-paged-view'),
         // ],
       },
     ],
   },
   plugins: [
     new webpack.DllReferencePlugin({
-      manifest: path.resolve(context, './build/dll/manifest.json'),
+      // context: path.join(__dirname, './../build/dll'),
+      // name: './../dll',
+      manifest: path.join(context, './build/dll/manifest.json'),
+      // sourceType: 'commonjs2',
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './public/index.html',
-      // filepath: require.resolve('./build/vendor.dll.js'),
+      // filepath: require.join('./build/vendor.dll.js'),
     }),
     new HtmlWebpackIncludeAssetsPlugin({
       assets: vendorAssets,
