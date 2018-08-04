@@ -4,7 +4,7 @@ import Connect from './connect'
 import { size, find, findLast } from '../utils'
 
 // position: 'absolute', top: 0, left: 0, right: 0, bottom: 0
-const initialStyle = { flex: 1, backgroundColor: 'transparent' }
+const initialStyle = { flex: 1, display: 'flex', backgroundColor: 'transparent' }
 const longSwipesMs = 300
 
 
@@ -40,12 +40,11 @@ export default function ScrollPageHOC(Animated, Easing) {
 
       // 检验纠正初始页参数
       getCheckInitialPage() {
-        const { children } = this.props
         let { initialPage } = this.props
         if (initialPage < 0) {
           initialPage = 0
-        } else if (initialPage >= size(children)) {
-          initialPage = size(children) - 1
+        } else if (initialPage >= this._childrenSize) {
+          initialPage = this._childrenSize - 1
         }
 
         return initialPage
@@ -67,7 +66,7 @@ export default function ScrollPageHOC(Animated, Easing) {
       // 计算下一索引，针对无限滚动
       _getNextPosPage() {
         const nextPosPage = this._posPage + 1
-        if (nextPosPage > this.childrenLen - 1) {
+        if (nextPosPage > this.childrenSize - 1) {
           return 1
         }
 
@@ -83,8 +82,8 @@ export default function ScrollPageHOC(Animated, Easing) {
         if (infinite) {
           switch (posPage) {
             case 0:
-              return this.childrenLen - 3
-            case this.childrenLen - 1:
+              return this.childrenSize - 3
+            case this.childrenSize - 1:
               return 0
             default:
               return posPage - 1
@@ -103,10 +102,9 @@ export default function ScrollPageHOC(Animated, Easing) {
 
       // 计算重制跳转页
       _getResetPage() {
-        const { _posPage, currentPage, props: { children } } = this
-        const childrenSize = size(children)
+        const { _posPage, currentPage } = this
         if (Math.abs(_posPage - currentPage) > 1) {
-          return _posPage === 0 ? _posPage + childrenSize : _posPage - childrenSize
+          return _posPage === 0 ? _posPage + this._childrenSize : _posPage - this._childrenSize
         }
         return _posPage
       }
@@ -127,7 +125,7 @@ export default function ScrollPageHOC(Animated, Easing) {
         if (infinite) return infinite
 
         if (distance > 0 && this.currentPage !== 0) return true
-        if (distance < 0 && this.currentPage + 1 !== this.childrenLen) return true
+        if (distance < 0 && this.currentPage + 1 !== this.childrenSize) return true
 
         return false
       }
@@ -170,8 +168,7 @@ export default function ScrollPageHOC(Animated, Easing) {
 
       // 对外提供跳转页数，检验页数正确性
       goToPage = (page) => {
-        const { children } = this.props
-        if (page < 0 || page > size(children) - 1) {
+        if (page < 0 || page > this._childrenSize - 1) {
           return
         }
 
@@ -262,8 +259,8 @@ export default function ScrollPageHOC(Animated, Easing) {
 
         if (page < 0) {
           page = 0
-        } else if (page > this.childrenLen - 1) {
-          page = this.childrenLen - 1
+        } else if (page > this.childrenSize - 1) {
+          page = this.childrenSize - 1
         }
 
         return page
@@ -273,7 +270,7 @@ export default function ScrollPageHOC(Animated, Easing) {
         const { vertical } = this.props
 
         this._boxSize = vertical ? height : width
-        this._maxPos = -(this.childrenLen - 1) * this._boxSize
+        this._maxPos = -(this.childrenSize - 1) * this._boxSize
         this._lastPos = this._getPosForPage(this._posPage)
 
         this.setState({
@@ -304,16 +301,18 @@ export default function ScrollPageHOC(Animated, Easing) {
       }
 
       render() {
-        const { width, height } = this.state
+        const { width, height, loadIndex } = this.state
         const { infinite } = this.props
 
-        if (!width && !height) {
-          // 先行测试容器尺寸
-          return this._renderMeasurements(initialStyle)
-        }
         if (infinite) {
           this.childrenList = this.getInfiniteChildren()
-          this.childrenLen = size(this.childrenList)
+          this.childrenSize = size(this.childrenList)
+        }
+        if (!width && !height) {
+          const [initialIndex] = loadIndex
+          const initialChild = this.childrenList[initialIndex]
+          // 先行测试容器尺寸，并给予初始展示child用于ssr
+          return this._renderMeasurements(initialStyle, initialChild)
         }
 
         return super.render()

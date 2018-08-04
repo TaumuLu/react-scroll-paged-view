@@ -23,7 +23,7 @@ export default class ViewPaged extends Component {
   getStyle = () => {
     const { props: { vertical }, state: { pos, width, height }, _boxSize } = this
     let mergeStyle = {}
-    const basis = this.childrenLen * 100
+    const basis = this.childrenSize * 100
 
     if (vertical) {
       mergeStyle = {
@@ -114,13 +114,15 @@ export default class ViewPaged extends Component {
     }
   }
 
-  _renderMeasurements(initialStyle) {
+  _renderMeasurements(initialStyle, initialChild) {
     return (
       <div style={{ width: '100%', height: '100%', flex: 1, display: 'flex' }}>
         <div
           style={initialStyle}
           ref={this._onLayout}
-        />
+        >
+          {initialChild}
+        </div>
       </div>
     )
   }
@@ -153,7 +155,7 @@ export default class ViewPaged extends Component {
                 key={index}
                 style={pageStyle}
               >
-                {loadIndex.includes(index) ? React.cloneElement(page, { pageIndex: index }) : null}
+                {loadIndex.includes(index) ? React.cloneElement(page) : null}
               </div>
             )
           })}

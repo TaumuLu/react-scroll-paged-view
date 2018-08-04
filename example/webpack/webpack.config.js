@@ -17,7 +17,6 @@ const vendorAssets = glob.sync('./dll/vendor*.dll.js', globOptions)
 
 module.exports = {
   ...config,
-  // mode: 'development',
   entry: './index.js',
   output: {
     path: path.join(context, './build'),
@@ -31,7 +30,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader',
-        // exclude: /node_modules/,
+        exclude: /node_modules/,
         // include: [
         //   path.join(context, 'node_modules/react-scroll-paged-view'),
         // ],

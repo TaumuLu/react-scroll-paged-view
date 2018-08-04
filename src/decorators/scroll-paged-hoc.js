@@ -99,7 +99,7 @@ export default function ScrollPageHOC(WrappedComponent) {
       switch (expression) {
         case 0:
           return isEnd && this.borderDirection === 'isEnd'
-        case this.childrenLen - 1:
+        case this.childrenSize - 1:
           return isStart && this.borderDirection === 'isStart'
         default:
           return (isStart && this.borderDirection === 'isStart') || (isEnd && this.borderDirection === 'isEnd')

@@ -21,16 +21,18 @@ if (Platform.OS === 'android') {
 
 export default class App extends Component {
   render() {
-    const WrapView = ScrollPagedView
-    // const WrapView = ViewPaged
+    // const WrapView = ScrollPagedView
+    const WrapView = ViewPaged
 
     return (
       <View style={styles.container}>
         <WrapView
           onChange={this._onChange}
           onResponder={this._onResponder}
+          // initialPage={0}
           // vertical={false}
-          // infinite
+          vertical
+          infinite
         >
           <View style={[styles.pageView, { backgroundColor: 'black' }]}>
             <Text style={styles.text}>head</Text>

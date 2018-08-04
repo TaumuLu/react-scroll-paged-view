@@ -15,7 +15,10 @@ export default function ConnectHOC(Inheritance) {
 
     render() {
       this.childrenList = this.getChildren()
-      this.childrenLen = size(this.childrenList)
+      this.childrenSize = size(this.childrenList)
+      // 记录初次children值
+      this._childrenList = this.childrenList
+      this._childrenSize = this.childrenSize
 
       return super.render()
     }

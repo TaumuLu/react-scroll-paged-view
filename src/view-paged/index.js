@@ -79,13 +79,15 @@ export default class ViewPaged extends Component {
     this._runMeasurements(width, height)
   }
 
-  _renderMeasurements(initialStyle) {
+  _renderMeasurements(initialStyle, initialChild) {
     return (
       <View style={{ flex: 1 }}>
         <View
           style={initialStyle}
           onLayout={this._onLayout}
-        />
+        >
+          {initialChild}
+        </View>
       </View>
     )
   }
@@ -107,7 +109,7 @@ export default class ViewPaged extends Component {
                 key={index}
                 style={pageStyle}
               >
-                {loadIndex.includes(index) ? React.cloneElement(page, { pageIndex: index }) : null}
+                {loadIndex.includes(index) ? React.cloneElement(page) : null}
               </View>
             )
           })}
