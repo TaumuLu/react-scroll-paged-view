@@ -35,6 +35,7 @@ Provides renderHeader and renderFooter for tab switching or carousel graphics, e
 
 ### Other
 What you can achieve depends on what you can imagine.  
+
 | Horizontal | Tab | Carousel |
 | ---------- | --- | -------- |
 | ![Horizontal](./demo.horizontal.gif) | ![Tab](./demo.tab.gif) | ![Carousel](./demo.carousel.gif) |

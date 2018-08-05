@@ -35,6 +35,7 @@ RN和web动画基于animated库，共用一套代码处理
 
 ### Other
 你所能实现的取决于你所能想象的  
+
 | Horizontal | Tab | Carousel |
 | ---------- | --- | -------- |
 | ![Horizontal](./demo.horizontal.gif) | ![Tab](./demo.tab.gif) | ![Carousel](./demo.carousel.gif) |
