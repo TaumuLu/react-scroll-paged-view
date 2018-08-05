@@ -6,7 +6,7 @@ import { size, find, findLast, mergeStyle } from '../utils'
 // position: 'absolute', top: 0, left: 0, right: 0, bottom: 0
 const initialStyle = { flex: 1, display: 'flex', backgroundColor: 'transparent' }
 const longSwipesMs = 300
-const tabBarDirectionMap = {
+const flexDirectionMap = {
   top: 'column',
   bottom: 'column-reverse',
   left: 'row',
@@ -288,8 +288,8 @@ export default function ScrollPageHOC(Animated, Easing) {
       }
 
       _getContainerStyle(style = {}) {
-        const { tabBarPosition } = this.props
-        const flexDirection = tabBarDirectionMap[tabBarPosition] || tabBarDirectionMap.top
+        const { renderPosition } = this.props
+        const flexDirection = flexDirectionMap[renderPosition] || flexDirectionMap.top
 
         return mergeStyle(style, {
           flex: 1,

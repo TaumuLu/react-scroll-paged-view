@@ -125,7 +125,7 @@ RN和web有相同的props，表现也一致
 | infinite | bool | false | 是否为无限滚动视图 |
 | renderHeader | function/element | undefined | Header组件 |
 | renderFooter | function/element | undefined | Footer组件 |
-| renderPosition | Header/Footer方向 | 'top' | 有4个值，分别为'top','left','bottom','right' |
+| renderPosition | string | top | Header/Footer方向，有4个值，分别为'top','left','bottom','right' |
 | autoPlay | bool | false | 是否自动轮播 |
 | autoPlaySpeed | number | 2000 | 自动轮播间隔时间(以毫秒为单位) |
 | hasAnimation | bool | true | 点击切换时否有动画 |

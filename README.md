@@ -125,7 +125,7 @@ RN and web have the same props and the performance is consistent
 | infinite | bool | false | Whether it is an infinite scroll view |
 | renderHeader | function/element | undefined | Header Component |
 | renderFooter | function/element | undefined | Footer Component |
-| renderPosition | Header/Footer direction | 'top' | There are 4 values, 'top', 'left', 'bottom', 'right' |
+| renderPosition | string | top | Header/Footer direction, There are 4 values, 'top', 'left', 'bottom', 'right' |
 | autoPlay | bool | false | Whether to auto rotate |
 | autoPlaySpeed | number | 2000 | Automatic carousel interval (In milliseconds) |
 | hasAnimation | bool | true | Click to switch whether there is an animation |
