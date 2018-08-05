@@ -21,8 +21,8 @@ if (Platform.OS === 'android') {
 
 export default class App extends Component {
   render() {
-    // const WrapView = ScrollPagedView
-    const WrapView = ViewPaged
+    const WrapView = ScrollPagedView
+    // const WrapView = ViewPaged
 
     return (
       <View style={styles.container}>

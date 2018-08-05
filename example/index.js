@@ -1,5 +1,5 @@
 import { AppRegistry, Platform } from 'react-native'
-import App from './src'
+import App from './app/index'
 
 AppRegistry.registerComponent('example', () => App)
 // web

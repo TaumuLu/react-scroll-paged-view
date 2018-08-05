@@ -115,7 +115,7 @@ export default class ScrollPagedView extends Component {
         overflowX: vertical ? 'hidden' : 'scroll',
         overflowY: !vertical ? 'hidden' : 'scroll',
         position: 'relative',
-        '-webkit-overflow-scrolling': 'touch',
+        WebkitOverflowScrolling: 'touch',
       },
     }, webProps)
 

@@ -109,7 +109,7 @@ export default class ViewPaged extends Component {
                 key={index}
                 style={pageStyle}
               >
-                {loadIndex.includes(index) ? React.cloneElement(page) : null}
+                {loadIndex.includes(index) ? page : null}
               </View>
             )
           })}
