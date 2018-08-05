@@ -2,37 +2,35 @@ import React, { Component } from 'react'
 import { View, PanResponder, Easing, Animated } from 'react-native'
 
 import { getMergeObject, mergeStyle } from '../utils'
+
 import ViewPagedHOC from '../decorators/view-paged-hoc'
 
+const panResponderKey = [
+  'onStartShouldSetPanResponder',
+  'onStartShouldSetPanResponderCapture',
+  'onMoveShouldSetPanResponder',
+  'onMoveShouldSetPanResponderCapture',
+  'onPanResponderTerminationRequest',
+  'onPanResponderTerminate',
+  'onShouldBlockNativeResponder',
+]
 
 @ViewPagedHOC(Animated, Easing)
 export default class ViewPaged extends Component {
   constructor(props) {
     super(props)
+    const { locked } = props
 
-    const {
-      onStartShouldSetPanResponder,
-      onStartShouldSetPanResponderCapture,
-      onMoveShouldSetPanResponder,
-      onMoveShouldSetPanResponderCapture,
-      onPanResponderTerminationRequest,
-      onPanResponderTerminate,
-      onShouldBlockNativeResponder,
-    } = props
-
-    this._panResponder = PanResponder.create({
-      onStartShouldSetPanResponder,
-      onStartShouldSetPanResponderCapture,
-      onMoveShouldSetPanResponder,
-      onMoveShouldSetPanResponderCapture,
-      onPanResponderTerminationRequest,
-      onPanResponderTerminate,
-      onShouldBlockNativeResponder,
-
-      onPanResponderGrant: this._onPanResponderGrant,
-      onPanResponderMove: this._onPanResponderMove,
-      onPanResponderRelease: this._onPanResponderRelease,
-    })
+    let panResponderValue = panResponderKey.map(key => props[key])
+    if (!locked) {
+      panResponderValue = {
+        ...panResponderValue,
+        onPanResponderGrant: this._onPanResponderGrant,
+        onPanResponderMove: this._onPanResponderMove,
+        onPanResponderRelease: this._onPanResponderRelease,
+      }
+    }
+    this._panResponder = PanResponder.create(panResponderValue)
   }
 
   getStyle = () => {
@@ -42,13 +40,13 @@ export default class ViewPaged extends Component {
     if (vertical) {
       mergeStyle = {
         wrapStyle: { flexDirection: 'column' },
-        containerStyle: { top: pos, flexDirection: 'column' },
+        viewPagedStyle: { top: pos, flexDirection: 'column' },
         pageStyle: { height: _boxSize, width },
       }
     } else {
       mergeStyle = {
         wrapStyle: { flexDirection: 'row' },
-        containerStyle: { left: pos, flexDirection: 'row' },
+        viewPagedStyle: { left: pos, flexDirection: 'row' },
         pageStyle: { width: _boxSize, height },
       }
     }
@@ -81,39 +79,45 @@ export default class ViewPaged extends Component {
 
   _renderMeasurements(initialStyle, initialChild) {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={this._getContainerStyle(Style.container)}>
+        {this._renderPropsComponent('renderHeader')}
         <View
           style={initialStyle}
           onLayout={this._onLayout}
         >
           {initialChild}
         </View>
+        {this._renderPropsComponent('renderFooter')}
       </View>
     )
   }
 
   render() {
-    const { wrapStyle, containerStyle, pageStyle } = this.getStyle()
+    const { wrapStyle, viewPagedStyle, pageStyle } = this.getStyle()
     const { style } = this.props
     const { loadIndex } = this.state
 
     return (
-      <View style={mergeStyle(style, wrapStyle)}>
-        <Animated.View
-          style={containerStyle}
-          {...this._panResponder.panHandlers}
-        >
-          {this.childrenList.map((page, index) => {
-            return (
-              <View
-                key={index}
-                style={pageStyle}
-              >
-                {loadIndex.includes(index) ? page : null}
-              </View>
-            )
-          })}
-        </Animated.View>
+      <View style={mergeStyle(style, this._getContainerStyle(Style.container))}>
+        {this._renderPropsComponent('renderHeader')}
+        <View style={wrapStyle}>
+          <Animated.View
+            style={viewPagedStyle}
+            {...this._panResponder.panHandlers}
+          >
+            {this.childrenList.map((page, index) => {
+              return (
+                <View
+                  key={index}
+                  style={pageStyle}
+                >
+                  {loadIndex.includes(index) ? page : null}
+                </View>
+              )
+            })}
+          </Animated.View>
+        </View>
+        {this._renderPropsComponent('renderFooter')}
       </View>
     )
   }
@@ -121,7 +125,8 @@ export default class ViewPaged extends Component {
 
 
 export const Style = {
-  wrapStyle: { flex: 1, overflow: 'hidden' },
-  containerStyle: { flex: 1 },
+  container: { flex: 1, overflow: 'hidden', position: 'relative' },
+  wrapStyle: { flex: 1, overflow: 'hidden', position: 'relative' },
+  viewPagedStyle: { flex: 1 },
   pageStyle: {},
 }

@@ -161,7 +161,9 @@ export default function ScrollPageHOC(WrappedComponent) {
           {...this.props}
           {...this._viewPagedProps}
           ref={this.setViewPagedRef}
+          // 避免在无限时滚动切换等其他问题，禁用这两个props，如实在有需要可继承此组件重写render方法
           infinite={false}
+          autoPlay={false}
           onChange={this.onChange}
         >
           {this.childrenList}
@@ -170,12 +172,12 @@ export default function ScrollPageHOC(WrappedComponent) {
     }
   }
 
-  const { defaultProps } = ScrollPaged
-  // 重置默认参数
-  ScrollPaged.defaultProps = {
-    ...defaultProps,
-    vertical: true,
-  }
+  // const { defaultProps } = ScrollPaged
+  // // 重置默认参数
+  // ScrollPaged.defaultProps = {
+  //   ...defaultProps,
+  //   vertical: true,
+  // }
 
   return ScrollPaged
 }

@@ -5,7 +5,8 @@ import {
   Text,
   Dimensions,
   NativeModules,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native'
 import PropTypes from 'prop-types'
 
@@ -20,31 +21,70 @@ if (Platform.OS === 'android') {
 }
 
 export default class App extends Component {
+  pageLists = ['blue', 'green', 'red']
+
+  _renderTabBar = ({ activeTab, goToPage }) => {
+    return (
+      <View style={Style.tabBarContainer}>
+        {this.pageLists.map((value, index) => {
+          return (
+            <TouchableOpacity key={value} style={{ flex: 1 }} onPress={() => goToPage(index)}>
+              <View style={[Style.tabBarItem, activeTab === index ? { borderColor: value } : {}]}>
+                <Text style={[Style.tabBarItemText, activeTab === index ? { color: value } : {}]}>{value}</Text>
+              </View>
+            </TouchableOpacity>
+          )
+        })}
+      </View>
+    )
+  }
+
+  _renderDot = ({ activeTab, goToPage }) => {
+    return (
+      <View style={Style.dotContainer}>
+        {this.pageLists.map((value, index) => {
+          return (
+            <TouchableOpacity key={value} style={{ flex: 1 }} onPress={() => goToPage(index)}>
+              <View style={Style.tabBarItem}>
+                <View style={[Style.dotItemView, activeTab === index ? { backgroundColor: 'white' } : {}]}></View>
+              </View>
+            </TouchableOpacity>
+          )
+        })}
+      </View>
+    )
+  }
+
   render() {
-    const WrapView = ScrollPagedView
-    // const WrapView = ViewPaged
+    // const WrapView = ScrollPagedView
+    const WrapView = ViewPaged
 
     return (
-      <View style={styles.container}>
+      <View style={Style.container}>
         <WrapView
           onChange={this._onChange}
           onResponder={this._onResponder}
+          renderHeader={this._renderTabBar}
+          // renderFooter={this._renderDot}
+          tabBarPosition='top'
+          // hasAnimation={false}
           // initialPage={0}
           // vertical={false}
-          vertical
           infinite
+          // locked
+          // autoPlay
         >
-          <View style={[styles.pageView, { backgroundColor: 'black' }]}>
-            <Text style={styles.text}>head</Text>
-            <Text style={styles.textIndex}>page {0}</Text>
-            <Text style={styles.text}>foot</Text>
-          </View>
+          {/* <View style={[Style.pageView, { backgroundColor: 'black' }]}>
+            <Text style={Style.text}>head</Text>
+            <Text style={Style.textIndex}>page {0}</Text>
+            <Text style={Style.text}>foot</Text>
+          </View> */}
           {Array.from({ length: 3 }, (val, ind) => {
             return (
               <InsideScrollView
                 key={ind}
                 text={ind + 1}
-                style={styles[`pageItem_${ind}`]}
+                style={Style[`pageItem_${ind}`]}
               />
             )
           })}
@@ -67,10 +107,10 @@ class InsideScrollView extends Component {
     return (
       <View style={{ flex: 1 }}>
         <WrapView style={{ flex: 1 }}>
-          <View style={[styles.pageView, style]}>
-            <Text style={styles.text}>head</Text>
-            <Text style={styles.textIndex}>page {text}</Text>
-            <Text style={styles.text}>foot</Text>
+          <View style={[Style.pageView, style]}>
+            <Text style={Style.text}>head</Text>
+            <Text style={Style.textIndex}>page {text}</Text>
+            <Text style={Style.text}>foot</Text>
           </View>
         </WrapView>
       </View>
@@ -78,7 +118,7 @@ class InsideScrollView extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+const Style = StyleSheet.create({
   container: {
     flex: 1,
     height,
@@ -126,5 +166,39 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     height,
     width: width * 2,
+  },
+
+  tabBarContainer: {
+    minWidth: 50,
+    minHeight: 50,
+    backgroundColor: 'white',
+    borderColor: '#000',
+    flexDirection: 'row',
+  },
+  tabBarItem: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 4,
+    borderColor: 'transparent',
+  },
+  tabBarItemText: {
+    fontSize: 18,
+    color: 'gray',
+  },
+
+  dotContainer: {
+    position: 'absolute',
+    bottom: 80,
+    left: 100,
+    right: 100,
+    height: 10,
+    flexDirection: 'row',
+  },
+  dotItemView: {
+    height: 10,
+    width: 10,
+    borderRadius: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
 })

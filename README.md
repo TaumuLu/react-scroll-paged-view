@@ -18,13 +18,15 @@ In addition, the core functional module ViewPaged is also available for use
 ScrollView component that provides subassembly packaging that can optionally be used  
 All pagination loads on demand, don't worry about initial rendering  
 Infinite pagination is also lazy, minimizing the current index page, even when switching quickly  
+RN and web animation based on animated library, sharing a set of code processing  
+Provides renderHeader and renderFooter for tab switching or carousel graphics, etc.  
 
 ## Notice
 ~~**Compatible version "react-native": "~0.54.0"**~~  
 ~~**The react native 0.47 version uses the 0.1.\* version**~~  
 **Has been perfectly compatible with the above RN version, directly install the latest package**  
 **Click events that do not appear in the internal ScrollView component can be replaced with onPressIn**  
-**Web version of ViewPaged needs to set the height, the default height is document.documentElement.clientHeight, It is recommended to pass style props given height**  
+**infinite and autoPlay are only available to the ViewPaged component, ScrollPagedView will turn off this option by default**
 
 ## Demo
 | IOS | Android | Web |
@@ -32,14 +34,16 @@ Infinite pagination is also lazy, minimizing the current index page, even when s
 | ![IOS](./demo.ios.gif) | ![Android](./demo.android.gif) | ![Web](./demo.web.gif) |
 
 ### Other
+What you can achieve depends on what you can imagine.  
 | Horizontal | Tab | Carousel |
 | ---------- | --- | -------- |
-| ![Horizontal](./demo.horizontal.gif) | | |
+| ![Horizontal](./demo.horizontal.gif) | ![Tab](./demo.tab.gif) | ![Carousel](./demo.carousel.gif) |
 
 ## Usage
 
-### External Full Page scroll
-```
+### ScrollPagedView
+The ScrollPagedView component encapsulates the inner scrolling component based on the ViewPaged component and uses it through the context.
+```javascript
 import ScrollPagedView from 'react-scroll-paged-view'
 import InsideScrollView from './InsideScrollView'
 
@@ -63,8 +67,8 @@ import InsideScrollView from './InsideScrollView'
 ...
 ```
 
-### Inside scrollView
-```
+#### Context ScrollView(InsideScrollView)
+```javascript
 ...
     static contextTypes = {
         ScrollView: PropTypes.func,
@@ -81,55 +85,50 @@ import InsideScrollView from './InsideScrollView'
 ...
 ```
 
-## Properties
-
-### ScrollPagedView
-ScrollPagedView directly uses the ViewPaged component, so you can pass in the Props of ViewPaged as needed, refer to the props of the following ViewPaged components  
-
-| Name | propType | default value | description |
-| --- | --- | --- | --- |
-| onResponder(native only) | function | (isResponder) => {} | Gesture switch state callback |
-| withRef | bool | false | Get ViewPaged instance ref, through the component's getViewPagedInstance method |
-
-### Inside scrollView
-Name | propType | default value | description
---- | --- | --- | ---
-nativeProps(native only) | object | {} | RN scrollView Props
-webProps(web only) | object | {} | Web scrollView Props
+### ViewPaged
+The ViewPaged component is consistent with the ScrollPagedView component and is free to use infinite and autoPlay.
+```javascript
+import { ViewPaged } from 'react-scroll-paged-view'
+```
 
 ## Export module
 - default - ScrollPagedView
 - ViewPaged
 
-### ViewPaged
-The web version is similar to react-native-scrollable-tab-view and provides similar functionality  
-The functionality of the Rn version is not as complete as the Web version, and the follow-up continues to improve  
+## Properties
 
-### Properties
+### ScrollPagedView
+The ScrollPagedView component is based on the ViewPaged component, which can be passed to the props of the ViewPaged as needed. Refer to the props of the ViewPaged component below.  
+
+| Name | propType | default value | description |
+| --- | --- | --- | --- |
+| withRef | bool | false | Get ViewPaged instance ref, through the component's getViewPagedInstance method |
+
+### Context ScrollView
+Name | propType | default value | description
+--- | --- | --- | ---
+nativeProps(native only) | object | {} | RN scrollView Props
+webProps(web only) | object | {} | Web scrollView Props
+
+### ViewPaged
+RN and web have the same props and the performance is consistent  
 
 #### Common Props
 | Name | propType | default value | description |
 | --- | --- | --- | --- |
-| onChange | function | () => {} | Switch paging callbacks |
-| initialPage | number | 0 | Initial page index |
-| vertical | bool | false | Whether to switch the view vertically |
-| duration | number | 400 | Animation duration(In milliseconds) |
 | style | object | {} | ViewPaged style |
-
-#### Web Only Props
-| Name | propType | default value | description |
-| --- | --- | --- | --- |
-| scrollWithoutAnimation | bool | false | Click on the top tab to toggle whether there is animation |
-| locked | bool | false | Whether to allow drag toggle |
+| initialPage | number | 0 | Initial page index |
+| vertical | bool | true | Whether to switch the view vertically |
+| onChange | function | () => {} | Switch paging callbacks |
+| duration | number | 400 | Animation duration(In milliseconds) |
 | infinite | bool | false | Whether it is an infinite scroll view |
-| isDot | bool | false | Is there a bottom dot |
-| tabLabels | array | [] | Tab index, using the children array index by default |
+| renderHeader | function/element | undefined | Header Component |
+| renderFooter | function/element | undefined | Footer Component |
+| renderPosition | Header/Footer direction | 'top' | There are 4 values, 'top', 'left', 'bottom', 'right' |
 | autoPlay | bool | false | Whether to auto rotate |
-| autoPlayTime | number | 2000 | Automatic carousel interval (In milliseconds) |
-| dotStyle | object | {} | Dot style |
-| dotWrapStyle | object | {} | Dot external style |
-| dotActiveStyle | object | {} | Dot activation style |
-| renderTabBar | function | () => {} | tabBar component |
+| autoPlaySpeed | number | 2000 | Automatic carousel interval (In milliseconds) |
+| hasAnimation | bool | true | Click to switch whether there is an animation |
+| locked | bool | false | Whether to allow drag toggle |
 
 #### RN Only Props
 | Name | propType | default value | description |
@@ -152,8 +151,8 @@ The functionality of the Rn version is not as complete as the Web version, and t
 - [x] Optimize structure, code, unified naming
 - [x] Uniformly compatible with different versions of React Native
 - [x] Record development process
-- [ ] Perfect RN end ViewPaged achieves consistency with web performance
-- [ ] More props configuration
+- [x] Perfect RN end ViewPaged achieves consistency with web performance
+- [x] More props configuration
 
 ## Changelog
 - 0.1.*
@@ -163,3 +162,4 @@ The functionality of the Rn version is not as complete as the Web version, and t
 - 1.3.*
 - 1.5.*
 - 1.6.*
+- 2.0.*

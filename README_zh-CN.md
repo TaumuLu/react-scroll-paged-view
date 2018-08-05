@@ -4,12 +4,12 @@
 
 **滚动视图，内滚动，整页滚动，嵌套滚动视图**  
 
-## Installation
+## 安装
 ```
 npm install react-scroll-paged-view --save
 ```
 
-## Introduction
+## 简介
 支持RN端，相应的web端组件也有  
 整页滚动和页内滚动结合，类似京东等app的商品详情页上下页查看  
 iOS RN代码完美支持，Android则提供了原生包支持，基于RN ScrollView改动了部分代码得以支持  
@@ -18,23 +18,32 @@ iOS RN代码完美支持，Android则提供了原生包支持，基于RN ScrollV
 提供子组件封装的ScrollView组件，可以选择使用  
 所有分页为按需加载，不必担心初始会全部渲染  
 无限分页也是懒处理，最小程度校准当前索引页，即使快速切换滑动也很流畅  
+RN和web动画基于animated库，共用一套代码处理  
+提供了renderHeader和renderFooter可做tab切换或轮播图等  
 
-## Notice
+## 注意
 ~~**兼容至"react-native": "~0.54.0"版本**~~  
 ~~**react native0.47版本的使用0.1.\*版本**~~  
 **已完美兼容以上RN的版本，直接安装最新的包即可**  
 **没有出现在内部ScrollView组件中的点击事件可以用onPressIn代替**  
-**web版的ViewPaged需要设置高度，默认高度是document.documentElement.clientHeight，建议传入style给定高度**  
+**infinite和autoPlay只提供给ViewPaged组件，ScrollPagedView会默认关闭此选项**
 
 ## Demo
 | IOS | Android | Web |
 | --- | ------- | --- |
 | ![IOS](./demo.ios.gif) | ![Android](./demo.android.gif) | ![Web](./demo.web.gif) |
 
-## Usage
+### Other
+你所能实现的取决于你所能想象的  
+| Horizontal | Tab | Carousel |
+| ---------- | --- | -------- |
+| ![Horizontal](./demo.horizontal.gif) | ![Tab](./demo.tab.gif) | ![Carousel](./demo.carousel.gif) |
 
-### External Full Page scroll
-```
+## 使用
+
+### ScrollPagedView
+ScrollPagedView组件基于ViewPaged组件封装了内滚动组件，通过context使用
+```javascript
 import ScrollPagedView from 'react-scroll-paged-view'
 import InsideScrollView from './InsideScrollView'
 
@@ -58,8 +67,8 @@ import InsideScrollView from './InsideScrollView'
 ...
 ```
 
-### Inside scrollView
-```
+#### Context ScrollView(InsideScrollView)
+```javascript
 ...
     static contextTypes = {
         ScrollView: PropTypes.func,
@@ -76,55 +85,50 @@ import InsideScrollView from './InsideScrollView'
 ...
 ```
 
-## Properties
-
-### ScrollPagedView
-ScrollPagedView直接使用了ViewPaged组件，因此可以根据需要传入ViewPaged的props，参考下面ViewPaged组件的props  
-
-| Name | propType | default value | description |
-| --- | --- | --- | --- |
-| onResponder(native only) | function | (isResponder) => {} | 手势状态改变时的回调 |
-| withRef | bool | false | 获取ViewPaged实例ref，通过组件的getViewPagedInstance方法 |
-
-### Inside scrollView
-Name | propType | default value | description
---- | --- | --- | ---
-nativeProps(native only) | object | {} | RN scrollView Props
-webProps(web only) | object | {} | Web scrollView Props
+### ViewPaged
+ViewPaged组件和ScrollPagedView组件用法一致，可以自由使用infinite和autoPlay
+```javascript
+import { ViewPaged } from 'react-scroll-paged-view'
+```
 
 ## Export module
 - default - ScrollPagedView
 - ViewPaged
 
-### ViewPaged
-web版的类似于react-native-scrollable-tab-view，提供的功能也类似  
-rn版的功能不如web版的完整，后续继续完善  
+## 属性
 
-### Properties
+### ScrollPagedView
+ScrollPagedView组件基于ViewPaged组件，可以根据需要传入ViewPaged的props，参考下面ViewPaged组件的props  
+
+| Name | propType | default value | description |
+| --- | --- | --- | --- |
+| withRef | bool | false | 获取ViewPaged实例ref，通过组件的getViewPagedInstance方法 |
+
+### Context ScrollView
+Name | propType | default value | description
+--- | --- | --- | ---
+nativeProps(native only) | object | {} | RN scrollView Props
+webProps(web only) | object | {} | Web scrollView Props
+
+### ViewPaged
+RN和web有相同的props，表现也一致  
 
 #### Common Props
 | Name | propType | default value | description |
 | --- | --- | --- | --- |
-| onChange | function | () => {} | 切换分页回调 |
-| initialPage | number | 0 | 初始页索引 |
-| vertical | bool | false | 是否为垂直切换视图 |
-| duration | number | 400 | 动画持续时间(以毫秒为单位) |
 | style | object | {} | ViewPaged样式 |
-
-#### Web Only Props
-| Name | propType | default value | description |
-| --- | --- | --- | --- |
-| scrollWithoutAnimation | bool | false | 点击顶部tab切换是否有动画 |
-| locked | bool | false | 是否允许拖动切换 |
+| initialPage | number | 0 | 初始页索引 |
+| vertical | bool | true | 是否为垂直切换视图 |
+| onChange | function | () => {} | 切换分页回调 |
+| duration | number | 400 | 动画持续时间(以毫秒为单位) |
 | infinite | bool | false | 是否为无限滚动视图 |
-| isDot | bool | false | 是否有底部dot |
-| tabLabels | array | [] | tab索引，默认使用children数组索引 |
+| renderHeader | function/element | undefined | Header组件 |
+| renderFooter | function/element | undefined | Footer组件 |
+| renderPosition | Header/Footer方向 | 'top' | 有4个值，分别为'top','left','bottom','right' |
 | autoPlay | bool | false | 是否自动轮播 |
-| autoPlayTime | number | 2000 | 自动轮播间隔时间(以毫秒为单位) |
-| dotStyle | object | {} | dot样式 |
-| dotWrapStyle | object | {} | dot外部样式 |
-| dotActiveStyle | object | {} | dot激活样式 |
-| renderTabBar | function | () => {} | tabBar组件 |
+| autoPlaySpeed | number | 2000 | 自动轮播间隔时间(以毫秒为单位) |
+| hasAnimation | bool | true | 点击切换时否有动画 |
+| locked | bool | false | 是否允许拖动切换 |
 
 #### RN Only Props
 | Name | propType | default value | description |
@@ -147,8 +151,8 @@ rn版的功能不如web版的完整，后续继续完善
 - [x] 优化结构、代码，统一命名
 - [x] 统一兼容React Native不同版本
 - [x] 记录开发过程
-- [ ] 完善RN端ViewPaged达到和web端表现一致
-- [ ] 更多props配置
+- [x] 完善RN端ViewPaged达到和web端表现一致
+- [x] 更多props配置
 
 ## Changelog
 - 0.1.*
@@ -158,3 +162,4 @@ rn版的功能不如web版的完整，后续继续完善
 - 1.3.*
 - 1.5.*
 - 1.6.*
+- 2.0.*

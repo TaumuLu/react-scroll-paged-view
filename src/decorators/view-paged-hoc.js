@@ -1,11 +1,17 @@
 import React from 'react'
 
 import Connect from './connect'
-import { size, find, findLast } from '../utils'
+import { size, find, findLast, mergeStyle } from '../utils'
 
 // position: 'absolute', top: 0, left: 0, right: 0, bottom: 0
 const initialStyle = { flex: 1, display: 'flex', backgroundColor: 'transparent' }
 const longSwipesMs = 300
+const tabBarDirectionMap = {
+  top: 'column',
+  bottom: 'column-reverse',
+  left: 'row',
+  right: 'row-reverse',
+}
 
 
 export default function ScrollPageHOC(Animated, Easing) {
@@ -51,23 +57,28 @@ export default function ScrollPageHOC(Animated, Easing) {
       }
 
       autoPlay() {
-        const { autoPlay, autoPlayTime } = this.props
+        const { autoPlay, autoPlaySpeed } = this.props
         if (autoPlay) {
           this._clearAutoPlayTimer()
+          // 排除第0页时重置操作，否则更新pos至下次连续切换
+          if (this._posPage && this._resetLastPos()) {
+            this._updateAnimatedValue(this._lastPos)
+          }
 
           this._autoPlayTimer = setTimeout(() => {
             const nextPosPage = this._getNextPosPage()
             this._goToPage(nextPosPage)
-            this.autoPlay()
-          }, autoPlayTime)
+            // this.autoPlay()
+          }, autoPlaySpeed)
         }
       }
 
       // 计算下一索引，针对无限滚动
       _getNextPosPage() {
+        const { infinite } = this.props
         const nextPosPage = this._posPage + 1
         if (nextPosPage > this.childrenSize - 1) {
-          return 1
+          return infinite ? 2 : 0
         }
 
         return nextPosPage
@@ -115,7 +126,9 @@ export default function ScrollPageHOC(Animated, Easing) {
         const page = this._getResetPage()
         if (page !== _posPage) {
           this._lastPos = this._getPosForPage(page)
+          return true
         }
+        return false
       }
 
       // 判断未无限滚动时是否到头不可拖动
@@ -160,10 +173,10 @@ export default function ScrollPageHOC(Animated, Easing) {
 
           // 重置或跳转下一页
           const posPage = this._getPageForPos(distance)
-          this._goToPage(posPage)
+          this._goToPage(posPage, true)
         }
 
-        this.autoPlay()
+        // this.autoPlay()
       }
 
       // 对外提供跳转页数，检验页数正确性
@@ -177,12 +190,12 @@ export default function ScrollPageHOC(Animated, Easing) {
       }
 
       // 对内提供跳转页数，传入定位的页数
-      _goToPage(posPage) {
+      _goToPage(posPage, hasAnimation) {
         this._posPage = posPage
         // 使用传入的下一页值，非计算的下一页值，无限滚动懒加载用
         this._lastPos = this._getPosForPage(this._posPage)
         // 处理切换动画
-        this._updateAnimatedQueue()
+        this._updateAnimatedQueue(hasAnimation)
         const nextPage = this._getCurrnetPage()
         // 没有跳转页仅仅重置动画return处理
         if (+nextPage === +this.currentPage) return
@@ -203,14 +216,14 @@ export default function ScrollPageHOC(Animated, Easing) {
         }
 
         const { onChange } = this.props
-        // 减少空render次数
-        if (size(loadIndex) !== size(oldLoadIndex)) {
-          this.setState({ loadIndex }, () => {
-            onChange(this.currentPage, this._prevPage)
-          })
-        } else {
+        // // 减少空render次数
+        // if (size(loadIndex) !== size(oldLoadIndex)) {
+        this.setState({ loadIndex }, () => {
           onChange(this.currentPage, this._prevPage)
-        }
+        })
+        // } else {
+        //   onChange(this.currentPage, this._prevPage)
+        // }
       }
 
       // move时设置动画值
@@ -226,21 +239,28 @@ export default function ScrollPageHOC(Animated, Easing) {
         }
       }
 
-      _updateAnimatedQueue() {
+      _updateAnimatedQueue(hasAnimation = this.props.hasAnimation) {
         const { duration } = this.props
         const { pos } = this.state
         const animations = []
         const toValue = this._lastPos
 
-        animations.push(
-          Animated.timing(pos, {
-            toValue,
-            duration,
-            easing: Easing.out(Easing.ease),  // default
+        if (hasAnimation) {
+          animations.push(
+            Animated.timing(pos, {
+              toValue,
+              duration,
+              easing: Easing.out(Easing.ease),  // default
+            })
+          )
+          this._clearAutoPlayTimer()
+          Animated.parallel(animations).start(() => {
+            // 所有类型的动画结束后都启用下次的自动播放，其他地方只用关心何时关闭循环
+            this.autoPlay()
           })
-        )
-
-        Animated.parallel(animations).start()
+        } else {
+          this.state.pos.setValue(toValue)
+        }
       }
 
       _getPosForPage(page) {
@@ -264,6 +284,16 @@ export default function ScrollPageHOC(Animated, Easing) {
         }
 
         return page
+      }
+
+      _getContainerStyle(style = {}) {
+        const { tabBarPosition } = this.props
+        const flexDirection = tabBarDirectionMap[tabBarPosition] || tabBarDirectionMap.top
+
+        return mergeStyle(style, {
+          flex: 1,
+          flexDirection,
+        })
       }
 
       _runMeasurements(width, height) {
@@ -293,11 +323,28 @@ export default function ScrollPageHOC(Animated, Easing) {
       }
 
       _clearAutoPlayTimer() {
-        if (this._autoPlayTimer) clearTimeout(this._autoPlayTimer)
+        clearTimeout(this._autoPlayTimer)
       }
 
       componentWillUnmount() {
         this._clearAutoPlayTimer()
+      }
+
+      _checkRenderComponent(key, props = {}) {
+        const Component = this.props[key]
+        if (Component) {
+          return (
+            <Component {...props}/>
+          )
+        }
+        return null
+      }
+
+      _renderPropsComponent(key) {
+        return this._checkRenderComponent(key, {
+          activeTab: this.currentPage,
+          goToPage: this.goToPage,
+        })
       }
 
       render() {
