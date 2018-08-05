@@ -21,7 +21,7 @@ export default class ViewPaged extends Component {
     super(props)
     const { locked } = props
 
-    let panResponderValue = panResponderKey.map(key => props[key])
+    let panResponderValue = panResponderKey.reduce((values, key) => ({ [key]: props[key], ...values }), {})
     if (!locked) {
       panResponderValue = {
         ...panResponderValue,

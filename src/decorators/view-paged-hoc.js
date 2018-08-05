@@ -185,6 +185,7 @@ export default function ScrollPageHOC(Animated, Easing) {
           return
         }
 
+        this._clearAutoPlayTimer()
         const posPage = this._getPosPageForCurrentPage(page)
         this._goToPage(posPage)
       }
