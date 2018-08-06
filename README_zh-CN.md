@@ -20,6 +20,7 @@ iOS RN代码完美支持，Android则提供了原生包支持，基于RN ScrollV
 无限分页也是懒处理，最小程度校准当前索引页，即使快速切换滑动也很流畅  
 RN和web动画基于animated库，共用一套代码处理  
 提供了renderHeader和renderFooter可做tab切换或轮播图等  
+web版的两个组件都有提供类变量isTouch用于判断是否为触摸事件，可借此区分滚动触发的点击事件  
 
 ## 注意
 ~~**兼容至"react-native": "~0.54.0"版本**~~  

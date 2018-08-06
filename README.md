@@ -20,6 +20,7 @@ All pagination loads on demand, don't worry about initial rendering
 Infinite pagination is also lazy, minimizing the current index page, even when switching quickly  
 RN and web animation based on animated library, sharing a set of code processing  
 Provides renderHeader and renderFooter for tab switching or carousel graphics, etc.  
+Both components of the web version provide a class variable isTouch for judging whether it is a touch event, thereby distinguishing the scrolling triggered click event.  
 
 ## Notice
 ~~**Compatible version "react-native": "~0.54.0"**~~  
