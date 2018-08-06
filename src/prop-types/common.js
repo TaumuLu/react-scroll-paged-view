@@ -28,7 +28,7 @@ export const propTypes = {
 export const defaultProps = {
   style: {},
   initialPage: 0,
-  vertical: false,
+  vertical: true,
   onChange: noop,
   duration: 400,
   withRef: false,

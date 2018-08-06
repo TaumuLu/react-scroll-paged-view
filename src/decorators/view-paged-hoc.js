@@ -113,9 +113,15 @@ export default function ScrollPageHOC(Animated, Easing) {
 
       // 计算重制跳转页
       _getResetPage() {
-        const { _posPage, currentPage } = this
-        if (Math.abs(_posPage - currentPage) > 1) {
-          return _posPage === 0 ? _posPage + this._childrenSize : _posPage - this._childrenSize
+        const { _posPage } = this
+        const { infinite } = this.props
+        if (infinite) {
+          if (_posPage === 0) {
+            return this._childrenSize
+          } else if (_posPage === this._childrenSize + 1) {
+            // return _posPage - this._childrenSize
+            return 1
+          }
         }
         return _posPage
       }
@@ -198,8 +204,8 @@ export default function ScrollPageHOC(Animated, Easing) {
         // 处理切换动画
         this._updateAnimatedQueue(hasAnimation)
         const nextPage = this._getCurrnetPage()
-        // 没有跳转页仅仅重置动画return处理
-        if (+nextPage === +this.currentPage) return
+        // 没有跳转页仅仅重置动画return处理，只有1页的除外，让1页也可以无限循环
+        if (this._childrenSize > 1 && +nextPage === +this.currentPage) return
 
         this._prevPage = this.currentPage
         this.currentPage = this._getCurrnetPage()
