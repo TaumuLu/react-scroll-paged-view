@@ -4,7 +4,36 @@ import { View, PanResponder, Easing, Animated } from 'react-native'
 import ViewPagedHOC from '../decorators/view-paged-hoc'
 
 
-@ViewPagedHOC(Animated, Easing)
+const AnimatedView = Animated.View
+
+const Style = {
+  containerStyle: {
+    flex: 1,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  wrapStyle: {
+    flex: 1,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  AnimatedStyle: {
+    flex: 1,
+  },
+  pageStyle: {},
+}
+
+const panResponderKey = [
+  'onStartShouldSetPanResponder',
+  'onStartShouldSetPanResponderCapture',
+  'onMoveShouldSetPanResponder',
+  'onMoveShouldSetPanResponderCapture',
+  'onPanResponderTerminationRequest',
+  'onPanResponderTerminate',
+  'onShouldBlockNativeResponder',
+]
+
+@ViewPagedHOC({ Animated, Easing, Style, View, AnimatedView })
 export default class ViewPaged extends Component {
   constructor(props) {
     super(props)
@@ -22,10 +51,6 @@ export default class ViewPaged extends Component {
     this._panResponder = PanResponder.create(panResponderValue)
     this._AnimatedViewProps = this._panResponder.panHandlers
   }
-
-  Style = Style
-  View = View
-  AnimatedView = Animated.View
 
   _getStyle() {
     const { props: { vertical }, state: { pos } } = this
@@ -60,32 +85,4 @@ export default class ViewPaged extends Component {
     const { width, height } = e.nativeEvent.layout || {}
     this._runMeasurements(width, height)
   }
-}
-
-
-const panResponderKey = [
-  'onStartShouldSetPanResponder',
-  'onStartShouldSetPanResponderCapture',
-  'onMoveShouldSetPanResponder',
-  'onMoveShouldSetPanResponderCapture',
-  'onPanResponderTerminationRequest',
-  'onPanResponderTerminate',
-  'onShouldBlockNativeResponder',
-]
-
-export const Style = {
-  containerStyle: {
-    flex: 1,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  wrapStyle: {
-    flex: 1,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  AnimatedStyle: {
-    flex: 1,
-  },
-  pageStyle: {},
 }
