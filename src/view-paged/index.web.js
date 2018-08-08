@@ -3,21 +3,63 @@ import React, { Component } from 'react'
 import Animated from 'animated/lib/targets/react-dom'
 import Easing from 'animated/lib/Easing'
 
-import { mergeStyle, getMergeObject, get } from '../utils'
+import { get } from '../utils'
 
 import ViewPagedHOC from '../decorators/view-paged-hoc'
 
 
-@ViewPagedHOC(Animated, Easing)
+const AnimatedView = Animated.div
+
+const View = (props) => {
+  const { onLayout, ...otherProps } = props
+  const extraProps = {}
+  if (onLayout) {
+    extraProps.ref = onLayout
+  }
+
+  return (
+    <div {...extraProps} {...otherProps}/>
+  )
+}
+
+const Style = {
+  containerStyle: {
+    flex: 1,
+    display: 'flex',
+    boxSizing: 'border-box',
+    position: 'relative',
+    overflow: 'hidden',
+    width: '100%',
+    height: '100%',
+  },
+  wrapStyle: {
+    flex: 1,
+    display: 'flex',
+    boxSizing: 'border-box',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  AnimatedStyle: {
+    flex: 1,
+    display: 'flex',
+  },
+  pageStyle: {
+    flex: 1,
+    display: 'flex',
+    overflow: 'hidden',
+  },
+}
+
+@ViewPagedHOC({ Animated, Easing, Style, View, AnimatedView })
 export default class ViewPaged extends Component {
   constructor(props) {
     super(props)
 
     const { locked } = props
 
-    this._touchEvent = {}
+    this._AnimatedViewProps = {}
     if (!locked) {
-      this._touchEvent = {
+      this._AnimatedViewProps = {
         onTouchStart: this._onTouchStart,
         ref: this._setAnimatedDivRef, // 代替move事件绑定
         // onTouchMove: this._onTouchMove,
@@ -26,26 +68,18 @@ export default class ViewPaged extends Component {
     }
   }
 
-  getStyle = () => {
-    const { props: { vertical }, state: { pos, width, height }, _boxSize } = this
-    let mergeStyle = {}
+  _getStyle() {
+    const { props: { vertical }, state: { pos, isReady } } = this
+    if (!isReady) return {}
     const basis = this.childrenSize * 100
+    const key = `translate${vertical ? 'Y' : 'X'}`
 
-    if (vertical) {
-      mergeStyle = {
-        wrapStyle: { flexDirection: 'column', width, height },
-        viewPagedStyle: { transform: [{ translateY: pos }], flexDirection: 'column', flex: `1 0 ${basis}%` },
-        pageStyle: { height: _boxSize, width },
-      }
-    } else {
-      mergeStyle = {
-        wrapStyle: { flexDirection: 'row', width, height },
-        viewPagedStyle: { transform: [{ translateX: pos }], flexDirection: 'row', flex: `1 0 ${basis}%` },
-        pageStyle: { width: _boxSize, height },
-      }
+    return {
+      AnimatedStyle: {
+        transform: [{ [key]: pos }],
+        flex: `1 0 ${basis}%`,
+      },
     }
-
-    return getMergeObject(Style, mergeStyle)
   }
 
   _onTouchStart = (e) => {
@@ -113,28 +147,6 @@ export default class ViewPaged extends Component {
     }
   }
 
-  _onLayout = (dom) => {
-    if (dom) {
-      const { offsetWidth, offsetHeight } = dom || {}
-      this._runMeasurements(offsetWidth, offsetHeight)
-    }
-  }
-
-  _renderMeasurements(initialStyle, initialChild) {
-    return (
-      <div style={this._getContainerStyle(Style.container)}>
-        {this._renderPropsComponent('renderHeader')}
-        <div
-          style={initialStyle}
-          ref={this._onLayout}
-        >
-          {initialChild}
-        </div>
-        {this._renderPropsComponent('renderFooter')}
-      </div>
-    )
-  }
-
   _setAnimatedDivRef = (ref) => {
     if (ref && !this._animatedDivRef) {
       this._animatedDivRef = ref
@@ -145,61 +157,10 @@ export default class ViewPaged extends Component {
     }
   }
 
-  render() {
-    const { wrapStyle, viewPagedStyle, pageStyle } = this.getStyle()
-    const { style } = this.props
-    const { loadIndex } = this.state
-
-    return (
-      <div style={mergeStyle(style, this._getContainerStyle(Style.container))}>
-        {this._renderPropsComponent('renderHeader')}
-        <div style={wrapStyle}>
-          <Animated.div
-            style={viewPagedStyle}
-            {...this._touchEvent}
-          >
-            {this.childrenList.map((page, index) => {
-              return (
-                <div
-                  key={index}
-                  style={pageStyle}
-                >
-                  {loadIndex.includes(index) ? page : null}
-                </div>
-              )
-            })}
-          </Animated.div>
-        </div>
-        {this._renderPropsComponent('renderFooter')}
-      </div>
-    )
+  _onLayout = (dom) => {
+    if (dom) {
+      const { offsetWidth, offsetHeight } = dom || {}
+      this._runMeasurements(offsetWidth, offsetHeight)
+    }
   }
-}
-
-
-export const Style = {
-  container: {
-    flex: 1,
-    display: 'flex',
-    boxSizing: 'border-box',
-    position: 'relative',
-    overflow: 'hidden',
-    width: '100%',
-    height: '100%',
-  },
-  wrapStyle: {
-    flex: 1,
-    display: 'flex',
-    boxSizing: 'border-box',
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  viewPagedStyle: {
-    display: 'flex',
-  },
-  pageStyle: {
-    flex: 1,
-    display: 'flex',
-    overflow: 'hidden',
-  },
 }

@@ -1,19 +1,8 @@
 import React, { Component } from 'react'
 import { View, PanResponder, Easing, Animated } from 'react-native'
 
-import { getMergeObject, mergeStyle } from '../utils'
-
 import ViewPagedHOC from '../decorators/view-paged-hoc'
 
-const panResponderKey = [
-  'onStartShouldSetPanResponder',
-  'onStartShouldSetPanResponderCapture',
-  'onMoveShouldSetPanResponder',
-  'onMoveShouldSetPanResponderCapture',
-  'onPanResponderTerminationRequest',
-  'onPanResponderTerminate',
-  'onShouldBlockNativeResponder',
-]
 
 @ViewPagedHOC(Animated, Easing)
 export default class ViewPaged extends Component {
@@ -31,27 +20,22 @@ export default class ViewPaged extends Component {
       }
     }
     this._panResponder = PanResponder.create(panResponderValue)
+    this._AnimatedViewProps = this._panResponder.panHandlers
   }
 
-  getStyle = () => {
-    const { props: { vertical }, state: { pos, width, height }, _boxSize } = this
-    let mergeStyle = {}
+  Style = Style
+  View = View
+  AnimatedView = Animated.View
 
-    if (vertical) {
-      mergeStyle = {
-        wrapStyle: { flexDirection: 'column' },
-        viewPagedStyle: { top: pos, flexDirection: 'column' },
-        pageStyle: { height: _boxSize, width },
-      }
-    } else {
-      mergeStyle = {
-        wrapStyle: { flexDirection: 'row' },
-        viewPagedStyle: { left: pos, flexDirection: 'row' },
-        pageStyle: { width: _boxSize, height },
-      }
+  _getStyle() {
+    const { props: { vertical }, state: { pos } } = this
+    const key = vertical ? 'top' : 'left'
+
+    return {
+      AnimatedStyle: {
+        [key]: pos,
+      },
     }
-
-    return getMergeObject(Style, mergeStyle)
   }
 
   _getDistance(gestureState) {
@@ -76,57 +60,32 @@ export default class ViewPaged extends Component {
     const { width, height } = e.nativeEvent.layout || {}
     this._runMeasurements(width, height)
   }
-
-  _renderMeasurements(initialStyle, initialChild) {
-    return (
-      <View style={this._getContainerStyle(Style.container)}>
-        {this._renderPropsComponent('renderHeader')}
-        <View
-          style={initialStyle}
-          onLayout={this._onLayout}
-        >
-          {initialChild}
-        </View>
-        {this._renderPropsComponent('renderFooter')}
-      </View>
-    )
-  }
-
-  render() {
-    const { wrapStyle, viewPagedStyle, pageStyle } = this.getStyle()
-    const { style } = this.props
-    const { loadIndex } = this.state
-
-    return (
-      <View style={mergeStyle(style, this._getContainerStyle(Style.container))}>
-        {this._renderPropsComponent('renderHeader')}
-        <View style={wrapStyle}>
-          <Animated.View
-            style={viewPagedStyle}
-            {...this._panResponder.panHandlers}
-          >
-            {this.childrenList.map((page, index) => {
-              return (
-                <View
-                  key={index}
-                  style={pageStyle}
-                >
-                  {loadIndex.includes(index) ? page : null}
-                </View>
-              )
-            })}
-          </Animated.View>
-        </View>
-        {this._renderPropsComponent('renderFooter')}
-      </View>
-    )
-  }
 }
 
 
+const panResponderKey = [
+  'onStartShouldSetPanResponder',
+  'onStartShouldSetPanResponderCapture',
+  'onMoveShouldSetPanResponder',
+  'onMoveShouldSetPanResponderCapture',
+  'onPanResponderTerminationRequest',
+  'onPanResponderTerminate',
+  'onShouldBlockNativeResponder',
+]
+
 export const Style = {
-  container: { flex: 1, overflow: 'hidden', position: 'relative' },
-  wrapStyle: { flex: 1, overflow: 'hidden', position: 'relative' },
-  viewPagedStyle: { flex: 1 },
+  containerStyle: {
+    flex: 1,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  wrapStyle: {
+    flex: 1,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  AnimatedStyle: {
+    flex: 1,
+  },
   pageStyle: {},
 }

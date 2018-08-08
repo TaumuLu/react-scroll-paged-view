@@ -1,10 +1,10 @@
 import React from 'react'
 
 import Connect from './connect'
-import { size, find, findLast, mergeStyle } from '../utils'
+import { size, find, findLast, mergeStyle, getMergeObject } from '../utils'
 
 // position: 'absolute', top: 0, left: 0, right: 0, bottom: 0
-const initialStyle = { flex: 1, display: 'flex', backgroundColor: 'transparent' }
+// const initialStyle = { flex: 1, display: 'flex', backgroundColor: 'transparent' }
 const longSwipesMs = 300
 const flexDirectionMap = {
   top: 'column',
@@ -14,7 +14,7 @@ const flexDirectionMap = {
 }
 
 
-export default function ScrollPageHOC(Animated, Easing) {
+export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedView }) {
   return (WrappedComponent) => {
     @Connect
     class ViewPaged extends WrappedComponent {
@@ -27,9 +27,11 @@ export default function ScrollPageHOC(Animated, Easing) {
         }
 
         this.state = {
+          isReady: false,
           width: 0,
           height: 0,
           loadIndex: [this._posPage],
+          pos: new Animated.Value(0),
         }
 
         this._lastPos = 0
@@ -150,12 +152,16 @@ export default function ScrollPageHOC(Animated, Easing) {
       }
 
       _TouchStartEvent() {
+        if (!this.state.isReady) return
+
         this._touchSartTime = Date.now()
 
         this._clearAutoPlayTimer()
       }
 
       _TouchMoveEvent(TouchState) {
+        if (!this.state.isReady) return
+
         this._resetLastPos()
         const distance = this._getDistance(TouchState)
         const nextValue = this._lastPos + distance
@@ -164,6 +170,8 @@ export default function ScrollPageHOC(Animated, Easing) {
       }
 
       _TouchEndEvent(TouchState) {
+        if (!this.state.isReady) return
+
         const distance = this._getDistance(TouchState)
         const { _boxSize, _touchSartTime } = this
         const judgeSize = _boxSize / 3
@@ -198,6 +206,8 @@ export default function ScrollPageHOC(Animated, Easing) {
 
       // 对内提供跳转页数，传入定位的页数
       _goToPage(posPage, hasAnimation) {
+        if (!this.state.isReady) return
+
         this._posPage = posPage
         // 使用传入的下一页值，非计算的下一页值，无限滚动懒加载用
         this._lastPos = this._getPosForPage(this._posPage)
@@ -293,30 +303,6 @@ export default function ScrollPageHOC(Animated, Easing) {
         return page
       }
 
-      _getContainerStyle(style = {}) {
-        const { renderPosition } = this.props
-        const flexDirection = flexDirectionMap[renderPosition] || flexDirectionMap.top
-
-        return mergeStyle(style, {
-          flex: 1,
-          flexDirection,
-        })
-      }
-
-      _runMeasurements(width, height) {
-        const { vertical } = this.props
-
-        this._boxSize = vertical ? height : width
-        this._maxPos = -(this.childrenSize - 1) * this._boxSize
-        this._lastPos = this._getPosForPage(this._posPage)
-
-        this.setState({
-          width,
-          height,
-          pos: new Animated.Value(this._lastPos),
-        })
-      }
-
       // 无限轮播拼接children
       getInfiniteChildren = () => {
         const head = findLast(this.childrenList, child => !!child)
@@ -354,22 +340,124 @@ export default function ScrollPageHOC(Animated, Easing) {
         })
       }
 
+      // _renderMeasurements(initialStyle, initialChild) {
+      //   const { containerStyle } = this._getStyle()
+      //   const { View } = this
+
+      //   return (
+      //     <View style={containerStyle}>
+      //       {this._renderPropsComponent('renderHeader')}
+      //       <View
+      //         style={initialStyle}
+      //         onLayout={this._onLayout}
+      //       >
+      //         {initialChild}
+      //       </View>
+      //       {this._renderPropsComponent('renderFooter')}
+      //     </View>
+      //   )
+      // }
+
+      // initialPage() {
+      //   const [initialIndex] = loadIndex
+      //   const initialChild = this.childrenList[initialIndex]
+      //     // 先行测试容器尺寸，并给予初始展示child用于ssr
+      //   return this._renderMeasurements(initialStyle, initialChild)
+      // }
+
+      _runMeasurements(width, height) {
+        const { vertical } = this.props
+
+        this._boxSize = vertical ? height : width
+        this._maxPos = -(this.childrenSize - 1) * this._boxSize
+        this._lastPos = this._getPosForPage(this._posPage)
+
+        this.setState({
+          isReady: true,
+          width,
+          height,
+          pos: new Animated.Value(this._lastPos),
+        })
+      }
+
+      _getStyle() {
+        const { props: { vertical, renderPosition, style }, state: { isReady, width, height }, _boxSize } = this
+        const flexDirection = flexDirectionMap[renderPosition] || flexDirectionMap.top
+        let commonStyle = {
+          containerStyle: {
+            flexDirection,
+          },
+        }
+
+        if (vertical) {
+          commonStyle = {
+            ...commonStyle,
+            wrapStyle: { flexDirection: 'column' },
+            AnimatedStyle: { flexDirection: 'column' },
+            pageStyle: { height: _boxSize, width },
+          }
+        } else {
+          commonStyle = {
+            ...commonStyle,
+            wrapStyle: { flexDirection: 'row' },
+            AnimatedStyle: { flexDirection: 'row' },
+            pageStyle: { width: _boxSize, height },
+          }
+        }
+
+        const createStyle = getMergeObject(commonStyle, super._getStyle())
+        const mergeStyles = getMergeObject(Style, createStyle)
+
+        if (isReady) {
+          mergeStyles.containerStyle = mergeStyle(style, mergeStyles.containerStyle)
+        } else {
+          // 不需要设置initialStyle，在android上会造成setState后不展示子视图的问题
+          // Style.wrapStyle = initialStyle
+          // Style.AnimatedStyle = initialStyle
+          mergeStyles.pageStyle = {
+            flex: 1,
+            display: 'flex',
+            overflow: 'hidden',
+          }
+        }
+
+        return mergeStyles
+      }
+
       render() {
-        const { width, height, loadIndex } = this.state
         const { infinite } = this.props
+        const { isReady, loadIndex } = this.state
 
         if (infinite) {
           this.childrenList = this.getInfiniteChildren()
           this.childrenSize = size(this.childrenList)
         }
-        if (!width && !height) {
-          const [initialIndex] = loadIndex
-          const initialChild = this.childrenList[initialIndex]
-          // 先行测试容器尺寸，并给予初始展示child用于ssr
-          return this._renderMeasurements(initialStyle, initialChild)
-        }
+        const { containerStyle, wrapStyle, AnimatedStyle, pageStyle } = this._getStyle()
 
-        return super.render()
+        return (
+          <View style={containerStyle}>
+            {this._renderPropsComponent('renderHeader')}
+            <View style={wrapStyle} onLayout={!isReady && this._onLayout}>
+              <AnimatedView
+                style={AnimatedStyle}
+                {...this._AnimatedViewProps}
+              >
+                {this.childrenList.map((page, index) => {
+                  const isRender = loadIndex.includes(index)
+                  return (
+                    <View
+                      key={index}
+                      style={!isReady ? isRender ? pageStyle : {} : pageStyle}
+                    >
+                      {isRender ? page : null}
+                    </View>
+                  )
+                })}
+              </AnimatedView>
+            </View>
+            {this._renderPropsComponent('renderFooter')}
+          </View>
+        )
       }
     }
 

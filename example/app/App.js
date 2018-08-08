@@ -21,6 +21,7 @@ if (Platform.OS === 'android') {
 }
 
 export default class App extends Component {
+
   pageLists = ['blue', 'green', 'red']
 
   _renderTabBar = ({ activeTab, goToPage }) => {
@@ -70,6 +71,7 @@ export default class App extends Component {
           // hasAnimation={false}
           // initialPage={0}
           // vertical={false}
+          initialPage={1}
           infinite
           // locked
           // autoPlay
