@@ -21,6 +21,7 @@ Infinite pagination is also lazy, minimizing the current index page, even when s
 RN and web animation based on animated library, sharing a set of code processing  
 Provides renderHeader and renderFooter for tab switching or carousel graphics, etc.  
 Both components of the web version provide a class variable isTouch for judging whether it is a touch event, thereby distinguishing the scrolling triggered click event.  
+Support for ssr, 2.1+ version removes the initial measurement size caused by repeated creation and destruction of components, better performance  
 
 ## Notice
 ~~**Compatible version "react-native": "~0.54.0"**~~  
@@ -165,3 +166,16 @@ RN and web have the same props and the performance is consistent
 - 1.5.*
 - 1.6.*
 - 2.0.*
+- 2.1.*
+
+### 2.0.*
+- Overall refactoring project to improve code reuse for web-side refactoring
+- Added dependency package animated, smoother animation and better performance
+- Use hoc to maximize the reuse of three-terminal public code, each side only retains the code of its own platform
+- Unify the props on the RN and web, and make them consistent
+- Support for ssr server rendering
+
+### 2.1.*
+- Unified RN and web render methods for ssr
+- A separate render when removing the initial measurement component size
+- Avoid sub-components to be created and destroyed repeatedly, with better performance
