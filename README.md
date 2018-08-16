@@ -33,14 +33,14 @@ Support for ssr, 2.1+ version removes the initial measurement size caused by rep
 ## Demo
 | IOS | Android | Web |
 | --- | ------- | --- |
-| ![IOS](./demo.ios.gif) | ![Android](./demo.android.gif) | ![Web](./demo.web.gif) |
+| ![IOS](./demo/ios.gif) | ![Android](./demo/android.gif) | ![Web](./demo/web.gif) |
 
 ### Other
 What you can achieve depends on what you can imagine.  
 
 | Horizontal | Tab | Carousel |
 | ---------- | --- | -------- |
-| ![Horizontal](./demo.horizontal.gif) | ![Tab](./demo.tab.gif) | ![Carousel](./demo.carousel.gif) |
+| ![Horizontal](./demo/horizontal.gif) | ![Tab](./demo/tab.gif) | ![Carousel](./demo/carousel.gif) |
 
 ## Usage
 

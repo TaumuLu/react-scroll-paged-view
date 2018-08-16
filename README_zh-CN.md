@@ -33,14 +33,14 @@ web版的两个组件都有提供类变量isTouch用于判断是否为触摸事�
 ## Demo
 | IOS | Android | Web |
 | --- | ------- | --- |
-| ![IOS](./demo.ios.gif) | ![Android](./demo.android.gif) | ![Web](./demo.web.gif) |
+| ![IOS](./demo/ios.gif) | ![Android](./demo/android.gif) | ![Web](./demo/web.gif) |
 
 ### Other
 你所能实现的取决于你所能想象的  
 
 | Horizontal | Tab | Carousel |
 | ---------- | --- | -------- |
-| ![Horizontal](./demo.horizontal.gif) | ![Tab](./demo.tab.gif) | ![Carousel](./demo.carousel.gif) |
+| ![Horizontal](./demo/horizontal.gif) | ![Tab](./demo/tab.gif) | ![Carousel](./demo/carousel.gif) |
 
 ## 使用
 

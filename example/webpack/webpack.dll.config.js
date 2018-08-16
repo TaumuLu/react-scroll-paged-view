@@ -1,5 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 const commonConfig = require('./common.config')
 
@@ -35,6 +36,10 @@ module.exports = {
     new webpack.DllPlugin({
       name: '[name]_[chunkhash]_library',
       path: path.join(context, './build/dll/manifest.json'),
+    }),
+    new CleanWebpackPlugin(['./build'], {
+      root: context,
+      verbose: true,
     }),
   ],
 }
