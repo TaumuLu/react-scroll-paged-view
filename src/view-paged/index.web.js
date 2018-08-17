@@ -38,6 +38,8 @@ const Style = {
     boxSizing: 'border-box',
     position: 'relative',
     overflow: 'hidden',
+    width: '100%',
+    height: '100%',
   },
   AnimatedStyle: {
     flex: 1,
