@@ -13,7 +13,8 @@
     "animated": "^0.2.2",
     "react": "^16.3.0-alpha.1",
     "react-native": "0.54.0",
-    "react-scroll-paged-view": "^2.1.1"
+    "react-native-underline-tabbar": "^1.3.6",
+    "react-scroll-paged-view": "^2.1.2"
   },
   "devDependencies": {
     "babel-jest": "22.4.1",

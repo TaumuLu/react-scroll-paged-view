@@ -25,13 +25,16 @@ export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedV
         if (infinite) {
           this._posPage += 1
         }
+        // 真正的初始页
+        this._initialPage = this._posPage
 
         this.state = {
-          isReady: false,
           width: 0,
           height: 0,
-          loadIndex: [this._posPage],
           pos: new Animated.Value(0),
+          ...this.state,
+          isReady: false,
+          loadIndex: [this._initialPage],
         }
 
         this._lastPos = 0
@@ -201,7 +204,12 @@ export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedV
 
         this._clearAutoPlayTimer()
         const posPage = this._getPosPageForCurrentPage(page)
-        this._goToPage(posPage)
+        // RN scrollView走自己的处理方法
+        if (this._isScrollView) {
+          this._scrollToPage(posPage)
+        } else {
+          this._goToPage(posPage)
+        }
       }
 
       // 对内提供跳转页数，传入定位的页数
@@ -217,12 +225,15 @@ export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedV
         // 没有跳转页仅仅重置动画return处理，只有1页的除外，让1页也可以无限循环
         if (this._childrenSize > 1 && +nextPage === +this.currentPage) return
 
-        this._prevPage = this.currentPage
-        this.currentPage = this._getCurrnetPage()
+        this._onChange()
+      }
 
+      _onChange() {
         const { loadIndex: oldLoadIndex } = this.state
         const loadIndex = oldLoadIndex.slice()
 
+        this._prevPage = this.currentPage
+        this.currentPage = this._getCurrnetPage()
         if (loadIndex.indexOf(this._posPage) === -1) {
           loadIndex.push(this._posPage)
           // 加载未重置的页
@@ -334,9 +345,14 @@ export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedV
       }
 
       _renderPropsComponent(key) {
+        const { scrollValue, width } = this.state
+
         return this._checkRenderComponent(key, {
           activeTab: this.currentPage,
           goToPage: this.goToPage,
+          tabs: this.getChildren().map(child => child.props.tabLabel),
+          containerWidth: width,
+          scrollValue,
         })
       }
 
@@ -371,13 +387,17 @@ export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedV
         this._boxSize = vertical ? height : width
         this._maxPos = -(this.childrenSize - 1) * this._boxSize
         this._lastPos = this._getPosForPage(this._posPage)
+        const pos = new Animated.Value(this._lastPos)
 
-        this.setState({
+        const initialState = {
           isReady: true,
           width,
           height,
-          pos: new Animated.Value(this._lastPos),
-        })
+          pos,
+        }
+
+        this.setState(initialState)
+        return initialState
       }
 
       _getStyle() {
@@ -424,36 +444,55 @@ export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedV
         return mergeStyles
       }
 
+      _renderPage({ pageStyle }) {
+        const { isReady, loadIndex } = this.state
+
+        return this.childrenList.map((page, index) => {
+          const isRender = loadIndex.includes(index)
+          return (
+            <View
+              key={index}
+              style={!isReady ? isRender ? pageStyle : {} : pageStyle}
+            >
+              {isRender ? page : null}
+            </View>
+          )
+        })
+      }
+
+      _renderContent(styles) {
+        let superRender = null
+        if (super._renderContent) {
+          superRender = super._renderContent(styles)
+          if (superRender) return superRender
+        }
+        const { AnimatedStyle, pageStyle } = styles
+
+        return (
+          <AnimatedView
+            style={AnimatedStyle}
+            {...this._AnimatedViewProps}
+          >
+            {this._renderPage({ pageStyle })}
+          </AnimatedView>
+        )
+      }
+
       render() {
         const { infinite } = this.props
-        const { isReady, loadIndex } = this.state
+        const { isReady } = this.state
 
         if (infinite) {
           this.childrenList = this.getInfiniteChildren()
           this.childrenSize = size(this.childrenList)
         }
-        const { containerStyle, wrapStyle, AnimatedStyle, pageStyle } = this._getStyle()
+        const { containerStyle, wrapStyle, ...otherStyle } = this._getStyle()
 
         return (
           <View style={containerStyle}>
             {this._renderPropsComponent('renderHeader')}
-            <View style={wrapStyle} onLayout={!isReady && this._onLayout}>
-              <AnimatedView
-                style={AnimatedStyle}
-                {...this._AnimatedViewProps}
-              >
-                {this.childrenList.map((page, index) => {
-                  const isRender = loadIndex.includes(index)
-                  return (
-                    <View
-                      key={index}
-                      style={!isReady ? isRender ? pageStyle : {} : pageStyle}
-                    >
-                      {isRender ? page : null}
-                    </View>
-                  )
-                })}
-              </AnimatedView>
+            <View style={wrapStyle} onLayout={!isReady ? this._onLayout : null}>
+              {this._renderContent(otherStyle)}
             </View>
             {this._renderPropsComponent('renderFooter')}
           </View>

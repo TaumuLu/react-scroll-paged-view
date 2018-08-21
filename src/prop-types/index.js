@@ -15,6 +15,8 @@ export const propTypes = {
   onPanResponderTerminationRequest: PropTypes.func,
   onShouldBlockNativeResponder: PropTypes.func,
   onPanResponderTerminate: PropTypes.func,
+  useScrollView: PropTypes.bool,
+  scrollViewProps: PropTypes.object,
 }
 
 export const defaultProps = {
@@ -26,4 +28,6 @@ export const defaultProps = {
   onPanResponderTerminationRequest: defaultResponder(true),
   onShouldBlockNativeResponder: defaultResponder(true),
   onPanResponderTerminate: noop,
+  useScrollView: true,
+  scrollViewProps: {},
 }
