@@ -53,21 +53,6 @@ export default class ViewPaged extends Component {
     this._isScrollView = !vertical && !infinite && useScrollView
     this._panResponder = PanResponder.create(panResponderValue)
     this._AnimatedViewProps = this._panResponder.panHandlers
-    if (this._isScrollView) {
-      const { width } = Dimensions.get('window')
-      const pos = new Animated.Value(0)
-      const widthAnimatedValue = new Animated.Value(width)
-      widthAnimatedValue.__makeNative()
-      const scrollValue = Animated.divide(pos, widthAnimatedValue)
-      const callListeners = this._polyfillAnimatedValue(scrollValue)
-      pos.addListener(({ value }) => callListeners(value / width))
-
-      this.state = {
-        pos,
-        width,
-        scrollValue,
-      }
-    }
   }
 
   _getStyle() {
@@ -99,49 +84,9 @@ export default class ViewPaged extends Component {
     this._TouchEndEvent(gestureState)
   }
 
-  _polyfillAnimatedValue(animatedValue) {
-    const listeners = new Set()
-    const addListener = (listener) => {
-      listeners.add(listener)
-    }
-
-    const removeListener = (listener) => {
-      listeners.delete(listener)
-    }
-
-    const removeAllListeners = () => {
-      listeners.clear()
-    }
-
-    animatedValue.addListener = addListener
-    animatedValue.removeListener = removeListener
-    animatedValue.removeAllListeners = removeAllListeners
-    return value => listeners.forEach(listener => listener({ value }))
-  }
-
   _onLayout = ({ nativeEvent }) => {
     const { width, height } = nativeEvent.layout || {}
-    const initialState = this._runMeasurements(width, height)
-    if (!initialState) return
-    let { pos } = initialState
-
-    if (this._isScrollView) {
-      pos = this.state.pos
-      let scrollValue = this.state.scrollValue
-
-      if (width !== this.state.width) {
-        const widthAnimatedValue = new Animated.Value(width)
-        widthAnimatedValue.__makeNative()
-        scrollValue = Animated.divide(pos, widthAnimatedValue)
-        // const callListeners = this._polyfillAnimatedValue(scrollValue)
-        // pos.addListener(({ value }) => callListeners(value / width))
-        this.setState({ scrollValue })
-      }
-      this.setState({ pos })
-      // requestAnimationFrame(() => {
-      //   this._scrollToPage(this._posPage, false)
-      // })
-    }
+    this._runMeasurements(width, height)
   }
 
   _scrollToPage = (posPage = this._posPage, hasAnimation = this.props.hasAnimation) => {

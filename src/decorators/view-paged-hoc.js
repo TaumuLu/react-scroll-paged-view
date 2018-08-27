@@ -14,7 +14,7 @@ const flexDirectionMap = {
 }
 
 
-export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedView }) {
+export default function ViewPageHOC({ Animated, Easing, Style, View, AnimatedView }) {
   return (WrappedComponent) => {
     @Connect
     class ViewPaged extends WrappedComponent {
@@ -27,12 +27,13 @@ export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedV
         }
         // 真正的初始页
         this._initialPage = this._posPage
+        const pos = new Animated.Value(0)
+        this._posListener = this._saveListener(pos)
 
         this.state = {
           width: 0,
           height: 0,
-          pos: new Animated.Value(0),
-          ...this.state,
+          pos,
           isReady: false,
           loadIndex: [this._initialPage],
         }
@@ -345,41 +346,33 @@ export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedV
       }
 
       _renderPropsComponent(key) {
-        const { scrollValue, width } = this.state
+        const { width, pos } = this.state
 
         return this._checkRenderComponent(key, {
           activeTab: this.currentPage,
           goToPage: this.goToPage,
           tabs: this.getChildren().map(child => child.props.tabLabel),
-          containerWidth: width,
-          scrollValue,
+          width,
+          pos,
         })
       }
 
-      // _renderMeasurements(initialStyle, initialChild) {
-      //   const { containerStyle } = this._getStyle()
-      //   const { View } = this
+      _saveListener(animatedValue) {
+        const listeners = new Set()
+        const { addListener } = animatedValue
+        animatedValue.addListener = (listener) => {
+          listeners.add(listener)
+          addListener.call(animatedValue, listener)
+        }
 
-      //   return (
-      //     <View style={containerStyle}>
-      //       {this._renderPropsComponent('renderHeader')}
-      //       <View
-      //         style={initialStyle}
-      //         onLayout={this._onLayout}
-      //       >
-      //         {initialChild}
-      //       </View>
-      //       {this._renderPropsComponent('renderFooter')}
-      //     </View>
-      //   )
-      // }
+        return listeners
+      }
 
-      // initialPage() {
-      //   const [initialIndex] = loadIndex
-      //   const initialChild = this.childrenList[initialIndex]
-      //     // 先行测试容器尺寸，并给予初始展示child用于ssr
-      //   return this._renderMeasurements(initialStyle, initialChild)
-      // }
+      _restoreListener(animatedValue, listeners) {
+        listeners.forEach((listener) => {
+          animatedValue.addListener(listener)
+        })
+      }
 
       _runMeasurements(width, height) {
         const { vertical } = this.props
@@ -388,6 +381,8 @@ export default function ScrollPageHOC({ Animated, Easing, Style, View, AnimatedV
         this._maxPos = -(this.childrenSize - 1) * this._boxSize
         this._lastPos = this._getPosForPage(this._posPage)
         const pos = new Animated.Value(this._lastPos)
+        // 恢复pos监听的回掉
+        this._restoreListener(pos, this._posListener)
 
         const initialState = {
           isReady: true,
