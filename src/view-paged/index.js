@@ -102,16 +102,47 @@ export default class ViewPaged extends Component {
     this._onChange()
   }
 
-  _onScroll = ({ nativeEvent }) => {
-    const { width } = this.state
-    const { onScroll } = this.props
-    const offsetX = nativeEvent.contentOffset.x
+  // _onScrollViewTouchStart = () => {
+  //   this._referX = null
+  //   this._startDirection = null
+  // }
 
-    if (offsetX === 0 && !this.scrollOnMountCalled) {
-      this.scrollOnMountCalled = true
-    } else {
-      onScroll && onScroll(offsetX / width)
-    }
+  // _onScrollViewTouchEnd = () => {
+  //   this._referX = null
+  //   this._isTouchEnd = true
+  //   // this._endDirection = null
+  // }
+
+  _onScroll = (event) => {
+    // const { nativeEvent } = event
+    const { onScroll } = this.props
+    // const { x } = nativeEvent.contentOffset
+
+    // // 优化体验，提前预知需要加载的下一页，避免监听onMomentumScrollEnd需等待滚动结束后才开始加载
+    // if (!this._referX) {
+    //   this._referX = x
+    // } else if (!this._startDirection) {
+    //   this._startDirection = x > this._referX ? 'right' : 'left'
+    // } else if (this._isTouchEnd) {
+    //   const _endDirection = x > this._referX ? 'right' : 'left'
+    //   if (this._startDirection === _endDirection) {
+    //     let newPosPage = this._posPage
+    //     if (_endDirection === 'right') {
+    //       newPosPage = this._posPage + 1
+    //     } else {
+    //       newPosPage = this._posPage - 1
+    //     }
+    //     // 处理ios两侧回弹计算错误，用scrollView不会处理无限滚动
+    //     if (newPosPage >= 0 && newPosPage < this._childrenSize) {
+    //       this._posPage = newPosPage
+    //       this._onChange()
+    //     }
+    //   }
+
+    //   this._isTouchEnd = false
+    // }
+
+    onScroll && onScroll(event)
   }
 
   _onMomentumScrollHandle = ({ nativeEvent }) => {
@@ -134,25 +165,27 @@ export default class ViewPaged extends Component {
 
       return (
         <Animated.ScrollView
-          horizontal
-          pagingEnabled
           automaticallyAdjustContentInsets={false}
-          contentOffset={{ x: this._initialPage * width }}
-          ref={this._setScrollViewRef}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: pos } } }],
-            { useNativeDriver: true, listener: this._onScroll }
-          )}
-          // onMomentumScrollBegin={this._onMomentumScrollHandle}
+          // onScrollBeginDrag={this._onScrollViewTouchStart}
+          // onScrollEndDrag={this._onScrollViewTouchEnd}
+          onMomentumScrollBegin={this._onMomentumScrollHandle}
           onMomentumScrollEnd={this._onMomentumScrollHandle}
           scrollEventThrottle={16}
           scrollsToTop={false}
           showsHorizontalScrollIndicator={false}
-          scrollEnabled={!locked}
           directionalLockEnabled
           alwaysBounceVertical={false}
           // keyboardDismissMode='on-drag'
           {...scrollViewProps}
+          horizontal
+          pagingEnabled
+          contentOffset={{ x: this._initialPage * width }}
+          ref={this._setScrollViewRef}
+          scrollEnabled={!locked}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: pos } } }],
+            { useNativeDriver: true, listener: this._onScroll }
+          )}
         >
           {this._renderPage({ pageStyle: { ...pageStyle, width } })}
         </Animated.ScrollView>

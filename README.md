@@ -22,6 +22,7 @@ RN and web animation based on animated library, sharing a set of code processing
 Provides renderHeader and renderFooter for tab switching or carousel graphics, etc.  
 Both components of the web version provide a class variable isTouch for judging whether it is a touch event, thereby distinguishing the scrolling triggered click event.  
 Support for ssr, 2.1+ version removes the initial measurement size caused by repeated creation and destruction of components, better performance  
+2.1.3+ version uses ScrollView as a scrolling container when scrolling horizontally and not infinitely, so subviews can be scrolled vertically using ScrollView  
 
 ## Notice
 ~~**Compatible version "react-native": "~0.54.0"**~~  
@@ -122,11 +123,11 @@ RN and web have the same props and the performance is consistent
 | style | object | {} | ViewPaged style |
 | initialPage | number | 0 | Initial page index |
 | vertical | bool | true | Whether to switch the view vertically |
-| onChange | function | () => {} | Switch paging callbacks |
+| onChange | function | () => {} | Switch paging callbacks, The parameters are currentPage and prevPage |
 | duration | number | 400 | Animation duration(In milliseconds) |
 | infinite | bool | false | Whether it is an infinite scroll view |
-| renderHeader | function/element | undefined | Header Component |
-| renderFooter | function/element | undefined | Footer Component |
+| renderHeader | function/element | undefined | Header Component, The parameters are activeTab, goToPage, width, pos |
+| renderFooter | function/element | undefined | Footer Component, The parameters are activeTab, goToPage, width, pos |
 | renderPosition | string | top | Header/Footer direction, There are 4 values, 'top', 'left', 'bottom', 'right' |
 | autoPlay | bool | false | Whether to auto rotate |
 | autoPlaySpeed | number | 2000 | Automatic carousel interval (In milliseconds) |

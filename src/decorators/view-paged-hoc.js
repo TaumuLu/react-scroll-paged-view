@@ -351,7 +351,6 @@ export default function ViewPageHOC({ Animated, Easing, Style, View, AnimatedVie
         return this._checkRenderComponent(key, {
           activeTab: this.currentPage,
           goToPage: this.goToPage,
-          tabs: this.getChildren().map(child => child.props.tabLabel),
           width,
           pos,
         })
@@ -420,23 +419,23 @@ export default function ViewPageHOC({ Animated, Easing, Style, View, AnimatedVie
           }
         }
 
-        const createStyle = getMergeObject(commonStyle, super._getStyle())
-        const mergeStyles = getMergeObject(Style, createStyle)
+        const mergeStyles = getMergeObject(commonStyle, super._getStyle())
+        const Styles = getMergeObject(Style, mergeStyles)
 
         if (isReady) {
-          mergeStyles.containerStyle = mergeStyle(style, mergeStyles.containerStyle)
+          Styles.containerStyle = mergeStyle(style, Styles.containerStyle)
         } else {
           // 不需要设置initialStyle，在android上会造成setState后不展示子视图的问题
           // Style.wrapStyle = initialStyle
           // Style.AnimatedStyle = initialStyle
-          mergeStyles.pageStyle = {
+          Styles.pageStyle = {
             flex: 1,
             display: 'flex',
             overflow: 'hidden',
           }
         }
 
-        return mergeStyles
+        return Styles
       }
 
       _renderPage({ pageStyle }) {

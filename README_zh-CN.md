@@ -22,6 +22,7 @@ RN和web动画基于animated库，共用一套代码处理
 提供了renderHeader和renderFooter可做tab切换或轮播图等  
 web版的两个组件都有提供类变量isTouch用于判断是否为触摸事件，可借此区分滚动触发的点击事件  
 支持ssr，2.1+版本移除初始测量尺寸所导致的组件重复创建和销毁，性能更好  
+2.1.3+版本在为横向滚动且不无限滚动时使用ScrollView作为滚动容器，这样子视图可以使用ScrollView来纵向滚动  
 
 ## 注意
 ~~**兼容至"react-native": "~0.54.0"版本**~~  
@@ -122,11 +123,11 @@ RN和web有相同的props，表现也一致
 | style | object | {} | ViewPaged样式 |
 | initialPage | number | 0 | 初始页索引 |
 | vertical | bool | true | 是否为垂直切换视图 |
-| onChange | function | () => {} | 切换分页回调 |
+| onChange | function | () => {} | 切换分页回调，参数为currentPage和prevPage |
 | duration | number | 400 | 动画持续时间(以毫秒为单位) |
 | infinite | bool | false | 是否为无限滚动视图 |
-| renderHeader | function/element | undefined | Header组件 |
-| renderFooter | function/element | undefined | Footer组件 |
+| renderHeader | function/element | undefined | Header组件，参数为activeTab, goToPage, width, pos |
+| renderFooter | function/element | undefined | Footer组件，参数为activeTab, goToPage, width, pos |
 | renderPosition | string | top | Header/Footer方向，有4个值，分别为'top','left','bottom','right' |
 | autoPlay | bool | false | 是否自动轮播 |
 | autoPlaySpeed | number | 2000 | 自动轮播间隔时间(以毫秒为单位) |
