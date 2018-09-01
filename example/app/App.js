@@ -15,6 +15,7 @@ import ScrollPagedView, { ViewPaged } from 'react-scroll-paged-view'
 
 let height = Dimensions.get('window').height
 const width = Dimensions.get('window').width
+
 if (Platform.OS === 'android') {
   height -= NativeModules.StatusBarManager.HEIGHT
 }
@@ -122,8 +123,8 @@ class InsideScrollView extends Component {
 const Style = StyleSheet.create({
   container: {
     flex: 1,
-    // height,
-    // width,
+    height,
+    width,
     backgroundColor: '#F5FCFF',
   },
   welcome: {

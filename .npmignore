@@ -23,3 +23,9 @@ gradlew
 gradlew.bat
 *.properties
 *.iml
+
+.babelrc
+.editorconfig
+.eslintignore
+.eslintrc.yml
+jsconfig.json
