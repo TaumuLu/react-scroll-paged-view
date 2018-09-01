@@ -55,7 +55,7 @@ export default class ViewPaged extends Component {
     this._AnimatedViewProps = this._panResponder.panHandlers
   }
 
-  _getStyle() {
+  _getStyles() {
     const { props: { vertical }, state: { pos } } = this
     const key = vertical ? 'top' : 'left'
 
@@ -157,9 +157,8 @@ export default class ViewPaged extends Component {
     this.scrollView = scrollView
   }
 
-  _renderContent(styles) {
+  _renderContent() {
     if (this._isScrollView) {
-      const { pageStyle } = styles
       const { locked, scrollViewProps } = this.props
       const { width, pos } = this.state
 
@@ -187,7 +186,7 @@ export default class ViewPaged extends Component {
             { useNativeDriver: true, listener: this._onScroll }
           )}
         >
-          {this._renderPage({ pageStyle: { ...pageStyle, width } })}
+          {this._renderPage()}
         </Animated.ScrollView>
       )
     }

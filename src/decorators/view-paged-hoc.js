@@ -394,7 +394,10 @@ export default function ViewPageHOC({ Animated, Easing, Style, View, AnimatedVie
         return initialState
       }
 
-      _getStyle() {
+      _getStyles(isClearCache) {
+        if (isClearCache) this.Styles = null
+        if (this.Styles) return this.Styles
+
         const { props: { vertical, renderPosition, style }, state: { isReady, width, height }, _boxSize } = this
         const flexDirection = flexDirectionMap[renderPosition] || flexDirectionMap.top
         let commonStyle = {
@@ -419,7 +422,7 @@ export default function ViewPageHOC({ Animated, Easing, Style, View, AnimatedVie
           }
         }
 
-        const mergeStyles = getMergeObject(commonStyle, super._getStyle())
+        const mergeStyles = getMergeObject(commonStyle, super._getStyles())
         const Styles = getMergeObject(Style, mergeStyles)
 
         if (isReady) {
@@ -435,11 +438,14 @@ export default function ViewPageHOC({ Animated, Easing, Style, View, AnimatedVie
           }
         }
 
-        return Styles
+        this.Styles = Styles
+
+        return this.Styles
       }
 
-      _renderPage({ pageStyle }) {
+      _renderPage() {
         const { isReady, loadIndex } = this.state
+        const { pageStyle } = this._getStyles()
 
         return this.childrenList.map((page, index) => {
           const isRender = loadIndex.includes(index)
@@ -454,20 +460,20 @@ export default function ViewPageHOC({ Animated, Easing, Style, View, AnimatedVie
         })
       }
 
-      _renderContent(styles) {
+      _renderContent() {
         let superRender = null
         if (super._renderContent) {
-          superRender = super._renderContent(styles)
+          superRender = super._renderContent()
           if (superRender) return superRender
         }
-        const { AnimatedStyle, pageStyle } = styles
+        const { AnimatedStyle } = this._getStyles()
 
         return (
           <AnimatedView
             style={AnimatedStyle}
             {...this._AnimatedViewProps}
           >
-            {this._renderPage({ pageStyle })}
+            {this._renderPage()}
           </AnimatedView>
         )
       }
@@ -480,13 +486,13 @@ export default function ViewPageHOC({ Animated, Easing, Style, View, AnimatedVie
           this.childrenList = this.getInfiniteChildren()
           this.childrenSize = size(this.childrenList)
         }
-        const { containerStyle, wrapStyle, ...otherStyle } = this._getStyle()
+        const { containerStyle, wrapStyle } = this._getStyles(true)
 
         return (
-          <View style={containerStyle}>
+          <View style={containerStyle} onLayout={this.temp}>
             {this._renderPropsComponent('renderHeader')}
             <View style={wrapStyle} onLayout={!isReady ? this._onLayout : null}>
-              {this._renderContent(otherStyle)}
+              {this._renderContent()}
             </View>
             {this._renderPropsComponent('renderFooter')}
           </View>

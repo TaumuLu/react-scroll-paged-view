@@ -70,7 +70,7 @@ export default class ViewPaged extends Component {
     }
   }
 
-  _getStyle() {
+  _getStyles() {
     const { props: { vertical }, state: { pos, isReady } } = this
     if (!isReady) return {}
     const basis = this.childrenSize * 100
