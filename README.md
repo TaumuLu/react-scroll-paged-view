@@ -180,3 +180,6 @@ RN and web have the same props and the performance is consistent
 - Unified RN and web render methods for ssr
 - A separate render when removing the initial measurement component size
 - Avoid sub-components to be created and destroyed repeatedly, with better performance
+
+### 2.1.4+
+Remove configuration files such as. babelrc from the uploaded NPM package, react native will use the Babel configuration in the package, and failing to install these configuration dependencies will report errors
