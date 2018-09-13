@@ -180,4 +180,4 @@ RN和web有相同的props，表现也一致
 - 避免子组件重复创建和销毁，性能更好
 
 ### 2.1.4+
-移除了上传npm包里的.babelrc等配置文件，react native会使用包里的babel配置，没有安装这些配置依赖会报错
+- 移除了上传npm包里的.babelrc等配置文件，react native会使用包里的babel配置，没有安装这些配置依赖会报错
