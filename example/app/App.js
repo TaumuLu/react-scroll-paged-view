@@ -12,6 +12,7 @@ import {
 import PropTypes from 'prop-types'
 
 import ScrollPagedView, { ViewPaged } from 'react-scroll-paged-view'
+// import ScrollPagedView, { ViewPaged } from './../src'
 
 let height = Dimensions.get('window').height
 const width = Dimensions.get('window').width
@@ -72,7 +73,7 @@ export default class App extends Component {
           // initialPage={0}
           vertical={false}
           // initialPage={1}
-          // infinite
+          infinite
           // locked
           // autoPlay
         >

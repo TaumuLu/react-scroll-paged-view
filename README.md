@@ -133,6 +133,8 @@ RN and web have the same props and the performance is consistent
 | autoPlaySpeed | number | 2000 | Automatic carousel interval (In milliseconds) |
 | hasAnimation | bool | true | Click to switch whether there is an animation |
 | locked | bool | false | Whether to allow drag toggle |
+| preRenderRange | number | 0 | Control the scope of the render component each time it is updated |
+| isMovingRender | bool | false | Preload the next page when you touch Move |
 
 #### RN Only Props
 | Name | propType | default value | description |
@@ -183,3 +185,6 @@ RN and web have the same props and the performance is consistent
 
 ### 2.1.4+
 - Remove configuration files such as. babelrc from the uploaded NPM package, react native will use the Babel configuration in the package, and failing to install these configuration dependencies will report errors
+
+### 2.2.0+
+- Optimize code structure, precisely control component render times, improve page performance, and provide preload and render scope props

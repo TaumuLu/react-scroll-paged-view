@@ -1,27 +1,6 @@
 import React, { Component } from 'react'
-import { View, PanResponder, Easing, Animated, Dimensions } from 'react-native'
-
+import { PanResponder, Animated } from 'react-native'
 import ViewPagedHOC from '../decorators/view-paged-hoc'
-
-
-const AnimatedView = Animated.View
-
-const Style = {
-  containerStyle: {
-    flex: 1,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  wrapStyle: {
-    flex: 1,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  AnimatedStyle: {
-    flex: 1,
-  },
-  pageStyle: {},
-}
 
 const panResponderKey = [
   'onStartShouldSetPanResponder',
@@ -33,7 +12,8 @@ const panResponderKey = [
   'onShouldBlockNativeResponder',
 ]
 
-@ViewPagedHOC({ Animated, Easing, Style, View, AnimatedView })
+
+@ViewPagedHOC
 export default class ViewPaged extends Component {
   constructor(props) {
     super(props)

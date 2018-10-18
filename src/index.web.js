@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-
 import { getMergeObject } from './utils'
-
-import ScrollPagedHOC from './decorators/scroll-paged-hoc'
+import { ScrollPagedHOC } from './decorators'
 import ViewPaged from './view-paged'
 
 

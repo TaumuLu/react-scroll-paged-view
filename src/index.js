@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
-
 import { isAndroid, isEmpty, getMergeObject } from './utils'
-
-import ScrollPagedHOC from './decorators/scroll-paged-hoc'
-import AgentScrollView from './components/agent-scroll-view'
+import { ScrollPagedHOC } from './decorators'
+import { AgentScrollView } from './components'
 import ViewPaged from './view-paged'
 
 

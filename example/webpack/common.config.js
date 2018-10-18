@@ -7,7 +7,7 @@ module.exports = {
   isDev,
   context,
   mode: 'none',
-  devtool: isDev ? 'false' : 'source-map',
+  devtool: 'source-map',
   resolve: {
     alias: {
       'react-native': 'react-native-web',

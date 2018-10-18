@@ -133,6 +133,8 @@ RN和web有相同的props，表现也一致
 | autoPlaySpeed | number | 2000 | 自动轮播间隔时间(以毫秒为单位) |
 | hasAnimation | bool | true | 点击切换时否有动画 |
 | locked | bool | false | 是否允许拖动切换 |
+| preRenderRange | number | 0 | 控制每次更新时render组件的范围 |
+| isMovingRender | bool | false | 触摸移动时预加载下一页 |
 
 #### RN Only Props
 | Name | propType | default value | description |
@@ -181,3 +183,6 @@ RN和web有相同的props，表现也一致
 
 ### 2.1.4+
 - 移除了上传npm包里的.babelrc等配置文件，react native会使用包里的babel配置，没有安装这些配置依赖会报错
+
+### 2.2.0+
+- 优化代码结构，精确控制组件render次数，提高页面性能，并提供预加载和render范围的props

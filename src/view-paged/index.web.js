@@ -1,58 +1,9 @@
-import React, { Component } from 'react'
-// import ReactDOM from 'react-dom'
-import Animated from 'animated/lib/targets/react-dom'
-import Easing from 'animated/lib/Easing'
-
+import { Component } from 'react'
 import { get } from '../utils'
-
 import ViewPagedHOC from '../decorators/view-paged-hoc'
 
 
-const AnimatedView = Animated.div
-
-const View = (props) => {
-  const { onLayout, ...otherProps } = props
-  const extraProps = {}
-  if (onLayout) {
-    extraProps.ref = onLayout
-  }
-
-  return (
-    <div {...extraProps} {...otherProps}/>
-  )
-}
-
-const Style = {
-  containerStyle: {
-    flex: 1,
-    display: 'flex',
-    boxSizing: 'border-box',
-    position: 'relative',
-    overflow: 'hidden',
-    width: '100%',
-    height: '100%',
-  },
-  wrapStyle: {
-    flex: 1,
-    display: 'flex',
-    boxSizing: 'border-box',
-    position: 'relative',
-    overflow: 'hidden',
-    width: '100%',
-    height: '100%',
-  },
-  AnimatedStyle: {
-    flex: 1,
-    display: 'flex',
-  },
-  pageStyle: {
-    flex: 1,
-    display: 'flex',
-    overflow: 'hidden',
-  },
-}
-
-@ViewPagedHOC({ Animated, Easing, Style, View, AnimatedView })
+@ViewPagedHOC
 export default class ViewPaged extends Component {
   constructor(props) {
     super(props)

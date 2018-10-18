@@ -22,6 +22,8 @@ export const propTypes = {
   autoPlaySpeed: PropTypes.number,
   hasAnimation: PropTypes.bool,
   locked: PropTypes.bool,
+  preRenderRange: PropTypes.number,
+  isMovingRender: PropTypes.bool,
   // children: PropTypes.array.isRequired,
 }
 
@@ -40,4 +42,6 @@ export const defaultProps = {
   autoPlaySpeed: 2000,
   hasAnimation: true,
   locked: false,
+  preRenderRange: 0,
+  isMovingRender: false,
 }
