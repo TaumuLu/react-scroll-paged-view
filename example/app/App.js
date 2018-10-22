@@ -71,6 +71,7 @@ export default class App extends Component {
           // tabBarPosition='top'
           // hasAnimation={false}
           // initialPage={0}
+          isMovingRender
           vertical={false}
           // initialPage={1}
           infinite

@@ -360,12 +360,15 @@ export default function ViewPageHOC(WrappedComponent) {
     }
 
     _renderPropsComponent(key) {
-      const { width, pos } = this.state
+      const { width, height, pos } = this.state
+      const { vertical } = this.props
 
       return this._checkRenderComponent(key, {
         activeTab: this.currentPage,
         goToPage: this.goToPage,
+        vertical,
         width,
+        height,
         pos,
       })
     }
