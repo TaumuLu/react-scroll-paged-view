@@ -24,7 +24,7 @@ export default function ViewPageHOC(WrappedComponent) {
       if (infinite) {
         this._posPage += 1
       }
-        // 真正的初始页
+      // 真正的初始页
       this._initialPage = this._posPage
       const pos = new Animated.Value(0)
       this._posListener = this._saveListener(pos)
@@ -50,7 +50,7 @@ export default function ViewPageHOC(WrappedComponent) {
       this.autoPlay()
     }
 
-      // 检验纠正初始页参数
+    // 检验纠正初始页参数
     getCheckInitialPage() {
       let { initialPage } = this.props
       if (initialPage < 0) {
@@ -66,7 +66,7 @@ export default function ViewPageHOC(WrappedComponent) {
       const { autoPlay, autoPlaySpeed } = this.props
       if (autoPlay) {
         this._clearAutoPlayTimer()
-          // 排除第0页时重置操作，否则更新pos至下次连续切换
+        // 排除第0页时重置操作，否则更新pos至下次连续切换
         if (this._posPage && this._resetLastPos()) {
           this._updateAnimatedValue(this._lastPos)
         }
@@ -79,7 +79,7 @@ export default function ViewPageHOC(WrappedComponent) {
       }
     }
 
-      // 计算下一索引，针对无限滚动
+    // 计算下一索引，针对无限滚动
     _getNextPosPage() {
       const { infinite } = this.props
       const nextPosPage = this._posPage + 1
@@ -117,7 +117,7 @@ export default function ViewPageHOC(WrappedComponent) {
       return page
     }
 
-      // 计算重制跳转页
+    // 计算重制跳转页
     _getResetPage() {
       const { _posPage } = this
       const { infinite } = this.props
@@ -125,14 +125,14 @@ export default function ViewPageHOC(WrappedComponent) {
         if (_posPage === 0) {
           return this._childrenSize
         } else if (_posPage === this._childrenSize + 1) {
-            // return _posPage - this._childrenSize
+          // return _posPage - this._childrenSize
           return 1
         }
       }
       return _posPage
     }
 
-      // 无限滚动重置滚动位置
+    // 无限滚动重置滚动位置
     _resetLastPos() {
       const { _posPage } = this
       const page = this._getResetPage()
@@ -143,7 +143,7 @@ export default function ViewPageHOC(WrappedComponent) {
       return false
     }
 
-      // 判断未无限滚动时是否到头不可拖动
+    // 判断未无限滚动时是否到头不可拖动
     _isMoveBorder = (distance) => {
       const { locked, infinite } = this.props
       if (locked) return false
@@ -188,23 +188,23 @@ export default function ViewPageHOC(WrappedComponent) {
       const judgeSize = _boxSize / 3
       const touchEndTime = Date.now()
 
-        // 检测边界拖动
+      // 检测边界拖动
       if (this._isMoveBorder(distance)) {
         const diffTime = touchEndTime - _touchSartTime
-          // 满足移动跳转下一页条件
+        // 满足移动跳转下一页条件
         if ((diffTime <= longSwipesMs || Math.abs(distance) >= judgeSize) && distance !== 0) {
           this._lastPos += distance
         }
 
-          // 重置或跳转下一页
+        // 重置或跳转下一页
         const posPage = this._getPageForPos(distance)
         this._goToPage(posPage, true)
       }
 
-        // this.autoPlay()
+      // this.autoPlay()
     }
 
-      // 对外提供跳转页数，检验页数正确性
+    // 对外提供跳转页数，检验页数正确性
     goToPage = (page) => {
       if (page < 0 || page > this._childrenSize - 1) {
         return
@@ -212,7 +212,7 @@ export default function ViewPageHOC(WrappedComponent) {
 
       this._clearAutoPlayTimer()
       const posPage = this._getPosPageForCurrentPage(page)
-        // RN scrollView走自己的处理方法
+      // RN scrollView走自己的处理方法
       if (this._isScrollView) {
         this._scrollToPage(posPage)
       } else {
@@ -220,17 +220,17 @@ export default function ViewPageHOC(WrappedComponent) {
       }
     }
 
-      // 对内提供跳转页数，传入定位的页数
+    // 对内提供跳转页数，传入定位的页数
     _goToPage(posPage, hasAnimation) {
       if (!this.state.isReady) return
 
       this._posPage = posPage
-        // 使用传入的下一页值，非计算的下一页值，无限滚动懒加载用
+      // 使用传入的下一页值，非计算的下一页值，无限滚动懒加载用
       this._lastPos = this._getPosForPage(this._posPage)
-        // 处理切换动画
+      // 处理切换动画
       this._updateAnimatedQueue(hasAnimation)
       const nextPage = this._getCurrnetPage()
-        // 没有跳转页仅仅重置动画return处理，只有1页的除外，让1页也可以无限循环
+      // 没有跳转页仅仅重置动画return处理，只有1页的除外，让1页也可以无限循环
       if (this._childrenSize > 1 && +nextPage === +this.currentPage) return
 
       this._onChange()
@@ -269,11 +269,11 @@ export default function ViewPageHOC(WrappedComponent) {
       }
     }
 
-      // move时设置动画值
+    // move时设置动画值
     _updateAnimatedValue(nextValue) {
       const { infinite } = this.props
       if (!infinite) {
-          // 回弹限制
+        // 回弹限制
         if (nextValue <= 0 && nextValue >= this._maxPos) {
           this.state.pos.setValue(nextValue)
         }
@@ -329,7 +329,7 @@ export default function ViewPageHOC(WrappedComponent) {
       return page
     }
 
-      // 无限轮播拼接children
+    // 无限轮播拼接children
     getInfiniteChildren = () => {
       const head = findLast(this.childrenList, child => !!child)
       const foot = find(this.childrenList, child => !!child)
@@ -377,8 +377,16 @@ export default function ViewPageHOC(WrappedComponent) {
       const listeners = new Set()
       const { addListener } = animatedValue
       animatedValue.addListener = (listener) => {
-        listeners.add(listener)
-        addListener.call(animatedValue, listener)
+        let wrapListener = listener
+        if (!this._isScrollView) {
+          wrapListener = (params) => {
+            // 模拟scrollView取反给正向值
+            const value = -params.value
+            listener({ value })
+          }
+        }
+        listeners.add(wrapListener)
+        addListener.call(animatedValue, wrapListener)
       }
 
       return listeners
@@ -397,7 +405,7 @@ export default function ViewPageHOC(WrappedComponent) {
       this._maxPos = -(this.childrenSize - 1) * this._boxSize
       this._lastPos = this._getPosForPage(this._posPage)
       const pos = new Animated.Value(this._lastPos)
-        // 恢复pos监听的回掉
+      // 恢复pos监听的回掉
       this._restoreListener(pos, this._posListener)
 
       const initialState = {
