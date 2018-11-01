@@ -352,9 +352,11 @@ export default function ViewPageHOC(WrappedComponent) {
     _checkRenderComponent(key, props = {}) {
       const Component = this.props[key]
       if (Component) {
-        return (
-          <Component {...props}/>
-        )
+        // 使用cloneElement防止重复创建组件
+        return React.cloneElement(Component(props), props)
+        // return (
+        //   <Component key={key} {...props}/>
+        // )
       }
       return null
     }
@@ -525,7 +527,7 @@ export default function ViewPageHOC(WrappedComponent) {
       const { containerStyle, wrapStyle } = this._getStyles(true)
 
       return (
-        <View style={containerStyle} onLayout={this.temp}>
+        <View style={containerStyle}>
           {this._renderPropsComponent('renderHeader')}
           <View style={wrapStyle} onLayout={!isReady ? this._onLayout : null}>
             {this._renderContent()}
