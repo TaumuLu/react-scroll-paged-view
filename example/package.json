@@ -13,7 +13,7 @@
   "dependencies": {
     "react": "^16.3.0-alpha.1",
     "react-native": "0.54.0",
-    "react-scroll-paged-view": "^2.2.3"
+    "react-scroll-paged-view": "^2.2.4"
   },
   "devDependencies": {
     "babel-jest": "22.4.1",

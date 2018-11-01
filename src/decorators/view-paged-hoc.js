@@ -353,7 +353,7 @@ export default function ViewPageHOC(WrappedComponent) {
       const Component = this.props[key]
       if (Component) {
         // 使用cloneElement防止重复创建组件
-        return React.cloneElement(Component(props), props)
+        return React.cloneElement(Component(props), { key })
         // return (
         //   <Component key={key} {...props}/>
         // )
