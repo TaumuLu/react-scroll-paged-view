@@ -352,8 +352,9 @@ export default function ViewPageHOC(WrappedComponent) {
     _checkRenderComponent(key, props = {}) {
       const Component = this.props[key]
       if (Component) {
+        const element = Component(props) || null
         // 使用cloneElement防止重复创建组件
-        return React.cloneElement(Component(props), { key })
+        return element && React.cloneElement(element, { key })
         // return (
         //   <Component key={key} {...props}/>
         // )
