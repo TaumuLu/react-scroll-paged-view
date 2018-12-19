@@ -1,5 +1,6 @@
 const WebpackDevServer = require('webpack-dev-server')
 const webpack = require('webpack')
+const open = require('opn')
 const config = require('./webpack.config')
 
 const compiler = webpack(config)
@@ -17,6 +18,8 @@ devServer.listen(9090, '0.0.0.0', (err) => {
   if (err) {
     console.log(err)
   } else {
-    console.log('Starting the development server: http://127.0.0.1:9090')
+    const uri = 'http://127.0.0.1:9090'
+    console.log(`Starting the development server: ${uri}`)
+    open(uri)
   }
 })
