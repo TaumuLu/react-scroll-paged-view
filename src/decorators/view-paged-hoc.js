@@ -274,7 +274,7 @@ export default function ViewPageHOC(WrappedComponent) {
       const { infinite } = this.props
       if (!infinite) {
         // 回弹限制
-        if (nextValue <= 0 && nextValue >= this._maxPos) {
+        if (nextValue <= 0 && nextValue >= this._getMaxPos()) {
           this.state.pos.setValue(nextValue)
         }
       } else {
@@ -401,11 +401,15 @@ export default function ViewPageHOC(WrappedComponent) {
       })
     }
 
+    _getMaxPos() {
+      return -(this.childrenSize - 1) * this._boxSize
+    }
+
     _runMeasurements(width, height) {
       const { vertical } = this.props
 
       this._boxSize = vertical ? height : width
-      this._maxPos = -(this.childrenSize - 1) * this._boxSize
+      // this._maxPos = -(this.childrenSize - 1) * this._boxSize
       this._lastPos = this._getPosForPage(this._posPage)
       const pos = new Animated.Value(this._lastPos)
       // 恢复pos监听的回掉

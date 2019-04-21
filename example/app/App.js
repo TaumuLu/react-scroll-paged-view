@@ -23,12 +23,15 @@ if (Platform.OS === 'android') {
 
 export default class App extends Component {
 
-  pageLists = ['blue', 'green', 'red']
+  state = {
+    pageLists: ['blue', 'green', 'red'],
+  }
 
   _renderTabBar = ({ activeTab, goToPage }) => {
+    const { pageLists } = this.state
     return (
       <View style={Style.tabBarContainer}>
-        {this.pageLists.map((value, index) => {
+        {pageLists.map((value, index) => {
           return (
             <TouchableOpacity key={value} style={{ flex: 1 }} onPress={() => goToPage(index)}>
               <View style={[Style.tabBarItem, activeTab === index ? { borderColor: value } : {}]}>
@@ -42,9 +45,10 @@ export default class App extends Component {
   }
 
   _renderDot = ({ activeTab, goToPage }) => {
+    const { pageLists } = this.state
     return (
       <View style={Style.dotContainer}>
-        {this.pageLists.map((value, index) => {
+        {pageLists.map((value, index) => {
           return (
             <TouchableOpacity key={value} style={{ flex: 1 }} onPress={() => goToPage(index)}>
               <View style={Style.tabBarItem}>
@@ -57,7 +61,21 @@ export default class App extends Component {
     )
   }
 
+  _onChange = (currentPage, prevPage) => {
+    const { pageLists } = this.state
+    const length = pageLists.length
+
+    if (currentPage + 1 === length) {
+      this.setState((prevState) => {
+        return {
+          pageLists: prevState.pageLists.concat([currentPage]),
+        }
+      })
+    }
+  }
+
   render() {
+    const { pageLists } = this.state
     const WrapView = ScrollPagedView
     // const WrapView = ViewPaged
 
@@ -83,12 +101,13 @@ export default class App extends Component {
             <Text style={Style.textIndex}>page {0}</Text>
             <Text style={Style.text}>foot</Text>
           </View> */}
-          {Array.from({ length: 3 }, (val, ind) => {
+          {pageLists.map((_val, ind) => {
+            const styleInd = ind % 3
             return (
               <InsideScrollView
                 key={ind}
                 text={ind + 1}
-                style={Style[`pageItem_${ind}`]}
+                style={Style[`pageItem_${styleInd}`]}
               />
             )
           })}

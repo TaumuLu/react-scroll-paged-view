@@ -54,5 +54,6 @@ rules:
   no-shadow: 0
   no-unused-expressions: 0
   no-plusplus: 0
+  react/jsx-closing-bracket-location: 0
 
 
