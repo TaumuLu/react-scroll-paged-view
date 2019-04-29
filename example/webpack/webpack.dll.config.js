@@ -37,8 +37,7 @@ module.exports = {
       name: '[name]_[chunkhash]_library',
       path: path.join(context, './build/dll/manifest.json'),
     }),
-    new CleanWebpackPlugin(['./build'], {
-      root: context,
+    new CleanWebpackPlugin({
       verbose: true,
     }),
   ],
