@@ -10,6 +10,7 @@ module.exports = {
   devtool: 'source-map',
   resolve: {
     alias: {
+      react: 'react',
       'react-native': 'react-native-web',
       'react-scroll-paged-view': path.join(context, './../src'),
       animated: path.join(context, './node_modules/animated'),
