@@ -1,6 +1,9 @@
 root = true
 
+<<<<<<< CURRENT_CONFIG
 # 对所有文件生效
+=======
+>>>>>>> CLI_CONFIG
 [*]
 charset = utf-8
 indent_style = space
@@ -9,6 +12,9 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+<<<<<<< CURRENT_CONFIG
 # 对后缀名为 md 的文件生效
+=======
+>>>>>>> CLI_CONFIG
 [*.md]
 trim_trailing_whitespace = false

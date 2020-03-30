@@ -1,31 +1,66 @@
-android-old-version/
-demo/
-doc/
-example/
-src/
-
-build
-bin
-gradle
-
+# ide配置
 .vscode
 .idea
 .gradle
 .settings
 
-.classpath
-.project
-
+# 文件
 *.gif
+
+# 日志
 npm-debug.log
 
+# android
 gradlew
 gradlew.bat
 *.properties
 *.iml
 
+# Folder
+demo/
+doc/
+docs/
+example/
+examples/
+src/
+backup/
+test/
+interface/
+
+# config file
+
+# babel
 .babelrc
+.babelrc.js
+babel.config.js
+
+# EditorConfig
 .editorconfig
+
+# eslint
 .eslintignore
 .eslintrc.yml
+
+# husky
+.huskyrc
+
+# lint-staged
+.lintstagedrc
+
+# prettier
+.prettierrc
+
+# commitlint
+commitlint.config.js
+
+# vscode config
 jsconfig.json
+
+# typesscript
+tsconfig.json
+
+# nodemon
+nodemon.json
+
+android-old-version/
+src/

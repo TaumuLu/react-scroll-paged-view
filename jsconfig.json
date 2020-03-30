@@ -3,8 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "baseUrl": ".",
-    "paths": {
-    }
+    "paths": {}
   },
   "exclude": [
     "node_modules",
@@ -16,8 +15,5 @@
     "example-rn",
     "lib"
   ],
-  "include": [
-    "app",
-    "src"
-  ]
+  "include": ["src"]
 }

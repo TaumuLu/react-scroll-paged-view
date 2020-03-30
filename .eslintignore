@@ -1,5 +1,16 @@
+<<<<<<< CURRENT_CONFIG
 build/*
 public/*
 vendor/*
 lib/*
 example/node_modules/*
+=======
+lib/
+public/
+build/
+dist/
+node_modules/
+
+# eslint ignores hidden files by default
+!.*
+>>>>>>> CLI_CONFIG
