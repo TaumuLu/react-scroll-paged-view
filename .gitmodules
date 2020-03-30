@@ -1,0 +1,3 @@
+[submodule "react-native-example"]
+	path = react-native-example
+	url = https://github.com/TaumuLu/react-native-example
