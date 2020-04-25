@@ -13,27 +13,27 @@ npm install react-scroll-paged-view --save
 
 ## Introduction
 
-Support React(web) & React Native(RN)  
-Full-page scrolling and in-page scrolling  
-iOS RN code is perfectly supported. Android provides native package support. Based on RN ScrollView, some code changes are supported  
-There is no combination of internal scrolling and page scrolling in open source RN projects. Write this component based on need  
-In addition, the core functional module ViewPaged is also available for use  
-ScrollView component that provides subassembly packaging that can optionally be used  
-All pagination loads on demand, don't worry about initial rendering  
-Infinite pagination is also lazy, minimizing the current index page, even when switching quickly  
-RN and web animation based on animated library, sharing a set of code processing  
-Provides renderHeader and renderFooter for tab switching or carousel graphics, etc.  
-Both components of the web version provide a class variable isTouch for judging whether it is a touch event, thereby distinguishing the scrolling triggered click event.  
-Support for ssr, 2.1+ version removes the initial measurement size caused by repeated creation and destruction of components, better performance  
-2.1.3+ version uses ScrollView as a scrolling container when scrolling horizontally and not infinitely, so subviews can be scrolled vertically using ScrollView
+- Support React(web) & React Native(RN)
+- Full-page scrolling and in-page scrolling
+- iOS RN code is perfectly supported. Android provides native package support. Based on RN ScrollView, some code changes are supported
+- There is no combination of internal scrolling and page scrolling in open source RN projects. Write this component based on need
+- In addition, the core functional module ViewPaged is also available for use
+- ScrollView component that provides subassembly packaging that can optionally be used
+- All pagination loads on demand, don't worry about initial rendering
+- Infinite pagination is also lazy, minimizing the current index page, even when switching quickly
+- RN and web animation based on animated library, sharing a set of code processing
+- Provides renderHeader and renderFooter for tab switching or carousel graphics, etc.
+- Both components of the web version provide a class variable isTouch for judging whether it is a touch event, thereby distinguishing the scrolling triggered click event.
+- Support for ssr, 2.1+ version removes the initial measurement size caused by repeated creation and destruction of components, better performance
+- 2.1.3+ version uses ScrollView as a scrolling container when scrolling horizontally and not infinitely, so subviews can be scrolled vertically using ScrollView
 
 ## Notice
 
-~~**Compatible version "react-native": "~0.54.0"**~~  
-~~**The react native 0.47 version uses the 0.1.\* version**~~  
-**Has been perfectly compatible with the above RN version, directly install the latest package**  
-**Click events that do not appear in the internal ScrollView component can be replaced with onPressIn**  
-**infinite and autoPlay are only available to the ViewPaged component, ScrollPagedView will turn off this option by default**
+- ~~**Compatible version "react-native": "~0.54.0"**~~
+- ~~**The react native 0.47 version uses the 0.1.\* version**~~
+- **Has been perfectly compatible with the above RN version, directly install the latest package**
+- **Click events that do not appear in the internal ScrollView component can be replaced with onPressIn**
+- **infinite and autoPlay are only available to the ViewPaged component, ScrollPagedView will turn off this option by default**
 
 ## Demo
 

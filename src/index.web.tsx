@@ -3,7 +3,6 @@ import { getMergeObject } from './utils'
 import { ScrollPagedHOC } from './decorators'
 import ViewPaged from './view-paged'
 
-
 @ScrollPagedHOC
 export default class ScrollPagedView extends Component {
   _onTouchStart = (e) => {
@@ -27,7 +26,16 @@ export default class ScrollPagedView extends Component {
   }
 
   _setBorderValue(e) {
-    const { currentTarget: { scrollHeight, scrollWidth, scrollTop, scrollLeft, clientHeight, clientWidth } } = e
+    const {
+      currentTarget: {
+        scrollHeight,
+        scrollWidth,
+        scrollTop,
+        scrollLeft,
+        clientHeight,
+        clientWidth
+      }
+    } = e
     const { vertical } = this.props
 
     const startValue = vertical ? scrollTop : scrollLeft
@@ -58,7 +66,9 @@ export default class ScrollPagedView extends Component {
   _onTouchMove = (e) => {
     const { targetTouches } = e
     const { clientX, clientY } = targetTouches[0] || {}
-    const { currentTarget: { scrollHeight, scrollWidth, clientHeight, clientWidth } } = e
+    const {
+      currentTarget: { scrollHeight, scrollWidth, clientHeight, clientWidth }
+    } = e
     const { vertical } = this.props
     // 是否达成触摸滑动操作
     if (!this.isTouch) {
@@ -73,7 +83,10 @@ export default class ScrollPagedView extends Component {
     this._TouchMoveEvent(clientX, clientY, sizeValue, layoutValue)
 
     // 边界不一致也停止冒泡
-    if (!this.isResponder || this.borderDirection !== this._startBorderDirection) {
+    if (
+      !this.isResponder ||
+      this.borderDirection !== this._startBorderDirection
+    ) {
       e.stopPropagation()
       // 到达边界时阻止默认事件
       if (this.isResponder && this.borderDirection) {
@@ -103,31 +116,29 @@ export default class ScrollPagedView extends Component {
   // 子元素调用一定要传入index值来索引对应数据,且最好执行懒加载
   ScrollViewMonitor = ({ children, webProps = {} }) => {
     const { vertical } = this.props
-    const mergeProps = getMergeObject({
-      onTouchStart: this._onTouchStart,
-      // onTouchMove: this._onTouchMove,
-      // onTouchEnd: this._onTouchEnd,
-      // onScroll: this._onScroll,
-      style: {
-        flex: 1,
-        overflowX: vertical ? 'hidden' : 'scroll',
-        overflowY: !vertical ? 'hidden' : 'scroll',
-        position: 'relative',
-        WebkitOverflowScrolling: 'touch',
+    const mergeProps = getMergeObject(
+      {
+        onTouchStart: this._onTouchStart,
+        // onTouchMove: this._onTouchMove,
+        // onTouchEnd: this._onTouchEnd,
+        // onScroll: this._onScroll,
+        style: {
+          flex: 1,
+          overflowX: vertical ? 'hidden' : 'scroll',
+          overflowY: !vertical ? 'hidden' : 'scroll',
+          position: 'relative',
+          WebkitOverflowScrolling: 'touch'
+        }
       },
-    }, webProps)
+      webProps
+    )
 
     return (
-      <div
-        {...mergeProps}
-        ref={this._webSetScrollViewRef}
-      >
+      <div {...mergeProps} ref={this._webSetScrollViewRef}>
         {children}
       </div>
     )
   }
 }
 
-export {
-  ViewPaged
-}
+export { ViewPaged }

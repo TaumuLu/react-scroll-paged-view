@@ -13,27 +13,27 @@ npm install react-scroll-paged-view --save
 
 ## 简介
 
-支持 RN 端，相应的 web 端组件也有  
-整页滚动和页内滚动结合，类似京东等 app 的商品详情页上下页查看  
-iOS RN 代码完美支持，Android 则提供了原生包支持，基于 RN ScrollView 改动了部分代码得以支持  
-目前开源的 RN 项目中并没有内滚动和页滚动结合的，基于需要写了这个组件  
-此外还额外提供了核心功能模块 ViewPaged 可供使用  
-提供子组件封装的 ScrollView 组件，可以选择使用  
-所有分页为按需加载，不必担心初始会全部渲染  
-无限分页也是懒处理，最小程度校准当前索引页，即使快速切换滑动也很流畅  
-RN 和 web 动画基于 animated 库，共用一套代码处理  
-提供了 renderHeader 和 renderFooter 可做 tab 切换或轮播图等  
-web 版的两个组件都有提供类变量 isTouch 用于判断是否为触摸事件，可借此区分滚动触发的点击事件  
-支持 ssr，2.1+版本移除初始测量尺寸所导致的组件重复创建和销毁，性能更好  
-2.1.3+版本在为横向滚动且不无限滚动时使用 ScrollView 作为滚动容器，这样子视图可以使用 ScrollView 来纵向滚动
+- 支持 RN 端，相应的 web 端组件也有
+- 整页滚动和页内滚动结合，类似京东等 app 的商品详情页上下页查看
+- iOS RN 代码完美支持，Android 则提供了原生包支持，基于 RN ScrollView 改动了部分代码得以支持
+- 目前开源的 RN 项目中并没有内滚动和页滚动结合的，基于需要写了这个组件
+- 此外还额外提供了核心功能模块 ViewPaged 可供使用
+- 提供子组件封装的 ScrollView 组件，可以选择使用
+- 所有分页为按需加载，不必担心初始会全部渲染
+- 无限分页也是懒处理，最小程度校准当前索引页，即使快速切换滑动也很流畅
+- RN 和 web 动画基于 animated 库，共用一套代码处理
+- 提供了 renderHeader 和 renderFooter 可做 tab 切换或轮播图等
+- web 版的两个组件都有提供类变量 isTouch 用于判断是否为触摸事件，可借此区分滚动触发的点击事件
+- 支持 ssr，2.1+版本移除初始测量尺寸所导致的组件重复创建和销毁，性能更好
+- 2.1.3+版本在为横向滚动且不无限滚动时使用 ScrollView 作为滚动容器，这样子视图可以使用 ScrollView 来纵向滚动
 
 ## 注意
 
-~~**兼容至"react-native": "~0.54.0"版本**~~  
-~~**react native0.47 版本的使用 0.1.\*版本**~~  
-**已完美兼容以上 RN 的版本，直接安装最新的包即可**  
-**没有出现在内部 ScrollView 组件中的点击事件可以用 onPressIn 代替**  
-**infinite 和 autoPlay 只提供给 ViewPaged 组件，ScrollPagedView 会默认关闭此选项**
+- ~~**兼容至"react-native": "~0.54.0"版本**~~
+- ~~**react native0.47 版本的使用 0.1.\*版本**~~
+- **已完美兼容以上 RN 的版本，直接安装最新的包即可**
+- **没有出现在内部 ScrollView 组件中的点击事件可以用 onPressIn 代替**
+- **infinite 和 autoPlay 只提供给 ViewPaged 组件，ScrollPagedView 会默认关闭此选项**
 
 ## Demo
 

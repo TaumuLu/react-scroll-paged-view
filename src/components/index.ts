@@ -9,25 +9,17 @@ const Style = {
   containerStyle: {
     flex: 1,
     overflow: 'hidden',
-    position: 'relative',
+    position: 'relative'
   },
   wrapStyle: {
     flex: 1,
     overflow: 'hidden',
-    position: 'relative',
+    position: 'relative'
   },
   AnimatedStyle: {
-    flex: 1,
+    flex: 1
   },
-  pageStyle: {},
+  pageStyle: {}
 }
 
-
-export {
-  Style,
-  Animated,
-  AnimatedView,
-  Easing,
-  View,
-  AgentScrollView
-}
+export { Style, Animated, AnimatedView, Easing, View, AgentScrollView }

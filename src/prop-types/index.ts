@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types'
 
 import { noop } from '../utils'
-import { propTypes as commonPropTypes, defaultProps as commonDefaultProps } from './common'
+import {
+  propTypes as commonPropTypes,
+  defaultProps as commonDefaultProps,
+  IProps as commonIProps
+} from './common'
 
-
-const defaultResponder = isResponder => (evt, gestureState) => isResponder
+const defaultResponder = (isResponder) => (evt, gestureState) => isResponder
 
 export const propTypes = {
   ...commonPropTypes,
@@ -16,7 +19,7 @@ export const propTypes = {
   onShouldBlockNativeResponder: PropTypes.func,
   onPanResponderTerminate: PropTypes.func,
   useScrollView: PropTypes.bool,
-  scrollViewProps: PropTypes.object,
+  scrollViewProps: PropTypes.object
 }
 
 export const defaultProps = {
@@ -29,5 +32,19 @@ export const defaultProps = {
   onShouldBlockNativeResponder: defaultResponder(true),
   onPanResponderTerminate: noop,
   useScrollView: true,
-  scrollViewProps: {},
+  scrollViewProps: {}
+}
+
+type TDefaultResponder = (isResponder: boolean) => boolean
+
+export interface IProps extends commonIProps {
+  onStartShouldSetPanResponder: TDefaultResponder
+  onStartShouldSetPanResponderCapture: TDefaultResponder
+  onMoveShouldSetPanResponder: TDefaultResponder
+  onMoveShouldSetPanResponderCapture: TDefaultResponder
+  onPanResponderTerminationRequest: TDefaultResponder
+  onShouldBlockNativeResponder: TDefaultResponder
+  onPanResponderTerminate: TDefaultResponder
+  useScrollView: boolean
+  scrollViewProps: object
 }

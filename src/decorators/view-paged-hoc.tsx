@@ -1,7 +1,15 @@
 import React from 'react'
 import Connect from './connect'
-import { Animated, AnimatedView, Easing, Style, View, SceneComponent } from './../components'
+import {
+  Animated,
+  AnimatedView,
+  Easing,
+  Style,
+  View,
+  StaticContainer
+} from '../components'
 import { size, find, findLast, mergeStyle, getMergeObject } from '../utils'
+import { IProps } from '../prop-types'
 
 // position: 'absolute', top: 0, left: 0, right: 0, bottom: 0
 // const initialStyle = { flex: 1, display: 'flex', backgroundColor: 'transparent' }
@@ -10,13 +18,24 @@ const flexDirectionMap = {
   top: 'column',
   bottom: 'column-reverse',
   left: 'row',
-  right: 'row-reverse',
+  right: 'row-reverse'
 }
 
+const SceneComponent = ({ shouldUpdated, children, ...otherProps }) => {
+  return (
+    <View {...otherProps}>
+      <StaticContainer shouldUpdate={shouldUpdated}>{children}</StaticContainer>
+    </View>
+  )
+}
 
 export default function ViewPageHOC(WrappedComponent) {
   @Connect
   class ViewPaged extends WrappedComponent {
+    _lastPos: number
+
+    props: IProps
+
     constructor(props) {
       super(props)
       const { infinite } = props
@@ -34,7 +53,7 @@ export default function ViewPageHOC(WrappedComponent) {
         height: 0,
         pos,
         isReady: false,
-        loadIndex: [this._initialPage],
+        loadIndex: [this._initialPage]
       }
 
       this._lastPos = 0
@@ -74,7 +93,7 @@ export default function ViewPageHOC(WrappedComponent) {
         this._autoPlayTimer = setTimeout(() => {
           const nextPosPage = this._getNextPosPage()
           this._goToPage(nextPosPage)
-            // this.autoPlay()
+          // this.autoPlay()
         }, autoPlaySpeed)
       }
     }
@@ -124,7 +143,8 @@ export default function ViewPageHOC(WrappedComponent) {
       if (infinite) {
         if (_posPage === 0) {
           return this._childrenSize
-        } else if (_posPage === this._childrenSize + 1) {
+        }
+        if (_posPage === this._childrenSize + 1) {
           // return _posPage - this._childrenSize
           return 1
         }
@@ -150,7 +170,8 @@ export default function ViewPageHOC(WrappedComponent) {
       if (infinite) return infinite
 
       if (distance > 0 && this.currentPage !== 0) return true
-      if (distance < 0 && this.currentPage + 1 !== this.childrenSize) return true
+      if (distance < 0 && this.currentPage + 1 !== this.childrenSize)
+        return true
 
       return false
     }
@@ -192,7 +213,10 @@ export default function ViewPageHOC(WrappedComponent) {
       if (this._isMoveBorder(distance)) {
         const diffTime = touchEndTime - _touchSartTime
         // 满足移动跳转下一页条件
-        if ((diffTime <= longSwipesMs || Math.abs(distance) >= judgeSize) && distance !== 0) {
+        if (
+          (diffTime <= longSwipesMs || Math.abs(distance) >= judgeSize) &&
+          distance !== 0
+        ) {
           this._lastPos += distance
         }
 
@@ -221,7 +245,7 @@ export default function ViewPageHOC(WrappedComponent) {
     }
 
     // 对内提供跳转页数，传入定位的页数
-    _goToPage(posPage, hasAnimation) {
+    _goToPage(posPage: number, hasAnimation?: boolean) {
       if (!this.state.isReady) return
 
       this._posPage = posPage
@@ -282,7 +306,7 @@ export default function ViewPageHOC(WrappedComponent) {
       }
     }
 
-    _updateAnimatedQueue(hasAnimation = this.props.hasAnimation) {
+    _updateAnimatedQueue(hasAnimation: boolean = this.props.hasAnimation) {
       const { duration } = this.props
       const { pos } = this.state
       const animations = []
@@ -293,7 +317,8 @@ export default function ViewPageHOC(WrappedComponent) {
           Animated.timing(pos, {
             toValue,
             duration,
-            easing: Easing.out(Easing.ease),  // default
+            useNativeDriver: false,
+            easing: Easing.out(Easing.ease) // default
           })
         )
         this._clearAutoPlayTimer()
@@ -331,13 +356,13 @@ export default function ViewPageHOC(WrappedComponent) {
 
     // 无限轮播拼接children
     getInfiniteChildren = () => {
-      const head = findLast(this.childrenList, child => !!child)
-      const foot = find(this.childrenList, child => !!child)
+      const head = findLast(this.childrenList, (child) => !!child)
+      const foot = find(this.childrenList, (child) => !!child)
 
       return [
         React.cloneElement(head, { key: 'page-head' }),
         ...this.childrenList,
-        React.cloneElement(foot, { key: 'page-foot' }),
+        React.cloneElement(foot, { key: 'page-foot' })
       ]
     }
 
@@ -372,7 +397,7 @@ export default function ViewPageHOC(WrappedComponent) {
         vertical,
         width,
         height,
-        pos,
+        pos
       })
     }
 
@@ -419,23 +444,28 @@ export default function ViewPageHOC(WrappedComponent) {
         isReady: true,
         width,
         height,
-        pos,
+        pos
       }
 
       this.setState(initialState)
       return initialState
     }
 
-    _getStyles(isClearCache) {
+    _getStyles(isClearCache?: boolean) {
       if (isClearCache) this.Styles = null
       if (this.Styles) return this.Styles
 
-      const { props: { vertical, renderPosition, style }, state: { isReady, width, height }, _boxSize } = this
-      const flexDirection = flexDirectionMap[renderPosition] || flexDirectionMap.top
-      let commonStyle = {
+      const {
+        props: { vertical, renderPosition, style },
+        state: { isReady, width, height },
+        _boxSize
+      } = this
+      const flexDirection =
+        flexDirectionMap[renderPosition] || flexDirectionMap.top
+      let commonStyle: Record<string, any> = {
         containerStyle: {
-          flexDirection,
-        },
+          flexDirection
+        }
       }
 
       if (vertical) {
@@ -443,14 +473,14 @@ export default function ViewPageHOC(WrappedComponent) {
           ...commonStyle,
           wrapStyle: { flexDirection: 'column' },
           AnimatedStyle: { flexDirection: 'column' },
-          pageStyle: { height: _boxSize, width },
+          pageStyle: { height: _boxSize, width }
         }
       } else {
         commonStyle = {
           ...commonStyle,
           wrapStyle: { flexDirection: 'row' },
           AnimatedStyle: { flexDirection: 'row' },
-          pageStyle: { width: _boxSize, height },
+          pageStyle: { width: _boxSize, height }
         }
       }
 
@@ -466,7 +496,7 @@ export default function ViewPageHOC(WrappedComponent) {
         Styles.pageStyle = {
           flex: 1,
           display: 'flex',
-          overflow: 'hidden',
+          overflow: 'hidden'
         }
       }
 
@@ -477,7 +507,9 @@ export default function ViewPageHOC(WrappedComponent) {
 
     _shouldRenderPage(index) {
       const { preRenderRange } = this.props
-      const hasRange = index < (this._posPage + preRenderRange + 1) && index > (this._posPage - preRenderRange - 1)
+      const hasRange =
+        index < this._posPage + preRenderRange + 1 &&
+        index > this._posPage - preRenderRange - 1
       const hasIndex = this._addIndexs.includes(index)
       const isUpdate = hasRange || hasIndex
 
@@ -490,12 +522,16 @@ export default function ViewPageHOC(WrappedComponent) {
 
       return this.childrenList.map((page, index) => {
         const isRender = loadIndex.includes(index)
+        let style = pageStyle
+        if (!isReady && !isRender) {
+          style = {}
+        }
 
         return (
           <SceneComponent
             key={index}
             shouldUpdated={this._shouldRenderPage(index)}
-            style={!isReady ? isRender ? pageStyle : {} : pageStyle}
+            style={style}
           >
             {isRender ? page : null}
           </SceneComponent>
@@ -512,10 +548,7 @@ export default function ViewPageHOC(WrappedComponent) {
       const { AnimatedStyle } = this._getStyles()
 
       return (
-        <AnimatedView
-          style={AnimatedStyle}
-          {...this._AnimatedViewProps}
-        >
+        <AnimatedView style={AnimatedStyle} {...this._AnimatedViewProps}>
           {this._renderPage()}
         </AnimatedView>
       )
@@ -545,4 +578,3 @@ export default function ViewPageHOC(WrappedComponent) {
 
   return ViewPaged
 }
-

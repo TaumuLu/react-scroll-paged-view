@@ -3,10 +3,30 @@ import { isAndroid, isEmpty, getMergeObject } from './utils'
 import { ScrollPagedHOC } from './decorators'
 import { AgentScrollView } from './components'
 import ViewPaged from './view-paged'
-
+import { IProps } from './prop-types'
 
 @ScrollPagedHOC
-export default class ScrollPagedView extends Component {
+export default class ScrollPagedView extends Component<IProps> {
+  _viewPagedProps: any
+
+  _setScrollViewRef: any
+
+  _TouchStartEvent: any
+
+  _TouchMoveEvent: any
+
+  currentRef: any
+
+  setBorderValue: any
+
+  isResponder: boolean
+
+  isBorder: boolean
+
+  isTouchMove: boolean
+
+  borderDirection: boolean
+
   constructor(props) {
     super(props)
 
@@ -15,7 +35,7 @@ export default class ScrollPagedView extends Component {
       onMoveShouldSetPanResponder: this._moveResponder,
       onStartShouldSetPanResponderCapture: this._startResponderCapture,
       onMoveShouldSetPanResponderCapture: this._moveResponderCapture,
-      onPanResponderTerminationRequest: this._onPanResponderTerminationRequest,
+      onPanResponderTerminationRequest: this._onPanResponderTerminationRequest
       // onShouldBlockNativeResponder: this._onShouldBlockNativeResponder,
       // onPanResponderTerminate: this._onPanResponderTerminate,
     }
@@ -36,7 +56,10 @@ export default class ScrollPagedView extends Component {
   _onContentSizeChange = (oldSize, newSize) => {
     // 修复高度变化后边界已判断操作,只有第一页需要判断
     if (!isEmpty(oldSize)) {
-      const { isResponder, props: { vertical } } = this
+      const {
+        isResponder,
+        props: { vertical }
+      } = this
       const newValue = vertical ? newSize.height : newSize.width
       const oldValue = vertical ? oldSize.height : oldSize.width
 
@@ -71,12 +94,12 @@ export default class ScrollPagedView extends Component {
   _onScrollEndDrag = (event) => {
     // if (isAndroid && this.androidMove) {
     //   this.androidMove = false
-      // const currentRef = this.getScrollViewConfig('scrollViewRef')
+    // const currentRef = this.getScrollViewConfig('scrollViewRef')
 
-      // this._startTime = Date.now()
-      // this._onUpdate(this._fromValue, (y) => {
-      //   currentRef.scrollTo({ x: 0, y, animated: false })
-      // })
+    // this._startTime = Date.now()
+    // this._onUpdate(this._fromValue, (y) => {
+    //   currentRef.scrollTo({ x: 0, y, animated: false })
+    // })
     // }
 
     this._onMomentumScrollEnd(event)
@@ -88,7 +111,7 @@ export default class ScrollPagedView extends Component {
       const {
         contentOffset: { y, x },
         contentSize: { height: maxHeight, width: maxWidth },
-        layoutMeasurement: { height, width },
+        layoutMeasurement: { height, width }
       } = nativeEvent
       const startValue = vertical ? y : x
       const endValue = vertical ? height : width
@@ -103,24 +126,29 @@ export default class ScrollPagedView extends Component {
     const { vertical } = this.props
 
     const sizeValue = vertical ? scrollViewSize.height : scrollViewSize.width
-    const layoutValue = vertical ? scrollViewLayout.height : scrollViewLayout.width
+    const layoutValue = vertical
+      ? scrollViewLayout.height
+      : scrollViewLayout.width
     this._TouchMoveEvent(pageX, pageY, sizeValue, layoutValue)
   }
 
   // 子元素调用一定要传入index值来索引对应数据,且最好执行懒加载
   ScrollViewMonitor = ({ children, nativeProps = {} }) => {
     const { vertical } = this.props
-    const mergeProps = getMergeObject({
-      onContentSizeChange: this._onContentSizeChange,
-      onMomentumScrollEnd: this._onMomentumScrollEnd,
-      onScrollEndDrag: this._onScrollEndDrag,
-      onTouchStart: this._onTouchStart,
-      onTouchMove: this._onTouchMove,
-      // onTouchEnd: this._onTouchEnd,
-      showsVerticalScrollIndicator: false,
-      bounces: false,
-      style: { flex: 1 },
-    }, nativeProps)
+    const mergeProps = getMergeObject(
+      {
+        onContentSizeChange: this._onContentSizeChange,
+        onMomentumScrollEnd: this._onMomentumScrollEnd,
+        onScrollEndDrag: this._onScrollEndDrag,
+        onTouchStart: this._onTouchStart,
+        onTouchMove: this._onTouchMove,
+        // onTouchEnd: this._onTouchEnd,
+        showsVerticalScrollIndicator: false,
+        bounces: false,
+        style: { flex: 1 }
+      },
+      nativeProps
+    )
 
     return (
       <AgentScrollView
@@ -168,6 +196,4 @@ export default class ScrollPagedView extends Component {
   // }
 }
 
-export {
-  ViewPaged
-}
+export { ViewPaged }

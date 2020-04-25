@@ -9,21 +9,15 @@ export const propTypes = {
   duration: PropTypes.number,
   withRef: PropTypes.bool,
   infinite: PropTypes.bool,
-  renderHeader: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.element,
-  ]),
-  renderFooter: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.element,
-  ]),
+  renderHeader: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
+  renderFooter: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
   renderPosition: PropTypes.string,
   autoPlay: PropTypes.bool,
   autoPlaySpeed: PropTypes.number,
   hasAnimation: PropTypes.bool,
   locked: PropTypes.bool,
   preRenderRange: PropTypes.number,
-  isMovingRender: PropTypes.bool,
+  isMovingRender: PropTypes.bool
   // children: PropTypes.array.isRequired,
 }
 
@@ -43,5 +37,24 @@ export const defaultProps = {
   hasAnimation: true,
   locked: false,
   preRenderRange: 0,
-  isMovingRender: false,
+  isMovingRender: false
+}
+
+export interface IProps {
+  style: Record<string, string>
+  initialPage: number
+  vertical: boolean
+  onChange: (currentPage: number, prevPage: number) => void
+  duration: number
+  withRef: boolean
+  infinite: boolean
+  renderHeader: any
+  renderFooter: any
+  renderPosition: 'top' | 'left' | 'bottom' | 'right'
+  autoPlay: boolean
+  autoPlaySpeed: number
+  hasAnimation: boolean
+  locked: boolean
+  preRenderRange: number
+  isMovingRender: boolean
 }

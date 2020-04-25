@@ -9,9 +9,8 @@ const panResponderKey = [
   'onMoveShouldSetPanResponderCapture',
   'onPanResponderTerminationRequest',
   'onPanResponderTerminate',
-  'onShouldBlockNativeResponder',
+  'onShouldBlockNativeResponder'
 ]
-
 
 @ViewPagedHOC
 export default class ViewPaged extends Component {
@@ -19,13 +18,16 @@ export default class ViewPaged extends Component {
     super(props)
     const { locked, infinite, vertical, useScrollView } = props
 
-    let panResponderValue = panResponderKey.reduce((values, key) => ({ [key]: props[key], ...values }), {})
+    let panResponderValue = panResponderKey.reduce(
+      (values, key) => ({ [key]: props[key], ...values }),
+      {}
+    )
     if (!locked) {
       panResponderValue = {
         ...panResponderValue,
         onPanResponderGrant: this._onPanResponderGrant,
         onPanResponderMove: this._onPanResponderMove,
-        onPanResponderRelease: this._onPanResponderRelease,
+        onPanResponderRelease: this._onPanResponderRelease
       }
     }
 
@@ -36,13 +38,16 @@ export default class ViewPaged extends Component {
   }
 
   _getStyles() {
-    const { props: { vertical }, state: { pos } } = this
+    const {
+      props: { vertical },
+      state: { pos }
+    } = this
     const key = vertical ? 'top' : 'left'
 
     return {
       AnimatedStyle: {
-        [key]: pos,
-      },
+        [key]: pos
+      }
     }
   }
 
@@ -69,7 +74,10 @@ export default class ViewPaged extends Component {
     this._runMeasurements(width, height)
   }
 
-  _scrollToPage = (posPage = this._posPage, hasAnimation = this.props.hasAnimation) => {
+  _scrollToPage = (
+    posPage = this._posPage,
+    hasAnimation = this.props.hasAnimation
+  ) => {
     const { width } = this.state
     this._posPage = posPage
 

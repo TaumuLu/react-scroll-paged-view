@@ -4,12 +4,11 @@ import { accAdd } from '../utils'
 import Connect from './connect'
 import ViewPaged from '../view-paged'
 
-
 export default function ScrollPageHOC(WrappedComponent) {
   @Connect
   class ScrollPaged extends WrappedComponent {
     static childContextTypes = {
-      ScrollView: PropTypes.func,
+      ScrollView: PropTypes.func
     }
 
     constructor(props) {
@@ -53,7 +52,7 @@ export default function ScrollPageHOC(WrappedComponent) {
 
     getChildContext() {
       return {
-        ScrollView: this.ScrollViewMonitor,
+        ScrollView: this.ScrollViewMonitor
       }
     }
 
@@ -77,14 +76,18 @@ export default function ScrollPageHOC(WrappedComponent) {
     getViewPagedInstance() {
       const { withRef } = this.props
       if (!withRef) {
-        console.warn('To access the viewPage instance, you need to specify withRef=true in the props')
+        console.warn(
+          'To access the viewPage instance, you need to specify withRef=true in the props'
+        )
       }
       return this.viewPagedRef
     }
 
     setBorderValue(startValue, endValue, maxValue) {
       const isStart = parseFloat(startValue) <= 0
-      const isEnd = parseFloat(accAdd(startValue, endValue).toFixed(2)) >= parseFloat(maxValue.toFixed(2))
+      const isEnd =
+        parseFloat(accAdd(startValue, endValue).toFixed(2)) >=
+        parseFloat(maxValue.toFixed(2))
       this.borderDirection = isStart ? 'isStart' : isEnd ? 'isEnd' : false
       this.isBorder = this.triggerJudge(isStart, isEnd)
     }
@@ -100,12 +103,19 @@ export default function ScrollPageHOC(WrappedComponent) {
         case this.childrenSize - 1:
           return isStart && this.borderDirection === 'isStart'
         default:
-          return (isStart && this.borderDirection === 'isStart') || (isEnd && this.borderDirection === 'isEnd')
+          return (
+            (isStart && this.borderDirection === 'isStart') ||
+            (isEnd && this.borderDirection === 'isEnd')
+          )
       }
     }
 
     checkMove(x, y) {
-      const { startY, startX, props: { vertical } } = this
+      const {
+        startY,
+        startX,
+        props: { vertical }
+      } = this
       const yValue = y - startY
       const xValue = x - startX
       if (vertical) {
@@ -115,7 +125,9 @@ export default function ScrollPageHOC(WrappedComponent) {
     }
 
     checkScrollContent(sizeValue, layoutValue) {
-      return parseFloat(sizeValue.toFixed(2)) > parseFloat(layoutValue.toFixed(2))
+      return (
+        parseFloat(sizeValue.toFixed(2)) > parseFloat(layoutValue.toFixed(2))
+      )
     }
 
     _TouchStartEvent(x, y) {
@@ -128,7 +140,11 @@ export default function ScrollPageHOC(WrappedComponent) {
       if (!this.isTouchMove) this.isTouchMove = true
 
       if (this.checkMove(x, y)) {
-        const { startY, startX, props: { vertical } } = this
+        const {
+          startY,
+          startX,
+          props: { vertical }
+        } = this
         const hasScrollContent = this.checkScrollContent(sizeValue, layoutValue)
 
         if (hasScrollContent) {
@@ -179,4 +195,3 @@ export default function ScrollPageHOC(WrappedComponent) {
 
   return ScrollPaged
 }
-

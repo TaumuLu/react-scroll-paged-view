@@ -8,14 +8,12 @@ const AnimatedView = Animated.div
 
 const View = (props) => {
   const { onLayout, ...otherProps } = props
-  const extraProps = {}
+  const extraProps: { ref?: any } = {}
   if (onLayout) {
     extraProps.ref = onLayout
   }
 
-  return (
-    <div {...extraProps} {...otherProps}/>
-  )
+  return <div {...extraProps} {...otherProps} />
 }
 
 const Style = {
@@ -26,7 +24,7 @@ const Style = {
     position: 'relative',
     overflow: 'hidden',
     width: '100%',
-    height: '100%',
+    height: '100%'
   },
   wrapStyle: {
     flex: 1,
@@ -35,23 +33,17 @@ const Style = {
     position: 'relative',
     overflow: 'hidden',
     width: '100%',
-    height: '100%',
+    height: '100%'
   },
   AnimatedStyle: {
     flex: 1,
-    display: 'flex',
+    display: 'flex'
   },
   pageStyle: {
     flex: 1,
     display: 'flex',
-    overflow: 'hidden',
-  },
+    overflow: 'hidden'
+  }
 }
 
-export {
-  Style,
-  Animated,
-  AnimatedView,
-  Easing,
-  View
-}
+export { Style, Animated, AnimatedView, Easing, View }

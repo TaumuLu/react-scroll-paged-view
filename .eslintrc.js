@@ -6,23 +6,23 @@ module.exports = {
     'plugin:prettier/recommended',
     'prettier',
     'prettier/react',
-    'prettier/@typescript-eslint',
+    'prettier/@typescript-eslint'
   ],
   env: {
     es6: true,
     browser: true,
     node: true,
     mocha: true,
-    'jest/globals': true,
+    'jest/globals': true
   },
   plugins: ['@typescript-eslint', 'prettier', 'jest'],
   settings: {
     'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
     'import/resolver': {
       node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      },
-    },
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
+      }
+    }
   },
   rules: {
     'react/jsx-filename-extension': 0,
@@ -46,8 +46,18 @@ module.exports = {
         mjs: 'never',
         jsx: 'never',
         ts: 'never',
-        tsx: 'never',
-      },
+        tsx: 'never'
+      }
     ],
-  },
+    'no-underscore-dangle': 0,
+    'react/static-property-placement': 0,
+    'import/prefer-default-export': 0,
+    'react/jsx-props-no-spreading': 0,
+    'no-unused-expressions': 0,
+    'no-param-reassign': 0,
+    'no-plusplus': 0,
+    'react/no-array-index-key': 0,
+    '@typescript-eslint/ban-ts-ignore': 0,
+    'class-methods-use-this': 0
+  }
 }

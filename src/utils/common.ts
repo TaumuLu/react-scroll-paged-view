@@ -1,4 +1,4 @@
-export const noop = () => {}
+export const noop = () => undefined
 
 export const getType = (object) => {
   return Object.prototype.toString.call(object).slice(8, -1)
@@ -30,12 +30,14 @@ const baseGetSet = (path) => {
   }
 }
 
-export const get = (object, path, defaultValue) => {
+export const get = (object, path, defaultValue?) => {
   const pathArray = baseGetSet(path)
 
-  return pathArray.reduce((obj, key) => {
-    return (obj && obj[key]) ? obj[key] : null
-  }, object) || defaultValue
+  return (
+    pathArray.reduce((obj, key) => {
+      return obj && obj[key] ? obj[key] : null
+    }, object) || defaultValue
+  )
 }
 
 export const set = (object, path, value) => {
@@ -112,7 +114,13 @@ export const mergeWith = (originObject, mergeObject, handle) => {
   originKeys.forEach((key) => {
     const mergeIndex = mergeKeys.indexOf(key)
     if (mergeIndex > -1) {
-      reObject[key] = handle(originObject[key], mergeObject[key], key, originObject, mergeObject)
+      reObject[key] = handle(
+        originObject[key],
+        mergeObject[key],
+        key,
+        originObject,
+        mergeObject
+      )
       mergeKeys.splice(mergeIndex, 1)
     } else {
       reObject[key] = originObject[key]
@@ -125,9 +133,13 @@ export const mergeWith = (originObject, mergeObject, handle) => {
   return reObject
 }
 
-export const mergeStyle = (...styles) => styles.reduce((p, c) => ({ ...(p || {}), ...(c || {}) }), {})
+export const mergeStyle = (...styles) =>
+  styles.reduce((p, c) => ({ ...(p || {}), ...(c || {}) }), {})
 
-export const getMergeObject = (originObject, mergeObject) => {
+export const getMergeObject = (
+  originObject: Record<string, any>,
+  mergeObject: Record<string, any>
+): Record<string, any> => {
   return mergeWith(originObject, mergeObject, (originValue, mergeValue) => {
     const type = getType(originValue)
 
@@ -135,7 +147,10 @@ export const getMergeObject = (originObject, mergeObject) => {
       case 'Array':
         return [...originValue, ...mergeValue]
       case 'Function':
-        return (...params) => { originValue(...params); mergeValue(...params) }
+        return (...params) => {
+          originValue(...params)
+          mergeValue(...params)
+        }
       case 'Object':
         return { ...originValue, ...mergeValue }
       default:
@@ -149,7 +164,10 @@ export const getDisplayName = (component) => {
 }
 
 export const getPrototypeOf = (object) => {
-  return Object.getPrototypeOf ? Object.getPrototypeOf(object) : object.__proto__
+  return Object.getPrototypeOf
+    ? Object.getPrototypeOf(object)
+    : // eslint-disable-next-line no-proto
+      object.__proto__
 }
 
 export const copyStatic = (target, source, options) => {
@@ -170,11 +188,9 @@ export const copyStatic = (target, source, options) => {
   return target
 }
 
-export const accAdd = (arg1, arg2) => {
-  let r1
-  let r2
-  let m
-  let c
+export const accAdd = (arg1: number, arg2: number) => {
+  let r1: number
+  let r2: number
   try {
     r1 = arg1.toString().split('.')[1].length
   } catch (e) {
@@ -185,25 +201,27 @@ export const accAdd = (arg1, arg2) => {
   } catch (e) {
     r2 = 0
   }
-  c = Math.abs(r1 - r2)
+  const c = Math.abs(r1 - r2)
 
   // eslint-disable-next-line no-restricted-properties
-  m = Math.pow(10, Math.max(r1, r2))
+  const m = Math.pow(10, Math.max(r1, r2))
   // m = 10 ** Math.max(r1, r2)
 
+  let value1: number
+  let value2: number
   if (c > 0) {
     // eslint-disable-next-line no-restricted-properties
     const cm = Math.pow(10, c)
     if (r1 > r2) {
-      arg1 = Number(arg1.toString().replace('.', ''))
-      arg2 = Number(arg2.toString().replace('.', '')) * cm
+      value1 = Number(arg1.toString().replace('.', ''))
+      value2 = Number(arg2.toString().replace('.', '')) * cm
     } else {
-      arg1 = Number(arg1.toString().replace('.', '')) * cm
-      arg2 = Number(arg2.toString().replace('.', ''))
+      value1 = Number(arg1.toString().replace('.', '')) * cm
+      value2 = Number(arg2.toString().replace('.', ''))
     }
   } else {
-    arg1 = Number(arg1.toString().replace('.', ''))
-    arg2 = Number(arg2.toString().replace('.', ''))
+    value1 = Number(arg1.toString().replace('.', ''))
+    value2 = Number(arg2.toString().replace('.', ''))
   }
-  return (arg1 + arg2) / m
+  return (value1 + value2) / m
 }

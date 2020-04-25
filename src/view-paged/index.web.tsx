@@ -2,7 +2,6 @@ import { Component } from 'react'
 import { get } from '../utils'
 import ViewPagedHOC from '../decorators/view-paged-hoc'
 
-
 @ViewPagedHOC
 export default class ViewPaged extends Component {
   constructor(props) {
@@ -16,13 +15,16 @@ export default class ViewPaged extends Component {
         onTouchStart: this._onTouchStart,
         ref: this._setAnimatedDivRef, // 代替move事件绑定
         // onTouchMove: this._onTouchMove,
-        onTouchEnd: this._onTouchEnd,
+        onTouchEnd: this._onTouchEnd
       }
     }
   }
 
   _getStyles() {
-    const { props: { vertical }, state: { pos, isReady } } = this
+    const {
+      props: { vertical },
+      state: { pos, isReady }
+    } = this
     if (!isReady) return {}
     const basis = this.childrenSize * 100
     const key = `translate${vertical ? 'Y' : 'X'}`
@@ -30,8 +32,8 @@ export default class ViewPaged extends Component {
     return {
       AnimatedStyle: {
         transform: [{ [key]: pos }],
-        flex: `1 0 ${basis}%`,
-      },
+        flex: `1 0 ${basis}%`
+      }
     }
   }
 

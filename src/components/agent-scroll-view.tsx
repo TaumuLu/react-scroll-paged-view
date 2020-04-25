@@ -1,10 +1,20 @@
 import React from 'react'
+import { ScrollViewProps } from 'react-native'
 import RNScrollView from './RNScrollView'
 import { get } from '../utils'
 
 const viewKeys = ['scrollViewRef', 'scrollViewLayout', 'scrollViewSize']
 
-export default class AgentScrollView extends React.Component {
+interface IAgentScrollView extends ScrollViewProps {
+  nativeProps?: any
+}
+
+export default class AgentScrollView extends React.Component<IAgentScrollView> {
+  scrollViewRef: any
+
+  scrollViewSize: any
+
+  scrollViewLayout: { width: number; height: number }
 
   setScrollEnabled = (flag) => {
     if (this.scrollViewRef) {
@@ -30,7 +40,7 @@ export default class AgentScrollView extends React.Component {
       const width = Math.ceil(layout.width)
 
       this.scrollViewLayout = { width, height }
-      onLayout && onLayout()
+      onLayout && onLayout(event)
     }
   }
 
@@ -42,7 +52,10 @@ export default class AgentScrollView extends React.Component {
     const { nativeProps } = this.props
     const method = get(this.props, propsKey)
     if (method) {
-      const agentInfo = viewKeys.reduce((p, key) => Object.assign({}, p, { [key]: this[key] || {} }), {})
+      const agentInfo = viewKeys.reduce(
+        (p, key) => ({ ...p, [key]: this[key] || {} }),
+        {}
+      )
       method(event, agentInfo)
       const nativeMethod = get(nativeProps, propsKey)
       nativeMethod && nativeMethod(event)
@@ -56,11 +69,10 @@ export default class AgentScrollView extends React.Component {
         ref={this._setScrollViewRef}
         onLayout={this._setScrollViewLayout}
         onContentSizeChange={this._setScrollViewSize}
-
         // onMomentumScrollEnd={this._onMomentumScrollEnd}
         // onScrollEndDrag={this._onScrollEndDrag}
-        onTouchStart={event => this._agentMethod('onTouchStart', event)}
-        onTouchMove={event => this._agentMethod('onTouchMove', event)}
+        onTouchStart={(event) => this._agentMethod('onTouchStart', event)}
+        onTouchMove={(event) => this._agentMethod('onTouchMove', event)}
         // onTouchEnd={this._onTouchEnd}
       />
     )

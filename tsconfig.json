@@ -15,6 +15,7 @@
     "noImplicitReturns": true,
     "esModuleInterop": true,
     "downlevelIteration": true,
+    "experimentalDecorators": true,
     "lib": ["esnext", "dom"]
   },
   "include": ["./src/**/*"],

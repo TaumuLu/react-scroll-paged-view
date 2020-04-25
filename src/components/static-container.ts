@@ -1,6 +1,11 @@
 import React, { Component } from 'react'
 
-export default class StaticContainer extends Component {
+interface IProps {
+  children: React.ReactNode
+  shouldUpdate: boolean
+}
+
+export default class StaticContainer extends Component<IProps> {
   shouldComponentUpdate(nextProps) {
     return !!nextProps.shouldUpdate
   }
