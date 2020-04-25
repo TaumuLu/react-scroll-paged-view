@@ -44,7 +44,7 @@ export default class ScrollPaged extends ScrollPagedPlatform {
     const flag = this.hasScrollViewPages.includes(+index)
     this.setResponder(!flag)
 
-    onChange(index, oldIndex)
+    onChange && onChange(index, oldIndex)
   }
 
   setResponder(flag) {

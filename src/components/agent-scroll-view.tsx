@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { ScrollViewProps } from 'react-native'
 import RNScrollView from './RNScrollView'
 import { get } from '../utils'
@@ -9,7 +9,7 @@ interface IAgentScrollView extends ScrollViewProps {
   nativeProps?: any
 }
 
-export default class AgentScrollView extends React.Component<IAgentScrollView> {
+export default class AgentScrollView extends Component<IAgentScrollView> {
   scrollViewRef: any
 
   scrollViewSize: any
