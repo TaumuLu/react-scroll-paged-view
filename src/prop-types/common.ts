@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types'
-import { noop } from '../utils'
 
 export const propTypes = {
   style: PropTypes.object,
@@ -17,7 +16,8 @@ export const propTypes = {
   hasAnimation: PropTypes.bool,
   locked: PropTypes.bool,
   preRenderRange: PropTypes.number,
-  isMovingRender: PropTypes.bool
+  isMovingRender: PropTypes.bool,
+  onScroll: PropTypes.func
   // children: PropTypes.array.isRequired,
 }
 
@@ -25,7 +25,7 @@ export const defaultProps = {
   style: {},
   initialPage: 0,
   vertical: true,
-  onChange: noop,
+  onChange: undefined,
   duration: 400,
   withRef: false,
   infinite: false,
@@ -37,7 +37,8 @@ export const defaultProps = {
   hasAnimation: true,
   locked: false,
   preRenderRange: 0,
-  isMovingRender: false
+  isMovingRender: false,
+  onScroll: undefined
 }
 
 export interface IProps {
@@ -57,4 +58,5 @@ export interface IProps {
   locked: boolean
   preRenderRange: number
   isMovingRender: boolean
+  onScroll: (event: any) => void
 }

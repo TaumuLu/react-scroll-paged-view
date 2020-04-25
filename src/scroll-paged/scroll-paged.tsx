@@ -1,31 +1,10 @@
-import React, { Component } from 'react'
-import { isAndroid, isEmpty, getMergeObject } from './utils'
-import { ScrollPagedHOC } from './decorators'
-import { AgentScrollView } from './components'
-import ViewPaged from './view-paged'
-import { IProps } from './prop-types'
+import React from 'react'
+import { isAndroid, isEmpty, getMergeObject } from '../utils'
+import { AgentScrollView } from '../components'
+import { ScrollPagedAbstract } from '../abstract-class'
 
-@ScrollPagedHOC
-export default class ScrollPagedView extends Component<IProps> {
-  _viewPagedProps: any
-
-  _setScrollViewRef: any
-
-  _TouchStartEvent: any
-
-  _TouchMoveEvent: any
-
-  currentRef: any
-
-  setBorderValue: any
-
-  isResponder: boolean
-
-  isBorder: boolean
-
-  isTouchMove: boolean
-
-  borderDirection: boolean
+export default abstract class ScrollPaged extends ScrollPagedAbstract {
+  _scrollViewRef: AgentScrollView
 
   constructor(props) {
     super(props)
@@ -44,9 +23,9 @@ export default class ScrollPagedView extends Component<IProps> {
   // 暂未观测出设置的先后顺序影响
   setResponder(flag) {
     if (isAndroid) {
-      if (this.currentRef) {
-        this.currentRef.setScrollEnabled(!flag)
-        // this.currentRef.setNativeProps({
+      if (this._scrollViewRef) {
+        this._scrollViewRef.setScrollEnabled(!flag)
+        // this._scrollViewRef.setNativeProps({
         //   scrollEnabled: !flag,
         // })
       }
@@ -65,7 +44,7 @@ export default class ScrollPagedView extends Component<IProps> {
 
       if (isResponder && newValue > oldValue) {
         this.isBorder = false
-        this.borderDirection = false
+        this.borderDirection = 'none'
         this.setResponder(false)
       }
     }
@@ -73,18 +52,18 @@ export default class ScrollPagedView extends Component<IProps> {
 
   _onTouchStart = ({ nativeEvent }, { scrollViewRef }) => {
     const { pageX, pageY } = nativeEvent
-    this.currentRef = scrollViewRef
+    this._scrollViewRef = scrollViewRef
 
     this._TouchStartEvent(pageX, pageY)
   }
 
   // _onTouchEnd = () => {
   //   if (isAndroid && this.androidMove) {
-  //     const currentRef = this.getScrollViewConfig('scrollViewRef')
+  //     const _scrollViewRef = this.getScrollViewConfig('scrollViewRef')
   //     this._startTime = Date.now()
   //     this.onUpdate(this._fromValue, (y) => {
   //       console.log(y)
-  //       currentRef.scrollTo({ x: 0, y, animated: false })
+  //       _scrollViewRef.scrollTo({ x: 0, y, animated: false })
   //     })
 
   //     this.androidMove = false
@@ -94,11 +73,11 @@ export default class ScrollPagedView extends Component<IProps> {
   _onScrollEndDrag = (event) => {
     // if (isAndroid && this.androidMove) {
     //   this.androidMove = false
-    // const currentRef = this.getScrollViewConfig('scrollViewRef')
+    // const _scrollViewRef = this.getScrollViewConfig('scrollViewRef')
 
     // this._startTime = Date.now()
     // this._onUpdate(this._fromValue, (y) => {
-    //   currentRef.scrollTo({ x: 0, y, animated: false })
+    //   _scrollViewRef.scrollTo({ x: 0, y, animated: false })
     // })
     // }
 
@@ -195,5 +174,3 @@ export default class ScrollPagedView extends Component<IProps> {
   //   }
   // }
 }
-
-export { ViewPaged }

@@ -1,17 +1,19 @@
-import React, { Component } from 'react'
-import { getMergeObject } from './utils'
-import { ScrollPagedHOC } from './decorators'
-import ViewPaged from './view-paged'
+import React from 'react'
+import { getMergeObject } from '../utils'
+import { ScrollPagedAbstract, DirectionValues } from '../abstract-class'
 
-@ScrollPagedHOC
-export default class ScrollPagedView extends Component {
+export default abstract class ScrollPaged extends ScrollPagedAbstract {
+  private _startBorderDirection: DirectionValues
+
+  private _isTouch: boolean
+
   _onTouchStart = (e) => {
     const { targetTouches } = e
     const { clientX, clientY } = targetTouches[0] || {}
 
     // 是否达成触摸滑动操作，此类变量可用于web端区分点击事件
     // 所有children共享类变量，从当前组件获取
-    this.isTouch = false
+    this._isTouch = false
     this._TouchStartEvent(clientX, clientY)
 
     // web端在touchStart中设置一次边界值，这样做的好处是
@@ -25,7 +27,7 @@ export default class ScrollPagedView extends Component {
     this._startBorderDirection = this.borderDirection
   }
 
-  _setBorderValue(e) {
+  _setBorderValue = (e) => {
     const {
       currentTarget: {
         scrollHeight,
@@ -71,10 +73,10 @@ export default class ScrollPagedView extends Component {
     } = e
     const { vertical } = this.props
     // 是否达成触摸滑动操作
-    if (!this.isTouch) {
+    if (!this._isTouch) {
       const { startX, startY } = this
       if (clientX !== startX || clientY !== startY) {
-        this.isTouch = true
+        this._isTouch = true
       }
     }
 
@@ -140,5 +142,3 @@ export default class ScrollPagedView extends Component {
     )
   }
 }
-
-export { ViewPaged }

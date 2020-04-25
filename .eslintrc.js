@@ -58,6 +58,8 @@ module.exports = {
     'no-plusplus': 0,
     'react/no-array-index-key': 0,
     '@typescript-eslint/ban-ts-ignore': 0,
-    'class-methods-use-this': 0
+    'class-methods-use-this': 0,
+    'max-classes-per-file': 0,
+    'no-nested-ternary': 0
   }
 }

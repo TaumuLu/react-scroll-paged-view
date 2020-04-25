@@ -1,9 +1,23 @@
-import { Component } from 'react'
 import { get } from '../utils'
-import ViewPagedHOC from '../decorators/view-paged-hoc'
+import { ViewPagedAbstract } from '../abstract-class'
 
-@ViewPagedHOC
-export default class ViewPaged extends Component {
+export default abstract class ViewPaged extends ViewPagedAbstract {
+  startX: number
+
+  startY: number
+
+  isScroll: boolean
+
+  isTouch: boolean
+
+  isMove: boolean
+
+  endX: number
+
+  endY: number
+
+  _animatedDivRef: any
+
   constructor(props) {
     super(props)
 

@@ -4,8 +4,10 @@
   "description": "Inside scroll, Full page scroll",
   "main": "./lib",
   "scripts": {
-    "build": "rm -rf ./lib && babel src/ --out-dir lib/",
-    "prepublishOnly": "npm run build"
+    "build": "rm -rf ./lib && tsc",
+    "watch": "tsc -w",
+    "prepublishOnly": "npm run build",
+    "lint": "lint-staged"
   },
   "repository": {
     "type": "git",

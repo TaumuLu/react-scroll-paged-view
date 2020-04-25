@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import { PanResponderCallbacks } from 'react-native'
 
 import { noop } from '../utils'
 import {
@@ -7,44 +8,67 @@ import {
   IProps as commonIProps
 } from './common'
 
-const defaultResponder = (isResponder) => (evt, gestureState) => isResponder
+const defaultResponder = (isResponder) => () => isResponder
+
+const panResponderMap = {
+  onStartShouldSetPanResponder: {
+    propType: PropTypes.func,
+    defaultValue: defaultResponder(true)
+  },
+  onStartShouldSetPanResponderCapture: {
+    propType: PropTypes.func,
+    defaultValue: defaultResponder(false)
+  },
+  onMoveShouldSetPanResponder: {
+    propType: PropTypes.func,
+    defaultValue: defaultResponder(true)
+  },
+  onMoveShouldSetPanResponderCapture: {
+    propType: PropTypes.func,
+    defaultValue: defaultResponder(false)
+  },
+  onPanResponderTerminationRequest: {
+    propType: PropTypes.func,
+    defaultValue: defaultResponder(true)
+  },
+  onShouldBlockNativeResponder: {
+    propType: PropTypes.func,
+    defaultValue: defaultResponder(true)
+  },
+  onPanResponderTerminate: {
+    propType: PropTypes.func,
+    defaultValue: noop
+  }
+}
+
+export const panResponderKey = Object.keys(panResponderMap)
+
+const getProperty = (name: string) => {
+  return panResponderKey.reduce((p, k) => {
+    p[k] = panResponderMap[k][name]
+    return p
+  }, {})
+}
 
 export const propTypes = {
   ...commonPropTypes,
-  onStartShouldSetPanResponder: PropTypes.func,
-  onStartShouldSetPanResponderCapture: PropTypes.func,
-  onMoveShouldSetPanResponder: PropTypes.func,
-  onMoveShouldSetPanResponderCapture: PropTypes.func,
-  onPanResponderTerminationRequest: PropTypes.func,
-  onShouldBlockNativeResponder: PropTypes.func,
-  onPanResponderTerminate: PropTypes.func,
+  ...getProperty('propType'),
   useScrollView: PropTypes.bool,
   scrollViewProps: PropTypes.object
 }
 
 export const defaultProps = {
   ...commonDefaultProps,
-  onStartShouldSetPanResponder: defaultResponder(true),
-  onStartShouldSetPanResponderCapture: defaultResponder(false),
-  onMoveShouldSetPanResponder: defaultResponder(true),
-  onMoveShouldSetPanResponderCapture: defaultResponder(false),
-  onPanResponderTerminationRequest: defaultResponder(true),
-  onShouldBlockNativeResponder: defaultResponder(true),
-  onPanResponderTerminate: noop,
+  ...getProperty('defaultValue'),
   useScrollView: true,
   scrollViewProps: {}
 }
 
-type TDefaultResponder = (isResponder: boolean) => boolean
+type keys = keyof typeof panResponderMap
 
-export interface IProps extends commonIProps {
-  onStartShouldSetPanResponder: TDefaultResponder
-  onStartShouldSetPanResponderCapture: TDefaultResponder
-  onMoveShouldSetPanResponder: TDefaultResponder
-  onMoveShouldSetPanResponderCapture: TDefaultResponder
-  onPanResponderTerminationRequest: TDefaultResponder
-  onShouldBlockNativeResponder: TDefaultResponder
-  onPanResponderTerminate: TDefaultResponder
-  useScrollView: boolean
-  scrollViewProps: object
+type PanResponder = Pick<PanResponderCallbacks, keys>
+
+export interface IProps extends commonIProps, PanResponder {
+  useScrollView?: boolean
+  scrollViewProps?: object
 }
